@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheLazySquid/Gimloader.git"
+    "url": "git+https://github.com/Gimloader/client-plugins.git"
   },
   "keywords": [
     "Plugin",
@@ -19,9 +19,9 @@
   "author": "TheLazySquid",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/TheLazySquid/Gimloader/issues"
+    "url": "https://github.com/Gimloader/client-plugins/issues"
   },
-  "homepage": "https://github.com/TheLazySquid/Gimloader#readme",
+  "homepage": "https://github.com/Gimloader/client-plugins#readme",
   "dependencies": {
     "gimloader": "^1.0.1"
   },

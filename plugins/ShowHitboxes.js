@@ -3,8 +3,8 @@
  * @description Enables debug mode which shows hitboxes
  * @author TheLazySquid
  * @version 0.2.0
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/ShowHitboxes.js
- * @webpage https://thelazysquid.github.io/Gimloader/plugins/showhitboxes
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/ShowHitboxes.js
+ * @webpage https://gimloader.github.io/plugins/showhitboxes
  * @reloadRequired ingame
  */
 

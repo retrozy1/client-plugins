@@ -12,8 +12,8 @@ export default {
     author: 'TheLazySquid',
     version: pkg.version,
     reloadRequired: 'ingame',
-    downloadUrl: "https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/2dMovementTAS/build/2dMovementTAS.js",
-    webpage: 'https://thelazysquid.github.io/Gimloader/plugins/movementtas',
+    downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/2dMovementTAS/build/2dMovementTAS.js",
+    webpage: 'https://gimloader.github.io/plugins/movementtas',
     plugins: [
         svelte({
             preprocess: sveltePreprocess(),

@@ -3,8 +3,8 @@
  * @description Automatically performs actions to let you gain XP while idle
  * @author TheLazySquid
  * @version 0.3.0
- * @webpage https://thelazysquid.github.io/Gimloader/plugins/idleforxp
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/IdleForXp.js
+ * @webpage https://gimloader.github.io/plugins/idleforxp
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/IdleForXp.js
  * @reloadRequired ingame
  */
 const api = new GL();

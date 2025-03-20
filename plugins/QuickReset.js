@@ -3,8 +3,8 @@
  * @description Quickly lets you restart 2d gamemodes
  * @version 0.2.3
  * @author TheLazySquid
- * @webpage https://thelazysquid.github.io/Gimloader/plugins/quickreset
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/refs/heads/main/plugins/QuickReset.js
+ * @webpage https://gimloader.github.io/plugins/quickreset
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/plugins/QuickReset.js
  */
 
 const api = new GL();

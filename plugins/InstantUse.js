@@ -3,8 +3,8 @@
  * @description Instantly use nearby devices without any wait
  * @author TheLazySquid
  * @version 0.2.3
- * @webpage https://thelazysquid.github.io/Gimloader/plugins/instantuse
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/InstantUse.js
+ * @webpage https://gimloader.github.io/plugins/instantuse
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InstantUse.js
  */
 
 const api = new GL();

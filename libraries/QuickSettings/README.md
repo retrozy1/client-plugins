@@ -7,7 +7,7 @@ QuickSettings is a library to easily make simple settings menus.
 ```js
 /**
  * ...
- * @needsLib QuickSettings | https://raw.githubusercontent.com/TheLazySquid/Gimloader/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
+ * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  */
 
 let settings = GL.lib("QuickSettings")("MyLib", [

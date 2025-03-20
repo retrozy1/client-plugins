@@ -11,9 +11,9 @@ export default {
     author: "TheLazySquid",
     version: pkg.version,
     reloadRequired: 'ingame',
-    downloadUrl: "https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/DLDTAS/build/DLDTAS.js",
-    webpage: 'https://thelazysquid.github.io/Gimloader/plugins/dldtas',
-    libs: ["DLDUtils | https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/libraries/DLDUtils.js"],
+    downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/DLDTAS/build/DLDTAS.js",
+    webpage: 'https://gimloader.github.io/plugins/dldtas',
+    libs: ["DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js"],
     plugins: [sassPlugin({ type: "css-text" })],
     esbuildOptions: {
         loader: {

@@ -3,7 +3,7 @@
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
  * @version 0.3.0
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/libraries/DLDUtils.js
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
  */
 

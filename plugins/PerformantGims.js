@@ -4,9 +4,9 @@
  * @author TheLazySquid
  * @version 0.3.2
  * @reloadRequired ingame
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/PerformantGims.js
- * @webpage https://thelazysquid.github.io/Gimloader/plugins/performantgims
- * @needsLib QuickSettings | https://raw.githubusercontent.com/TheLazySquid/Gimloader/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/PerformantGims.js
+ * @webpage https://gimloader.github.io/plugins/performantgims
+ * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  * @hasSettings true
  */
 

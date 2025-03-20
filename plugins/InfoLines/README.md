@@ -1,6 +1,6 @@
 # InfoLines
 
-Install the plugin by clicking [here](https://thelazysquid.github.io/Gimloader/install/?installUrl=https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/InfoLines/build/InfoLines.js) while having Gimloader downloaded.
+Install the plugin by clicking [here](https://gimloader.github.io/install/?installUrl=https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InfoLines/build/InfoLines.js) while having Gimloader downloaded.
 
 ## Lines
 

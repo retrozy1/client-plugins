@@ -3,8 +3,8 @@
  * @description Make the flags in capture the flag or creative swing like crazy!
  * @author TheLazySquid
  * @version 1.1.2
- * @webpage https://thelazysquid.github.io/Gimloader/plugins/crazyflag
- * @needsLib QuickSettings | https://raw.githubusercontent.com/TheLazySquid/Gimloader/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
+ * @webpage https://gimloader.github.io/plugins/crazyflag
+ * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  * @hasSettings true
  */
 const api = new GL();

@@ -3,7 +3,7 @@
  * @description Detects which official 2d gamemode the player is in
  * @author TheLazySquid
  * @version 0.1.0
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/libraries/GamemodeDetector.js
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/GamemodeDetector.js
  * @isLibrary true
  */
 

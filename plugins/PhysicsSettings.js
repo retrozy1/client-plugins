@@ -3,9 +3,9 @@
  * @description Allows you to configure various things about the physics in platformer modes (client-side only)
  * @version 0.1.2
  * @author TheLazySquid
- * @downloadUrl https://raw.githubusercontent.com/TheLazySquid/Gimloader/main/plugins/PhysicsSettings.js
- * @webpage https://thelazysquid.github.io/Gimloader/plugins/physicssettings
- * @needsLib QuickSettings | https://raw.githubusercontent.com/TheLazySquid/Gimloader/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/PhysicsSettings.js
+ * @webpage https://gimloader.github.io/plugins/physicssettings
+ * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  */
 
 const api = new GL();
