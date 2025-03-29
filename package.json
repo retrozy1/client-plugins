@@ -1,0 +1,8 @@
+{
+    "name": "client-plugins",
+    "description": "Official client-side plugins for Gimloader",
+    "workspaces": [
+        "plugins/*",
+        "libraries/*"
+    ]
+}
