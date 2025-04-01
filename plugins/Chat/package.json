@@ -1,0 +1,18 @@
+{
+  "name": "chat",
+  "version": "0.1.0",
+  "description": "Adds an in-game chat to 2d gamemodes",
+  "type": "module",
+  "scripts": {
+    "build": "gl build",
+    "serve": "gl serve"
+  },
+  "author": "TheLazySquid",
+  "devDependencies": {
+    "@gimloader/build": "^1.0.2",
+    "eventemitter2": "^6.4.9"
+  },
+  "dependencies": {
+    "gimloader": "^1.2.6"
+  }
+}
