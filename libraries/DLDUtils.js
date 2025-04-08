@@ -2,7 +2,7 @@
  * @name DLDUtils
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
- * @version 0.3.0
+ * @version 0.3.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
  */
@@ -212,14 +212,11 @@ api.net.onLoad(() => {
     if(!isDLD()) return;
 
     enable();
+    GL.lib("Desync").enable();
 });
 
-api.net.on("PHYSICS_STATE", (_, editFn) => {
-    if(isDLD()) editFn(null);
-});
-
-export function moveCharToPos(x, y) {
-    let rb = api.stores?.phaser?.mainCharacter?.physics?.getBody().rigidBody
+function moveCharToPos(x, y) {
+    let rb = api.stores?.phaser?.mainCharacter?.physics?.getBody().rigidBody;
     if(!rb) return;
 
     rb.setTranslation({ x, y }, true);

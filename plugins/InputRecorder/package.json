@@ -1,6 +1,6 @@
 {
   "name": "inputrecorder",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A plugin that allows you to record and play back movements in Gimkit Don't Look Down",
   "main": "build/InputRecorder.js",
   "type": "module",

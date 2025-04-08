@@ -12,5 +12,8 @@ export default {
     reloadRequired: 'ingame',
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InputRecorder/build/InputRecorder.js",
     webpage: 'https://gimloader.github.io/plugins/inputrecorder',
-    libs: ["DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js"]
+    libs: [
+        "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js",
+        "Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js"
+    ]
 }
