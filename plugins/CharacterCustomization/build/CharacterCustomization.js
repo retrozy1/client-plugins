@@ -2,7 +2,7 @@
  * @name CharacterCustomization
  * @description Allows you to use any gim or a custom gim client-side
  * @author TheLazySquid
- * @version 0.5.0
+ * @version 0.5.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CharacterCustomization/build/CharacterCustomization.js
  * @webpage https://gimloader.github.io/plugins/charactercustomization
  * @hasSettings true
@@ -34,9 +34,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// node_modules/compress-json/dist/debug.js
+// ../../node_modules/compress-json/dist/debug.js
 var require_debug = __commonJS({
-  "node_modules/compress-json/dist/debug.js"(exports) {
+  "../../node_modules/compress-json/dist/debug.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.throwUnsupportedData = exports.throwUnknownDataType = exports.getType = void 0;
@@ -55,9 +55,9 @@ var require_debug = __commonJS({
   }
 });
 
-// node_modules/compress-json/dist/number.js
+// ../../node_modules/compress-json/dist/number.js
 var require_number = __commonJS({
-  "node_modules/compress-json/dist/number.js"(exports) {
+  "../../node_modules/compress-json/dist/number.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.s_to_num = exports.int_str_to_s = exports.num_to_s = exports.big_int_to_s = exports.int_to_s = exports.s_to_big_int = exports.s_to_int = void 0;
@@ -147,7 +147,13 @@ var require_number = __commonJS({
       }
       let [a, b] = num.toString().split(".");
       if (!b) {
-        return int_to_s(num);
+        if (a.includes("e")) {
+          const [a1, a2] = a.split("e");
+          a = a1;
+          b = "0e" + a2;
+        } else {
+          return int_to_s(num);
+        }
       }
       let c;
       if (b) {
@@ -216,9 +222,9 @@ var require_number = __commonJS({
   }
 });
 
-// node_modules/compress-json/dist/encode.js
+// ../../node_modules/compress-json/dist/encode.js
 var require_encode = __commonJS({
-  "node_modules/compress-json/dist/encode.js"(exports) {
+  "../../node_modules/compress-json/dist/encode.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.decodeStr = exports.encodeStr = exports.decodeBool = exports.encodeBool = exports.decodeKey = exports.decodeNum = exports.encodeNum = void 0;
@@ -272,9 +278,9 @@ var require_encode = __commonJS({
   }
 });
 
-// node_modules/compress-json/dist/config.js
+// ../../node_modules/compress-json/dist/config.js
 var require_config = __commonJS({
-  "node_modules/compress-json/dist/config.js"(exports) {
+  "../../node_modules/compress-json/dist/config.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.config = void 0;
@@ -288,9 +294,9 @@ var require_config = __commonJS({
   }
 });
 
-// node_modules/compress-json/dist/memory.js
+// ../../node_modules/compress-json/dist/memory.js
 var require_memory = __commonJS({
-  "node_modules/compress-json/dist/memory.js"(exports) {
+  "../../node_modules/compress-json/dist/memory.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.addValue = exports.makeInMemoryMemory = exports.makeInMemoryCache = exports.makeInMemoryStore = exports.memToValues = void 0;
@@ -455,9 +461,9 @@ var require_memory = __commonJS({
   }
 });
 
-// node_modules/compress-json/dist/core.js
+// ../../node_modules/compress-json/dist/core.js
 var require_core = __commonJS({
-  "node_modules/compress-json/dist/core.js"(exports) {
+  "../../node_modules/compress-json/dist/core.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.decompress = exports.decode = exports.compress = void 0;
@@ -545,9 +551,9 @@ var require_core = __commonJS({
   }
 });
 
-// node_modules/compress-json/dist/helpers.js
+// ../../node_modules/compress-json/dist/helpers.js
 var require_helpers = __commonJS({
-  "node_modules/compress-json/dist/helpers.js"(exports) {
+  "../../node_modules/compress-json/dist/helpers.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.trimUndefinedRecursively = exports.trimUndefined = void 0;
@@ -579,9 +585,9 @@ var require_helpers = __commonJS({
   }
 });
 
-// node_modules/compress-json/dist/index.js
+// ../../node_modules/compress-json/dist/index.js
 var require_dist = __commonJS({
-  "node_modules/compress-json/dist/index.js"(exports) {
+  "../../node_modules/compress-json/dist/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.config = exports.trimUndefinedRecursively = exports.trimUndefined = exports.addValue = exports.decode = exports.decompress = exports.compress = void 0;
@@ -614,11 +620,11 @@ var require_dist = __commonJS({
   }
 });
 
-// node_modules/gimloader/index.js
+// ../../node_modules/gimloader/index.js
 var api = new GL();
 var gimloader_default = api;
 
-// node_modules/svelte/src/runtime/internal/utils.js
+// ../../node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
 function run(fn) {
@@ -640,13 +646,13 @@ function is_empty(obj) {
   return Object.keys(obj).length === 0;
 }
 
-// node_modules/svelte/src/runtime/internal/globals.js
+// ../../node_modules/svelte/src/runtime/internal/globals.js
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : (
   // @ts-ignore Node typings have this
   global
 );
 
-// node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
+// ../../node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
 var ResizeObserverSingleton = class _ResizeObserverSingleton {
   /**
    * @private
@@ -692,7 +698,7 @@ var ResizeObserverSingleton = class _ResizeObserverSingleton {
 };
 ResizeObserverSingleton.entries = "WeakMap" in globals ? /* @__PURE__ */ new WeakMap() : void 0;
 
-// node_modules/svelte/src/runtime/internal/dom.js
+// ../../node_modules/svelte/src/runtime/internal/dom.js
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -814,7 +820,7 @@ function get_custom_elements_slots(element2) {
   return result;
 }
 
-// node_modules/svelte/src/runtime/internal/lifecycle.js
+// ../../node_modules/svelte/src/runtime/internal/lifecycle.js
 var current_component;
 function set_current_component(component) {
   current_component = component;
@@ -827,7 +833,7 @@ function onMount(fn) {
   get_current_component().$$.on_mount.push(fn);
 }
 
-// node_modules/svelte/src/runtime/internal/scheduler.js
+// ../../node_modules/svelte/src/runtime/internal/scheduler.js
 var dirty_components = [];
 var binding_callbacks = [];
 var render_callbacks = [];
@@ -901,7 +907,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 
-// node_modules/svelte/src/runtime/internal/transitions.js
+// ../../node_modules/svelte/src/runtime/internal/transitions.js
 var outroing = /* @__PURE__ */ new Set();
 function transition_in(block, local) {
   if (block && block.i) {
@@ -910,12 +916,12 @@ function transition_in(block, local) {
   }
 }
 
-// node_modules/svelte/src/runtime/internal/each.js
+// ../../node_modules/svelte/src/runtime/internal/each.js
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
 
-// node_modules/svelte/src/shared/boolean_attributes.js
+// ../../node_modules/svelte/src/shared/boolean_attributes.js
 var _boolean_attributes = (
   /** @type {const} */
   [
@@ -948,7 +954,7 @@ var _boolean_attributes = (
 );
 var boolean_attributes = /* @__PURE__ */ new Set([..._boolean_attributes]);
 
-// node_modules/svelte/src/runtime/internal/Component.js
+// ../../node_modules/svelte/src/runtime/internal/Component.js
 function mount_component(component, target, anchor) {
   const { fragment, after_update } = component.$$;
   fragment && fragment.m(target, anchor);
@@ -1284,10 +1290,10 @@ var SvelteComponent = class {
   }
 };
 
-// node_modules/svelte/src/shared/version.js
+// ../../node_modules/svelte/src/shared/version.js
 var PUBLIC_VERSION = "4";
 
-// node_modules/svelte/src/runtime/internal/disclose-version/index.js
+// ../../node_modules/svelte/src/runtime/internal/disclose-version/index.js
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 
@@ -1298,16 +1304,18 @@ function add_css(target) {
 }
 function get_each_context(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[16] = list[i];
+  child_ctx[18] = list[i];
+  child_ctx[19] = list;
+  child_ctx[20] = i;
   return child_ctx;
 }
 function get_each_context_1(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[19] = list[i];
-  child_ctx[21] = i;
+  child_ctx[21] = list[i];
+  child_ctx[23] = i;
   return child_ctx;
 }
-function create_if_block_3(ctx) {
+function create_if_block_4(ctx) {
   let button;
   let t0;
   let t1_value = (
@@ -1402,7 +1410,8 @@ function create_if_block_1(ctx) {
             "change",
             /*onSkinIdEntered*/
             ctx[8]
-          )
+          ),
+          listen(input, "keydown", keydown_handler)
         ];
         mounted = true;
       }
@@ -1471,7 +1480,7 @@ function create_if_block_2(ctx) {
       insert(target, each_1_anchor, anchor);
     },
     p(ctx2, dirty) {
-      if (dirty & /*styles, selectedStyles*/
+      if (dirty & /*selectedStyles, styles*/
       96) {
         each_value = ensure_array_like(
           /*styles*/
@@ -1502,6 +1511,121 @@ function create_if_block_2(ctx) {
     }
   };
 }
+function create_else_block(ctx) {
+  let div;
+  let t;
+  let each_value_1 = ensure_array_like(
+    /*category*/
+    ctx[18].options
+  );
+  let each_blocks = [];
+  for (let i = 0; i < each_value_1.length; i += 1) {
+    each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+  }
+  return {
+    c() {
+      div = element("div");
+      for (let i = 0; i < each_blocks.length; i += 1) {
+        each_blocks[i].c();
+      }
+      t = space();
+      attr(div, "class", "colors svelte-79x94m");
+    },
+    m(target, anchor) {
+      insert(target, div, anchor);
+      for (let i = 0; i < each_blocks.length; i += 1) {
+        if (each_blocks[i]) {
+          each_blocks[i].m(div, null);
+        }
+      }
+      append(div, t);
+    },
+    p(ctx2, dirty) {
+      if (dirty & /*styles, selectedStyles*/
+      96) {
+        each_value_1 = ensure_array_like(
+          /*category*/
+          ctx2[18].options
+        );
+        let i;
+        for (i = 0; i < each_value_1.length; i += 1) {
+          const child_ctx = get_each_context_1(ctx2, each_value_1, i);
+          if (each_blocks[i]) {
+            each_blocks[i].p(child_ctx, dirty);
+          } else {
+            each_blocks[i] = create_each_block_1(child_ctx);
+            each_blocks[i].c();
+            each_blocks[i].m(div, t);
+          }
+        }
+        for (; i < each_blocks.length; i += 1) {
+          each_blocks[i].d(1);
+        }
+        each_blocks.length = each_value_1.length;
+      }
+    },
+    d(detaching) {
+      if (detaching) {
+        detach(div);
+      }
+      destroy_each(each_blocks, detaching);
+    }
+  };
+}
+function create_if_block_3(ctx) {
+  let input;
+  let mounted;
+  let dispose;
+  function input_input_handler_1() {
+    ctx[13].call(
+      input,
+      /*category*/
+      ctx[18]
+    );
+  }
+  return {
+    c() {
+      input = element("input");
+      attr(input, "type", "color");
+    },
+    m(target, anchor) {
+      insert(target, input, anchor);
+      set_input_value(
+        input,
+        /*selectedStyles*/
+        ctx[5][
+          /*category*/
+          ctx[18].name
+        ]
+      );
+      if (!mounted) {
+        dispose = listen(input, "input", input_input_handler_1);
+        mounted = true;
+      }
+    },
+    p(new_ctx, dirty) {
+      ctx = new_ctx;
+      if (dirty & /*selectedStyles, styles*/
+      96) {
+        set_input_value(
+          input,
+          /*selectedStyles*/
+          ctx[5][
+            /*category*/
+            ctx[18].name
+          ]
+        );
+      }
+    },
+    d(detaching) {
+      if (detaching) {
+        detach(input);
+      }
+      mounted = false;
+      dispose();
+    }
+  };
+}
 function create_each_block_1(ctx) {
   let button;
   let mounted;
@@ -1509,11 +1633,11 @@ function create_each_block_1(ctx) {
   function click_handler() {
     return (
       /*click_handler*/
-      ctx[13](
+      ctx[14](
         /*category*/
-        ctx[16],
+        ctx[18],
         /*option*/
-        ctx[19]
+        ctx[21]
       )
     );
   }
@@ -1525,7 +1649,7 @@ function create_each_block_1(ctx) {
         button,
         "background-color",
         /*option*/
-        ctx[19].preview.color
+        ctx[21].preview.color
       );
       toggle_class(
         button,
@@ -1533,17 +1657,17 @@ function create_each_block_1(ctx) {
         /*selectedStyles*/
         ctx[5][
           /*category*/
-          ctx[16].name
+          ctx[18].name
         ] ? (
           /*selectedStyles*/
           ctx[5][
             /*category*/
-            ctx[16].name
+            ctx[18].name
           ] === /*option*/
-          ctx[19].name
+          ctx[21].name
         ) : (
           /*i*/
-          ctx[21] === 0
+          ctx[23] === 0
         )
       );
     },
@@ -1562,7 +1686,7 @@ function create_each_block_1(ctx) {
           button,
           "background-color",
           /*option*/
-          ctx[19].preview.color
+          ctx[21].preview.color
         );
       }
       if (dirty & /*selectedStyles, styles*/
@@ -1573,17 +1697,17 @@ function create_each_block_1(ctx) {
           /*selectedStyles*/
           ctx[5][
             /*category*/
-            ctx[16].name
+            ctx[18].name
           ] ? (
             /*selectedStyles*/
             ctx[5][
               /*category*/
-              ctx[16].name
+              ctx[18].name
             ] === /*option*/
-            ctx[19].name
+            ctx[21].name
           ) : (
             /*i*/
-            ctx[21] === 0
+            ctx[23] === 0
           )
         );
       }
@@ -1601,78 +1725,57 @@ function create_each_block(ctx) {
   let h2;
   let t0_value = (
     /*category*/
-    ctx[16].name + ""
+    ctx[18].name + ""
   );
   let t0;
   let t1;
-  let div;
-  let t2;
-  let each_value_1 = ensure_array_like(
-    /*category*/
-    ctx[16].options
-  );
-  let each_blocks = [];
-  for (let i = 0; i < each_value_1.length; i += 1) {
-    each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+  let if_block_anchor;
+  function select_block_type_1(ctx2, dirty) {
+    if (
+      /*category*/
+      ctx2[18].type === "color"
+    ) return create_if_block_3;
+    return create_else_block;
   }
+  let current_block_type = select_block_type_1(ctx, -1);
+  let if_block = current_block_type(ctx);
   return {
     c() {
       h2 = element("h2");
       t0 = text(t0_value);
       t1 = space();
-      div = element("div");
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        each_blocks[i].c();
-      }
-      t2 = space();
-      attr(div, "class", "colors svelte-79x94m");
+      if_block.c();
+      if_block_anchor = empty();
     },
     m(target, anchor) {
       insert(target, h2, anchor);
       append(h2, t0);
       insert(target, t1, anchor);
-      insert(target, div, anchor);
-      for (let i = 0; i < each_blocks.length; i += 1) {
-        if (each_blocks[i]) {
-          each_blocks[i].m(div, null);
-        }
-      }
-      append(div, t2);
+      if_block.m(target, anchor);
+      insert(target, if_block_anchor, anchor);
     },
     p(ctx2, dirty) {
       if (dirty & /*styles*/
       64 && t0_value !== (t0_value = /*category*/
-      ctx2[16].name + "")) set_data(t0, t0_value);
-      if (dirty & /*styles, selectedStyles*/
-      96) {
-        each_value_1 = ensure_array_like(
-          /*category*/
-          ctx2[16].options
-        );
-        let i;
-        for (i = 0; i < each_value_1.length; i += 1) {
-          const child_ctx = get_each_context_1(ctx2, each_value_1, i);
-          if (each_blocks[i]) {
-            each_blocks[i].p(child_ctx, dirty);
-          } else {
-            each_blocks[i] = create_each_block_1(child_ctx);
-            each_blocks[i].c();
-            each_blocks[i].m(div, t2);
-          }
+      ctx2[18].name + "")) set_data(t0, t0_value);
+      if (current_block_type === (current_block_type = select_block_type_1(ctx2, dirty)) && if_block) {
+        if_block.p(ctx2, dirty);
+      } else {
+        if_block.d(1);
+        if_block = current_block_type(ctx2);
+        if (if_block) {
+          if_block.c();
+          if_block.m(if_block_anchor.parentNode, if_block_anchor);
         }
-        for (; i < each_blocks.length; i += 1) {
-          each_blocks[i].d(1);
-        }
-        each_blocks.length = each_value_1.length;
       }
     },
     d(detaching) {
       if (detaching) {
         detach(h2);
         detach(t1);
-        detach(div);
+        detach(if_block_anchor);
       }
-      destroy_each(each_blocks, detaching);
+      if_block.d(detaching);
     }
   };
 }
@@ -1697,8 +1800,8 @@ function create_if_block(ctx) {
         dispose = listen(
           input,
           "input",
-          /*input_input_handler_1*/
-          ctx[15]
+          /*input_input_handler_2*/
+          ctx[16]
         );
         mounted = true;
       }
@@ -1750,7 +1853,7 @@ function create_fragment(ctx) {
     if (
       /*skinType*/
       ctx2[0] === "custom"
-    ) return create_if_block_3;
+    ) return create_if_block_4;
   }
   let current_block_type = select_block_type(ctx, -1);
   let if_block0 = current_block_type && current_block_type(ctx);
@@ -1807,7 +1910,7 @@ function create_fragment(ctx) {
         ctx[2] === void 0
       ) add_render_callback(() => (
         /*select1_change_handler*/
-        ctx[14].call(select1)
+        ctx[15].call(select1)
       ));
     },
     m(target, anchor) {
@@ -1853,7 +1956,7 @@ function create_fragment(ctx) {
             select1,
             "change",
             /*select1_change_handler*/
-            ctx[14]
+            ctx[15]
           )
         ];
         mounted = true;
@@ -1923,7 +2026,35 @@ function create_fragment(ctx) {
     }
   };
 }
+var keydown_handler = (e) => e.stopPropagation();
 function instance($$self, $$props, $$invalidate) {
+  var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P ? value : new P(function(resolve) {
+        resolve(value);
+      });
+    }
+    return new (P || (P = Promise))(function(resolve, reject) {
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+  };
   let { cosmeticChanger: cosmeticChanger2 } = $$props;
   let skinType = cosmeticChanger2.skinType;
   let skinId = cosmeticChanger2.skinId;
@@ -1936,7 +2067,8 @@ function instance($$self, $$props, $$invalidate) {
     input.type = "file";
     input.accept = ".png";
     input.onchange = () => {
-      let file = input.files?.[0];
+      var _a;
+      let file = (_a = input.files) === null || _a === void 0 ? void 0 : _a[0];
       if (!file) {
         $$invalidate(4, customSkinFile = null);
       } else {
@@ -1946,17 +2078,27 @@ function instance($$self, $$props, $$invalidate) {
     input.click();
   }
   let styles;
-  async function onSkinIdEntered() {
-    $$invalidate(6, styles = null);
-    if (!skinId) return;
-    let url = `https://www.gimkit.com/assets/map/characters/spine/${skinId}.json`;
-    let res = await fetch(url);
-    if (res.headers.get("content-type")?.startsWith("text/html")) {
-      return;
-    }
-    let json = await res.json();
-    let skinData = (0, import_compress_json.decompress)(json);
-    if (skinData.style) $$invalidate(6, styles = skinData.style);
+  function onSkinIdEntered() {
+    return __awaiter(this, void 0, void 0, function* () {
+      var _a;
+      $$invalidate(6, styles = null);
+      if (!skinId) return;
+      let url = `https://www.gimkit.com/assets/map/characters/spine/${skinId}.json`;
+      let res = yield fetch(url);
+      if ((_a = res.headers.get("content-type")) === null || _a === void 0 ? void 0 : _a.startsWith("text/html")) {
+        return;
+      }
+      let json = yield res.json();
+      let skinData = (0, import_compress_json.decompress)(json);
+      if (!skinData.style) return;
+      $$invalidate(6, styles = skinData.style);
+      console.log(styles);
+      for (let style of styles.categories) {
+        if (style.type === "color") {
+          $$invalidate(5, selectedStyles[style.name] = style.color.defaultColor, selectedStyles);
+        }
+      }
+    });
   }
   function save() {
     cosmeticChanger2.setSkin(skinType, skinId, customSkinFile, selectedStyles);
@@ -1971,12 +2113,16 @@ function instance($$self, $$props, $$invalidate) {
     skinId = this.value;
     $$invalidate(1, skinId);
   }
+  function input_input_handler_1(category) {
+    selectedStyles[category.name] = this.value;
+    $$invalidate(5, selectedStyles);
+  }
   const click_handler = (category, option) => $$invalidate(5, selectedStyles[category.name] = option.name, selectedStyles);
   function select1_change_handler() {
     trailType = select_value(this);
     $$invalidate(2, trailType);
   }
-  function input_input_handler_1() {
+  function input_input_handler_2() {
     trailId = this.value;
     $$invalidate(3, trailId);
   }
@@ -1997,9 +2143,10 @@ function instance($$self, $$props, $$invalidate) {
     save,
     select0_change_handler,
     input_input_handler,
+    input_input_handler_1,
     click_handler,
     select1_change_handler,
-    input_input_handler_1
+    input_input_handler_2
   ];
 }
 var UI = class extends SvelteComponent {

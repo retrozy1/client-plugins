@@ -44,7 +44,15 @@
         let json = await res.json();
         let skinData = decompress(json);
 
-        if(skinData.style) styles = skinData.style;
+        if(!skinData.style) return;
+        styles = skinData.style;
+        console.log(styles)
+
+        for(let style of styles.categories) {
+            if(style.type === "color") {
+                selectedStyles[style.name] = style.color.defaultColor;
+            }
+        }
     }
     
     export function save() {
@@ -64,17 +72,21 @@
     </select>
     {#if skinType === "id"}
         <input bind:value={skinId} type="text" placeholder="Skin ID" 
-        on:change={onSkinIdEntered} />
+        on:change={onSkinIdEntered} on:keydown={(e) => e.stopPropagation()} />
         {#if styles}
             {#each styles.categories as category}
                 <h2>{category.name}</h2>
-                <div class="colors">
-                    {#each category.options as option, i}
-                        <button class="color" style="background-color:{option.preview.color};"
-                        class:selected={selectedStyles[category.name] ? selectedStyles[category.name] === option.name : i === 0}
-                        on:click={() => selectedStyles[category.name] = option.name}></button>
-                    {/each}
-                </div>
+                {#if category.type === "color"}
+                    <input type="color" bind:value={selectedStyles[category.name]} />
+                {:else}
+                    <div class="colors">
+                        {#each category.options as option, i}
+                            <button class="color" style="background-color:{option.preview.color};"
+                            class:selected={selectedStyles[category.name] ? selectedStyles[category.name] === option.name : i === 0}
+                            on:click={() => selectedStyles[category.name] = option.name}></button>
+                        {/each}
+                    </div>
+                {/if}
             {/each}
         {/if}
     {:else if skinType === "custom"}
