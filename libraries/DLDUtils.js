@@ -2,7 +2,7 @@
  * @name DLDUtils
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
- * @version 0.3.1
+ * @version 0.3.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
  */
@@ -77,6 +77,8 @@ const enable = () => {
     
     // disable the physics state from the server
     let lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter(d => d.laser);
+    if(lasers.length === 0) return;
+
     let states = api.stores.world.devices.states;
     let body = api.stores.phaser.mainCharacter.physics.getBody();
     let shape = body.collider.shape;
@@ -199,13 +201,9 @@ const enable = () => {
     physics.bodies.activeBodies.disableBody = () => {};
 }
 
-// obviously not perfect, but I can't think of a good way to check
 function isDLD() {
-    let tileManager = api.stores.phaser.scene.tileManager;
-    let layer = tileManager.layerManager.layers.get("terrain-3");
-
-    // confirm that this is DLD
-    return layer.tiles.size === 1955;
+    let options = JSON.parse(api.stores.world.mapOptionsJSON);
+    return options.musicUrl === "/assets/map/modes/dontLookDown/music.mp3";
 }
 
 api.net.onLoad(() => {
