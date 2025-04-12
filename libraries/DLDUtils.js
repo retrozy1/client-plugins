@@ -2,7 +2,7 @@
  * @name DLDUtils
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
- * @version 0.3.2
+ * @version 0.3.3
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
  */
@@ -74,14 +74,11 @@ export function setLaserWarningEnabled(enabled) {
 const enable = () => {
     let hurtFrames = 0;
     let maxHurtFrames = 1;
-    
-    // disable the physics state from the server
-    let lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter(d => d.laser);
-    if(lasers.length === 0) return;
 
     let states = api.stores.world.devices.states;
     let body = api.stores.phaser.mainCharacter.physics.getBody();
     let shape = body.collider.shape;
+    let devicesInView = api.stores.phaser.scene.worldManager.devices.devicesInView;
     
     // override the physics update to manually check for laser collisions
     let physics = api.stores.phaser.scene.worldManager.physics;
@@ -97,6 +94,9 @@ const enable = () => {
     api.patcher.after(physics, "physicsStep", () => {
         if(api.net.room.state.session.gameSession.phase === "results") return;
         if(!showHitLaser || !doLaserRespawn || startImmunityActive) return;
+
+        let lasers = devicesInView.filter(d => d.laser);
+        if(lasers.length === 0) return;
 
         // all the lasers always have the same state
         let lasersOn = states.get(lasers[0].id).properties.get("GLOBAL_active");
