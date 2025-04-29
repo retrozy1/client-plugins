@@ -2,7 +2,7 @@
  * @name CameraControl
  * @description Lets you freely move and zoom your camera
  * @author TheLazySquid & Blackhole927
- * @version 0.5.2
+ * @version 0.5.3
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CameraControl.js
  * @webpage https://gimloader.github.io/plugins/cameracontrol
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
@@ -100,7 +100,10 @@ const getCanvasZoom = () => {
 }
 
 let isPointerDown = false;
-const setPointerDown = () => isPointerDown = true;
+const setPointerDown = (e) => {
+    if(e.target.nodeName !== "CANVAS") return;
+    isPointerDown = true;
+}
 const setPointerUp = () => isPointerDown = false;
 window.addEventListener('pointerdown', setPointerDown);
 window.addEventListener('pointerup', setPointerUp);
@@ -119,6 +122,8 @@ function onPointermove(e) {
 }
 
 function onWheel(e) {
+    if(e.target.nodeName !== "CANVAS") return;
+
     if(!freecamming || !settings.mouseControls) {
         if(settings.shiftToZoom && !api.hotkeys.pressed.has("ShiftLeft")) return;
         scrollMomentum -= e.deltaY / 65000;
