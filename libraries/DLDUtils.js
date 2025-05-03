@@ -2,7 +2,7 @@
  * @name DLDUtils
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
- * @version 0.3.3
+ * @version 0.3.4
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
  */
@@ -78,11 +78,9 @@ const enable = () => {
     let states = api.stores.world.devices.states;
     let body = api.stores.phaser.mainCharacter.physics.getBody();
     let shape = body.collider.shape;
-    let devicesInView = api.stores.phaser.scene.worldManager.devices.devicesInView;
     
     // override the physics update to manually check for laser collisions
     let physics = api.stores.phaser.scene.worldManager.physics;
-    let showHitLaser = true;
     api.patcher.before(physics, "physicsStep", () => {
         // Ignore running out of energy
         if(api.stores.me.movementSpeed === 0) api.stores.me.movementSpeed = 310;
@@ -93,8 +91,9 @@ const enable = () => {
 
     api.patcher.after(physics, "physicsStep", () => {
         if(api.net.room.state.session.gameSession.phase === "results") return;
-        if(!showHitLaser || !doLaserRespawn || startImmunityActive) return;
+        if(!doLaserRespawn || startImmunityActive) return;
 
+        let devicesInView = api.stores.phaser.scene.worldManager.devices.devicesInView;
         let lasers = devicesInView.filter(d => d.laser);
         if(lasers.length === 0) return;
 
