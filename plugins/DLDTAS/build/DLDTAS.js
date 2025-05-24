@@ -2,12 +2,11 @@
  * @name DLDTAS
  * @description Allows you to create TASes for Dont Look Down
  * @author TheLazySquid
- * @version 0.3.3
+ * @version 0.3.4
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/DLDTAS/build/DLDTAS.js
  * @webpage https://gimloader.github.io/plugins/dldtas
  * @reloadRequired ingame
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
- * @needsLib Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js
  */
 
 

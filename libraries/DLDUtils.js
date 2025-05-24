@@ -2,9 +2,10 @@
  * @name DLDUtils
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
- * @version 0.3.4
+ * @version 0.3.5
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
+ * @needsLib Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js
  */
 
 const api = new GL();

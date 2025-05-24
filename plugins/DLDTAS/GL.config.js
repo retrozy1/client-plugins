@@ -14,8 +14,7 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/DLDTAS/build/DLDTAS.js",
     webpage: 'https://gimloader.github.io/plugins/dldtas',
     libs: [
-        "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js",
-        "Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js"
+        "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js"
     ],
     plugins: [sassPlugin({ type: "css-text" })],
     esbuildOptions: {
