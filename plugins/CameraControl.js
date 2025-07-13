@@ -2,7 +2,7 @@
  * @name CameraControl
  * @description Lets you freely move and zoom your camera
  * @author TheLazySquid & Blackhole927
- * @version 0.5.3
+ * @version 0.5.4
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CameraControl.js
  * @webpage https://gimloader.github.io/plugins/cameracontrol
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
@@ -164,11 +164,10 @@ api.net.onLoad(() => {
     window.addEventListener("wheel", onWheel);
 });
 
-let disableAim = false;
-
+let lastInteractiveSlot = 0;
 function stopFreecamming() {
     if(!scene || !camera) return;
-    disableAim = false;
+    api.stores.me.inventory.activeInteractiveSlot = lastInteractiveSlot;
 
     camera.useBounds = true;
     let charObj = scene.characterManager.characters
@@ -180,12 +179,6 @@ function stopFreecamming() {
 
     window.removeEventListener('pointermove', onPointermove);
 }
-
-api.parcel.getLazy((exports) => exports?.AmIAiming, (exports) => {
-    api.patcher.before(exports, "AmIAiming", () => {
-        if(disableAim) return true;
-    });
-});
 
 api.hotkeys.addConfigurableHotkey({
     category: "Camera Control",
@@ -203,6 +196,8 @@ api.hotkeys.addConfigurableHotkey({
         stopFreecamming();
     } else {
         // start freecamming
+        lastInteractiveSlot = api.stores.me.inventory.activeInteractiveSlot;
+        api.stores.me.inventory.activeInteractiveSlot = 0;
         scene.cameraHelper.stopFollow();
         camera.useBounds = false;
         freecamPos = {x: camera.midPoint.x, y: camera.midPoint.y};
@@ -221,10 +216,6 @@ api.hotkeys.addConfigurableHotkey({
 
             scene.cameraHelper.goTo(freecamPos);
         };
-
-        // show the cursor
-        disableAim = true;
-        api.stores.phaser.scene.game.canvas.style.cursor = "default";
 
         window.addEventListener('pointermove', onPointermove);
     }
