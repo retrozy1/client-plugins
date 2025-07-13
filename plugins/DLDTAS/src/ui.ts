@@ -10,12 +10,12 @@ import { getLaserOffset, setLaserOffset } from "./updateLasers";
 let frames: IFrameInfo[] = GL.storage.getValue("frames", []);
 let values: ISharedValues = { frames, currentFrame: 0 }
 
-export function createUI(physicsManager: any) {
+export function createUI() {
     let rowOffset = 0;
 
     initOverlay();
 
-    let tools = new TASTools(physicsManager, values, () => {
+    let tools = new TASTools(values, () => {
         scrollTable();
         updateTable();
     })

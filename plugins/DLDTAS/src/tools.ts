@@ -16,17 +16,17 @@ export default class TASTools {
     slowdownAmount: number = 1;
     slowdownDelayedFrames: number = 0;
 
-    constructor(physicsManager: any, values: ISharedValues, updateTable: () => void) {
-        this.physicsManager = physicsManager;
+    constructor(values: ISharedValues, updateTable: () => void) {
+        this.physicsManager = GL.stores.phaser.scene.worldManager.physics;
         this.values = values;
         this.updateTable = updateTable;
 
-        this.nativeStep = physicsManager.physicsStep;
-        physicsManager.physicsStep = (dt: number) => {
+        this.nativeStep = this.physicsManager.physicsStep;
+        this.physicsManager.physicsStep = (dt: number) => {
             // only rerender, rather than running the physics loop
             GL.stores.phaser.mainCharacter.physics.postUpdate(dt);
         }
-        GL.onStop(() => physicsManager.physicsStep = this.nativeStep);
+        GL.onStop(() => this.physicsManager.physicsStep = this.nativeStep);
 
         this.physics = GL.stores.phaser.mainCharacter.physics;
         this.rb = this.physics.getBody().rigidBody;

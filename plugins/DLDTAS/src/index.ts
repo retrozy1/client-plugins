@@ -10,25 +10,13 @@ let startTasBtn = document.createElement("button");
 startTasBtn.id = "startTasBtn";
 startTasBtn.innerText = "Start TAS";
 
+startTasBtn.addEventListener("click", () => createUI());
 startTasBtn.addEventListener("click", () => startTasBtn.remove());
 
 GL.onStop(() => startTasBtn.remove());
 
 GL.net.onLoad(() => {
     document.body.appendChild(startTasBtn);
-});
-
-GL.parcel.getLazy(exports => exports?.PhysicsManager, exports => {
-    let physManClass = exports.PhysicsManager;
-    delete exports.PhysicsManager;
-    exports.PhysicsManager = class extends physManClass {
-        constructor() {
-            super(...arguments);
-            startTasBtn.addEventListener("click", () => {
-                createUI(this)
-            });
-        }
-    }
 });
 
 let moveSpeed = 310;

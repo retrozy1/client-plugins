@@ -2,10 +2,9 @@
  * @name DLDTAS
  * @description Allows you to create TASes for Dont Look Down
  * @author TheLazySquid
- * @version 0.3.4
+ * @version 0.4.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/DLDTAS/build/DLDTAS.js
  * @webpage https://gimloader.github.io/plugins/dldtas
- * @reloadRequired ingame
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  */
 
@@ -288,15 +287,15 @@ var TASTools = class {
   getPhysicsInput;
   slowdownAmount = 1;
   slowdownDelayedFrames = 0;
-  constructor(physicsManager, values2, updateTable) {
-    this.physicsManager = physicsManager;
+  constructor(values2, updateTable) {
+    this.physicsManager = gimloader_default.stores.phaser.scene.worldManager.physics;
     this.values = values2;
     this.updateTable = updateTable;
-    this.nativeStep = physicsManager.physicsStep;
-    physicsManager.physicsStep = (dt) => {
+    this.nativeStep = this.physicsManager.physicsStep;
+    this.physicsManager.physicsStep = (dt) => {
       gimloader_default.stores.phaser.mainCharacter.physics.postUpdate(dt);
     };
-    gimloader_default.onStop(() => physicsManager.physicsStep = this.nativeStep);
+    gimloader_default.onStop(() => this.physicsManager.physicsStep = this.nativeStep);
     this.physics = gimloader_default.stores.phaser.mainCharacter.physics;
     this.rb = this.physics.getBody().rigidBody;
     this.inputManager = gimloader_default.stores.phaser.scene.inputManager;
@@ -402,10 +401,10 @@ var controller_default = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2
 // src/ui.ts
 var frames = gimloader_default.storage.getValue("frames", []);
 var values = { frames, currentFrame: 0 };
-function createUI(physicsManager) {
+function createUI() {
   let rowOffset = 0;
   initOverlay();
-  let tools = new TASTools(physicsManager, values, () => {
+  let tools = new TASTools(values, () => {
     scrollTable();
     updateTable();
   });
@@ -681,22 +680,11 @@ gimloader_default.UI.addStyles(styles_default);
 var startTasBtn = document.createElement("button");
 startTasBtn.id = "startTasBtn";
 startTasBtn.innerText = "Start TAS";
+startTasBtn.addEventListener("click", () => createUI());
 startTasBtn.addEventListener("click", () => startTasBtn.remove());
 gimloader_default.onStop(() => startTasBtn.remove());
 gimloader_default.net.onLoad(() => {
   document.body.appendChild(startTasBtn);
-});
-gimloader_default.parcel.getLazy((exports) => exports?.PhysicsManager, (exports) => {
-  let physManClass = exports.PhysicsManager;
-  delete exports.PhysicsManager;
-  exports.PhysicsManager = class extends physManClass {
-    constructor() {
-      super(...arguments);
-      startTasBtn.addEventListener("click", () => {
-        createUI(this);
-      });
-    }
-  };
 });
 var moveSpeed = 310;
 function getMoveSpeed() {
