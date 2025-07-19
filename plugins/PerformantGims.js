@@ -2,7 +2,7 @@
  * @name PerformantGims
  * @description Replaces configurable gims with images of them. Looks like crap, runs really fast.
  * @author TheLazySquid
- * @version 0.3.2
+ * @version 0.4.0
  * @reloadRequired ingame
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/PerformantGims.js
  * @webpage https://gimloader.github.io/plugins/performantgims
@@ -35,17 +35,14 @@ function shouldApply(character) {
     return character.id !== api.stores.network.authId;
 }
 
-api.parcel.getLazy(exports => exports?.default?.toString?.().includes('this,"applyEditStyles"'), exports => {
-    let normalSkin = exports.default;
-
-    delete exports.default;
-    exports.default = class {
+const wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {
+    class NewSkin {
         skinId = "character_default_cyan"
         latestSkinId = "character_default_cyan"
 
         constructor(props) {
             if(!props.character || !shouldApply(props.character)) {
-                return new normalSkin(props);
+                return new Skin(props);
             }
             this.character = props.character;
             this.scene = props.scene;
@@ -77,17 +74,30 @@ api.parcel.getLazy(exports => exports?.default?.toString?.().includes('this,"app
         applyEditStyles() {}
     }
 
-    api.onStop(() => exports.default = normalSkin);
+    return NewSkin;
 });
 
-api.parcel.getLazy(exports => exports?.ANIMATION_TRACKS?.BODY, exports => {
-    let normalAnimation = exports.default;
+api.rewriter.addParseHook("App", (code) => {
+    const index = code.indexOf("JSON.stringify(this.editStyles");
+    if(index === -1) return;
 
-    delete exports.default;
-    exports.default = class {
+    const classStart = code.lastIndexOf("class ", index);
+    const nameEnd = code.indexOf("{", classStart);
+    const name = code.slice(classStart + 6, nameEnd);
+    const classEnd = code.indexOf("}}", code.indexOf("this.character=", index)) + 2;
+    const classCode = code.slice(classStart, classEnd);
+
+    code = code.slice(0, classStart) + `const ${name}=(${wrapSkin} ?? (v => v))(${classCode});`
+        + code.slice(classEnd);
+
+    return code;
+});
+
+const wrapAnimations = api.rewriter.createShared("WrapAnimations", (Animation) => {
+    class NewAnimation {
         constructor(props) {
             if(!shouldApply(props.character)) {
-                return new normalAnimation(props);
+                return new Animation(props);
             }
         }
         destroy() {}
@@ -95,5 +105,22 @@ api.parcel.getLazy(exports => exports?.ANIMATION_TRACKS?.BODY, exports => {
         onSkinChanged() {}
     }
 
-    api.onStop(() => exports.default = normalAnimation);
+    return NewAnimation;
+});
+
+api.rewriter.addParseHook("FixSpinePlugin", (code) => {
+    const index = code.indexOf("onSkinChanged=");
+    if(index === -1) return;
+
+    // By pure chance the same code happens to work here too
+    const classStart = code.lastIndexOf("class ", index);
+    const nameEnd = code.indexOf("{", classStart);
+    const name = code.slice(classStart + 6, nameEnd);
+    const classEnd = code.indexOf("}}", code.indexOf("this.character=", index)) + 2;
+    const classCode = code.slice(classStart, classEnd);
+
+    code = code.slice(0, classStart) + `const ${name}=(${wrapAnimations} ?? (v => v))(${classCode});`
+        + code.slice(classEnd);
+
+    return code;
 });
