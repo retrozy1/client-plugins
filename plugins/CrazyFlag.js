@@ -2,10 +2,11 @@
  * @name CrazyFlag
  * @description Make the flags in capture the flag or creative swing like crazy!
  * @author TheLazySquid
- * @version 1.1.2
+ * @version 1.2.0
  * @webpage https://gimloader.github.io/plugins/crazyflag
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  * @hasSettings true
+ * @reloadRequired ingame
  */
 const api = new GL();
 
@@ -39,12 +40,24 @@ function applySettings() {
 settings.listen("swingSpeed", applySettings);
 settings.listen("swingAmount", applySettings);
 
-api.parcel.getLazy(exports => exports?.Consts?.FlagSwingInterval, exports => {
-    let defaults = Object.assign({}, exports.Consts);
-    flagConsts = exports.Consts;
+const constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
+    let defaults = Object.assign({}, consts);
+    flagConsts = consts;
     applySettings();
 
     api.onStop(() => {
         Object.assign(flagConsts, defaults);
     });
+});
+
+api.rewriter.addParseHook("FlagDevice", (code) => {
+    let index = code.indexOf("FlagOriginX:");
+    if(index === -1) return;
+
+    const end = code.lastIndexOf("=", index);
+    const start = code.lastIndexOf(",", end);
+    const name = code.slice(start + 1, end);
+    code += `${constsCallback}?.(${name});`
+
+    return code;
 });
