@@ -2,7 +2,7 @@
  * @name CharacterCustomization
  * @description Allows you to use any gim or a custom gim client-side
  * @author TheLazySquid
- * @version 0.5.1
+ * @version 0.6.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CharacterCustomization/build/CharacterCustomization.js
  * @webpage https://gimloader.github.io/plugins/charactercustomization
  * @hasSettings true
@@ -2185,54 +2185,14 @@ var CosmeticChanger = class {
     gimloader_default.net.onLoad((type) => {
       if (type !== "Colyseus") return;
       this.loadCustomSkin();
-    });
-    let me = this;
-    let skin = gimloader_default.stores?.phaser?.mainCharacter?.skin;
-    if (skin) {
+      const mc = gimloader_default.stores?.phaser?.mainCharacter;
+      const skin = mc?.skin;
+      const characterTrail = mc?.characterTrail;
       this.normalSkin = { id: skin.skinId, editStyles: Object.assign({}, skin.editStyles) };
       this.patchSkin(skin);
-    } else {
-      gimloader_default.parcel.getLazy(
-        (exports) => exports?.default?.toString?.().includes("this.latestSkinId"),
-        (exports) => {
-          let Skin = exports.default;
-          delete exports.default;
-          class NewSkin extends Skin {
-            constructor(scene) {
-              super(scene);
-              if (!me.stopped && this.character.id === me.authId) {
-                me.patchSkin(this);
-              }
-            }
-          }
-          exports.default = NewSkin;
-          gimloader_default.onStop(() => exports.default = Skin);
-        }
-      );
-    }
-    let characterTrail = gimloader_default.stores?.phaser?.mainCharacter?.characterTrail;
-    if (characterTrail) {
       this.normalTrail = characterTrail.currentAppearanceId;
       this.patchTrail(characterTrail);
-    } else {
-      gimloader_default.parcel.getLazy(
-        (exports) => exports?.CharacterTrail,
-        (exports) => {
-          let CharacterTrail = exports.CharacterTrail;
-          delete exports.CharacterTrail;
-          class NewCharacterTrail extends CharacterTrail {
-            constructor(scene) {
-              super(scene);
-              if (!me.stopped && this.character.id === me.authId) {
-                me.patchTrail(this);
-              }
-            }
-          }
-          exports.CharacterTrail = NewCharacterTrail;
-          gimloader_default.onStop(() => exports.CharacterTrail = CharacterTrail);
-        }
-      );
-    }
+    });
     gimloader_default.onStop(() => this.reset());
   }
   get authId() {

@@ -27,63 +27,17 @@ export default class CosmeticChanger {
         GL.net.onLoad((type) => {
             if(type !== "Colyseus") return;
             this.loadCustomSkin();
-        });
 
-        let me = this;
+            const mc = GL.stores?.phaser?.mainCharacter;
+            const skin = mc?.skin;
+            const characterTrail = mc?.characterTrail;
 
-        let skin = GL.stores?.phaser?.mainCharacter?.skin;
-        if(skin) {
             this.normalSkin = { id: skin.skinId, editStyles: Object.assign({}, skin.editStyles) };
-
             this.patchSkin(skin);
-        } else {
-            // Intercept the class to get the starting skin ID
-            GL.parcel.getLazy((exports) => exports?.default?.toString?.().includes("this.latestSkinId"),
-            (exports) => {
-                let Skin = exports.default;
-    
-                delete exports.default;
-                class NewSkin extends Skin {
-                    constructor(scene: any) {
-                        super(scene);
-    
-                        if(!me.stopped && this.character.id === me.authId) {
-                            me.patchSkin(this);
-                        }
-                    }
-                }
-    
-                exports.default = NewSkin;
-                GL.onStop(() => exports.default = Skin);
-            });
-        }
 
-        let characterTrail = GL.stores?.phaser?.mainCharacter?.characterTrail;
-        if(characterTrail) {
             this.normalTrail = characterTrail.currentAppearanceId;
-
             this.patchTrail(characterTrail);
-        } else {
-            // Intercept the class to get the starting trail ID
-            GL.parcel.getLazy((exports) => exports?.CharacterTrail,
-            (exports) => {
-                let CharacterTrail = exports.CharacterTrail;
-
-                delete exports.CharacterTrail;
-                class NewCharacterTrail extends CharacterTrail {
-                    constructor(scene: any) {
-                        super(scene);
-
-                        if(!me.stopped && this.character.id === me.authId) {
-                            me.patchTrail(this);
-                        }
-                    }
-                }
-
-                exports.CharacterTrail = NewCharacterTrail;
-                GL.onStop(() => exports.CharacterTrail = CharacterTrail);
-            });
-        }
+        });
 
         GL.onStop(() => this.reset());
     }
