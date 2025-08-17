@@ -1,35 +1,32 @@
 {
   "name": "charactercustomization",
   "version": "0.6.0",
-  "description": "Allows you to use any gim or a custom gim client-side",
-  "main": "src/index.ts",
-  "type": "module",
-  "scripts": {
-    "generateJson": "node jsonGen/index.js"
-  },
+  "author": "TheLazySquid",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Gimloader/client-plugins.git"
   },
-  "keywords": [
-    "Plugin",
-    "Gimloader",
-    "Gimkit"
-  ],
-  "author": "TheLazySquid",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Gimloader/client-plugins/issues"
-  },
-  "homepage": "https://github.com/Gimloader/client-plugins#readme",
-  "dependencies": {
-    "gimloader": "^1.0.1"
-  },
+  "main": "src/index.ts",
   "devDependencies": {
     "@gimloader/build": "^1.0.1",
     "compress-json": "^3.1.0",
     "esbuild-svelte": "^0.9.0",
     "svelte": "^4.2.19",
     "svelte-preprocess": "^6.0.3"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/Gimloader/client-plugins/issues"
+  },
+  "description": "Allows you to use any gim or a custom gim client-side",
+  "homepage": "https://github.com/Gimloader/client-plugins#readme",
+  "keywords": [
+    "Plugin",
+    "Gimloader",
+    "Gimkit"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "generateJson": "node jsonGen/index.js"
+  },
+  "type": "module"
 }

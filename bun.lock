@@ -3,6 +3,9 @@
   "workspaces": {
     "": {
       "name": "client-plugins",
+      "dependencies": {
+        "gimloader": "^1.6.3",
+      },
     },
     "libraries/QuickSettings": {
       "name": "quicksettings",
@@ -20,9 +23,6 @@
     "plugins/2dMovementTAS": {
       "name": "2dmovementtas",
       "version": "0.3.1",
-      "dependencies": {
-        "gimloader": "^1.0.1",
-      },
       "devDependencies": {
         "@gimloader/build": "^1.0.1",
         "esbuild-svelte": "^0.9.0",
@@ -34,7 +34,6 @@
       "name": "autokicker",
       "version": "0.2.2",
       "dependencies": {
-        "gimloader": "^1.0.2",
         "out-of-character": "^1.2.2",
       },
       "devDependencies": {
@@ -45,9 +44,6 @@
     "plugins/Autosplitter": {
       "name": "autosplitter",
       "version": "0.5.1",
-      "dependencies": {
-        "gimloader": "^1.0.2",
-      },
       "devDependencies": {
         "@gimloader/build": "^1.0.1",
         "esbuild-sass-plugin": "^3.3.1",
@@ -58,10 +54,7 @@
     },
     "plugins/CharacterCustomization": {
       "name": "charactercustomization",
-      "version": "0.5.0",
-      "dependencies": {
-        "gimloader": "^1.0.1",
-      },
+      "version": "0.6.0",
       "devDependencies": {
         "@gimloader/build": "^1.0.1",
         "compress-json": "^3.1.0",
@@ -73,9 +66,6 @@
     "plugins/Chat": {
       "name": "chat",
       "version": "0.1.0",
-      "dependencies": {
-        "gimloader": "^1.2.6",
-      },
       "devDependencies": {
         "@gimloader/build": "^1.0.2",
         "eventemitter2": "^6.4.9",
@@ -84,9 +74,6 @@
     "plugins/CustomUI": {
       "name": "customui",
       "version": "0.3.2",
-      "dependencies": {
-        "gimloader": "^1.0.2",
-      },
       "devDependencies": {
         "@gimloader/build": "^1.0.1",
         "esbuild-sass-plugin": "^3.3.1",
@@ -94,10 +81,7 @@
     },
     "plugins/DLDTAS": {
       "name": "platformertas",
-      "version": "0.3.2",
-      "dependencies": {
-        "gimloader": "^1.0.2",
-      },
+      "version": "0.4.0",
       "devDependencies": {
         "@gimloader/build": "^1.0.1",
         "esbuild-sass-plugin": "^3.3.1",
@@ -106,9 +90,6 @@
     "plugins/InfoLines": {
       "name": "infolines",
       "version": "0.1.2",
-      "dependencies": {
-        "gimloader": "^1.0.1",
-      },
       "devDependencies": {
         "@gimloader/build": "^1.0.1",
         "esbuild-sass-plugin": "^3.3.1",
@@ -116,10 +97,7 @@
     },
     "plugins/InputRecorder": {
       "name": "inputrecorder",
-      "version": "0.2.1",
-      "dependencies": {
-        "gimloader": "^1.0.1",
-      },
+      "version": "0.2.3",
       "devDependencies": {
         "@gimloader/build": "^1.0.1",
       },
@@ -294,7 +272,7 @@
 
     "get-caller-file": ["get-caller-file@2.0.5", "", {}, "sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg=="],
 
-    "gimloader": ["gimloader@1.2.6", "", {}, "sha512-VwzEzUDIZchFP2jsvJgINDjZoFlZ6e+Aayd1edPY+ioiYpjkQSf5XDUbIPVNB8q0tfrQx+gq+8MW0DlxMGcdIA=="],
+    "gimloader": ["gimloader@1.6.3", "", {}, "sha512-xdoYv7DrWwKrreRShDVWlfyvBMDnfN16eCqir6i0trgt5F8cMiRshSe/u4mynP7UQcIkgwzlRbK5SmMmF5Knaw=="],
 
     "glob": ["glob@7.1.7", "", { "dependencies": { "fs.realpath": "^1.0.0", "inflight": "^1.0.4", "inherits": "2", "minimatch": "^3.0.4", "once": "^1.3.0", "path-is-absolute": "^1.0.0" } }, "sha512-OvD9ENzPLbegENnYP5UUfJIirTg4+XwMWGaQfQTY0JenxNvvIKP3U3/tAQSPIu/lHxXYSZmpXlUHeqAIdKzBLQ=="],
 

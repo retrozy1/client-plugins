@@ -4,5 +4,8 @@
     "workspaces": [
         "plugins/*",
         "libraries/*"
-    ]
+    ],
+    "dependencies": {
+        "gimloader": "^1.6.3"
+    }
 }

@@ -1,24 +1,21 @@
 {
   "name": "platformertas",
   "version": "0.4.0",
-  "description": "A TAS tool for Gimkit platformer modes",
+  "author": "TheLazySquid",
   "main": "build/PlatformerTAS.js",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "@gimloader/build": "^1.0.1",
+    "esbuild-sass-plugin": "^3.3.1"
   },
+  "description": "A TAS tool for Gimkit platformer modes",
   "keywords": [
     "Gimkit",
     "TAS",
     "Gimloader"
   ],
-  "author": "TheLazySquid",
   "license": "MIT",
-  "dependencies": {
-    "gimloader": "^1.0.2"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "@gimloader/build": "^1.0.1",
-    "esbuild-sass-plugin": "^3.3.1"
-  }
+  "type": "module"
 }
