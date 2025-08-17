@@ -20,6 +20,25 @@ api.hotkeys.addConfigurableHotkey({
     UI.input?.focus();
 });
 
+// Get the formatter that is used for formatting the activity feed
+type Formatter = (message: { inputText: string }) => string;
+let format: Formatter | null = null;
+const formatCallback = api.rewriter.createShared("formatActivityFeed", (fmtFn: Formatter) => {
+    format = fmtFn;
+});
+
+api.rewriter.addParseHook("App", (code) => {
+    const index = code.indexOf(">%SPACE_HERE%");
+    if(index === -1) return;
+
+    const start = code.lastIndexOf("});const", index);
+    const end = code.indexOf("=", start);
+    const name = code.substring(start + 9, end);
+    code += `${formatCallback}?.(${name});`
+
+    return code;
+});
+
 export default class UI {
     static send: (message: string) => Promise<void>;
     static element: HTMLElement;
@@ -99,7 +118,12 @@ export default class UI {
 
     static addMessage(message: string, forceScroll = false) {
         let element = document.createElement("div");
-        element.innerText = message;
+        if(format) {
+            // The formatter includes a full html sanitizer so there is no need to sanitize the messages
+            element.innerHTML = format({ inputText: message });
+        } else {
+            element.innerText = message;
+        }
 
         let wrap = this.messageWrapper;
         let shouldScroll = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < 1;

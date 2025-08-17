@@ -2,13 +2,13 @@
  * @name Chat
  * @description Adds an in-game chat to 2d gamemodes
  * @author TheLazySquid
- * @version 0.1.0
+ * @version 0.2.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Chat/build/Chat.js
  * @webpage https://gimloader.github.io/plugins/chat
  */
 
 
-// node_modules/gimloader/index.js
+// ../../node_modules/gimloader/index.js
 var api = new GL();
 var gimloader_default = api;
 
@@ -71,6 +71,19 @@ gimloader_default.hotkeys.addConfigurableHotkey({
   e.stopImmediatePropagation();
   UI.input?.focus();
 });
+var format = null;
+var formatCallback = gimloader_default.rewriter.createShared("formatActivityFeed", (fmtFn) => {
+  format = fmtFn;
+});
+gimloader_default.rewriter.addParseHook("App", (code) => {
+  const index = code.indexOf(">%SPACE_HERE%");
+  if (index === -1) return;
+  const start = code.lastIndexOf("});const", index);
+  const end = code.indexOf("=", start);
+  const name = code.substring(start + 9, end);
+  code += `${formatCallback}?.(${name});`;
+  return code;
+});
 var UI = class {
   static send;
   static element;
@@ -132,7 +145,11 @@ var UI = class {
   }
   static addMessage(message, forceScroll = false) {
     let element = document.createElement("div");
-    element.innerText = message;
+    if (format) {
+      element.innerHTML = format({ inputText: message });
+    } else {
+      element.innerText = message;
+    }
     let wrap = this.messageWrapper;
     let shouldScroll = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < 1;
     this.history.push(element);
