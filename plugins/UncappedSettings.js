@@ -2,7 +2,7 @@
  * @name UncappedSettings
  * @description Lets you start games with a much wider range of settings than normal
  * @author TheLazySquid
- * @version 0.2.0
+ * @version 0.2.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/UncappedSettings.js
  * @webpage https://gimloader.github.io/plugins/uncappedsettings
  * @reloadRequired true
@@ -28,16 +28,16 @@ function changeHooks(res) {
 
 const wrapRequester = api.rewriter.createShared("WrapRequester", (requester) => {
     return function() {
-        console.log(arguments);
-        if(!GL.plugins.isEnabled("UncappedSettings")) return requester.apply(this, arguments);
-
-        if(arguments[0].url !== "/api/experience/map/hooks") return;
-        if(!arguments[0].success) return;
-
-        let success = arguments[0].success;
-        arguments[0].success = function(res) {
-            changeHooks(res);
-            return success.apply(this, arguments);
+        if(
+            GL.plugins.isEnabled("UncappedSettings") &&
+            arguments[0].url === "/api/experience/map/hooks" &&
+            arguments[0].success
+        ) {
+            let success = arguments[0].success;
+            arguments[0].success = function(res) {
+                changeHooks(res);
+                return success.apply(this, arguments);
+            }
         }
 
         return requester.apply(this, arguments);
@@ -52,6 +52,6 @@ api.rewriter.addParseHook(true, (code) => {
     const end = code.indexOf("})}})}", index) + 6;
     const func = code.slice(start, end);
 
-    code = code.slice(0, start) + `(${wrapRequester} ?? (v => v))(${func})` + code.slice(end);
+    code = code.slice(0, start) + `(${wrapRequester} ?? (v => v))(${func});` + code.slice(end);
     return code;
 });
