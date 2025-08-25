@@ -8,7 +8,9 @@ interface MessageState {
     charsRemaining: number;
 }
 
-api.net.onLoad(() => {
+api.net.onLoad((type) => {
+    if(type !== "Colyseus") return;
+    
     let myId = api.stores.network.authId;
     
     let sending = false;
