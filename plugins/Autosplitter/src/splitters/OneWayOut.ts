@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { stageCoords } from "../constants";
 import SplitsTimer from "../timers/splits";
 import { OneWayOutUI } from "../ui/oneWayOut";
@@ -17,12 +16,12 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
     constructor() {
         super("OneWayOut");
         
-        let gameSession = GL.net.room.state.session.gameSession;
+        let gameSession = api.net.room.state.session.gameSession;
 
-        GL.net.on("DEVICES_STATES_CHANGES", (msg: any) => {
+        api.net.on("DEVICES_STATES_CHANGES", (msg: any) => {
             for(let change of msg.changes) {
-                if(msg.values[change[1][0]] === "GLOBAL_healthPercent") {
-                    let device = GL.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
+                if(msg.values[change[1][0]] === "apiOBAL_healthPercent") {
+                    let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
                     if(device.propOption.id === "barriers/scifi_barrier_1" && change[2][0] == 0) {
                         this.addAttempt();
                         this.ui.updateAttempts();
@@ -32,7 +31,7 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
             }
         });
 
-        GL.net.on("KNOCKOUT", (e: any) => {
+        api.net.on("KNOCKOUT", (e: any) => {
             if(e.name !== "Evil Plant") return;
             this.knockouts++;
 
@@ -44,15 +43,15 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
                 dropped = true;
                 this.drops++;
                 this.updateDrops();
-                GL.net.off("WORLD_CHANGES", addDrop);
+                api.net.off("WORLD_CHANGES", addDrop);
             }
 
             setTimeout(() => {
-                GL.net.off("WORLD_CHANGES", addDrop);
+                api.net.off("WORLD_CHANGES", addDrop);
                 if(!dropped) this.updateDrops();
             }, 100);
 
-            GL.net.on("WORLD_CHANGES", addDrop)
+            api.net.on("WORLD_CHANGES", addDrop)
         })
 
         // start the timer when the game starts
@@ -62,10 +61,10 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
             }
         });
 
-        GL.net.on("send:MESSAGE_FOR_DEVICE", (e: any) => {
+        api.net.on("send:MESSAGE_FOR_DEVICE", (e: any) => {
             let id = e?.deviceId;
             if(!id) return;
-            let device = GL.stores.phaser.scene.worldManager.devices.getDeviceById(id);
+            let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
             let channel = device?.options?.channel;
             if(!channel) return;
 
@@ -78,7 +77,7 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
         onFrame(() => {
             this.timer.update();
             if(stageCoords[this.stage]) {
-                let body = GL.stores.phaser.mainCharacter.body;
+                let body = api.stores.phaser.mainCharacter.body;
                 if(inBox(body, stageCoords[this.stage])) {
                     this.stage++;
                     this.timer.split();

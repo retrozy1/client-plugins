@@ -1,15 +1,14 @@
-import GL from 'gimloader';
 // @ts-ignore
 import atlas from '../assets/gim_atlas.txt';
 // @ts-ignore
 import json from '../assets/gim_json.txt';
 
 export default class CosmeticChanger {
-    skinType: string = GL.storage.getValue("skinType",  "default");
-    trailType: string = GL.storage.getValue("trailType",  "default");
-    skinId: string = GL.storage.getValue("skinId",  "");
-    trailId: string = GL.storage.getValue("trailId",  "");
-    selectedStyles: Record<string, string> = GL.storage.getValue("selectedStyles",  {});
+    skinType: string = api.storage.getValue("skinType",  "default");
+    trailType: string = api.storage.getValue("trailType",  "default");
+    skinId: string = api.storage.getValue("skinId",  "");
+    trailId: string = api.storage.getValue("trailId",  "");
+    selectedStyles: Record<string, string> = api.storage.getValue("selectedStyles",  {});
 
     normalSkin: any;
     allowNextSkin: boolean = false;
@@ -24,11 +23,11 @@ export default class CosmeticChanger {
     constructor() {
         this.initCustomSkinFile();
 
-        GL.net.onLoad((type) => {
+        api.net.onLoad((type) => {
             if(type !== "Colyseus") return;
             this.loadCustomSkin();
 
-            const mc = GL.stores?.phaser?.mainCharacter;
+            const mc = api.stores?.phaser?.mainCharacter;
             const skin = mc?.skin;
             const characterTrail = mc?.characterTrail;
 
@@ -39,11 +38,11 @@ export default class CosmeticChanger {
             this.patchTrail(characterTrail);
         });
 
-        GL.onStop(() => this.reset());
+        api.onStop(() => this.reset());
     }
 
     get authId() {
-        return GL.stores?.network.authId;
+        return api.stores?.network.authId;
     }
 
     loadCustomSkin() {
@@ -72,11 +71,11 @@ export default class CosmeticChanger {
                 super(loader, key, url, config);
             }
         }
-        GL.onStop(() => fileTypes.ImageFile = imgFile);
+        api.onStop(() => fileTypes.ImageFile = imgFile);
 
         fileTypes.ImageFile = newImgFile;
 
-        let load = GL.stores.phaser.scene.load;
+        let load = api.stores.phaser.scene.load;
         let jsonRes = load.spineJson("customSkin-data", jsonUrl);
         let atlasRes = load.spineAtlas("customSkin-atlas", atlasUrl);
 
@@ -90,7 +89,7 @@ export default class CosmeticChanger {
             URL.revokeObjectURL(atlasUrl);
             URL.revokeObjectURL(jsonUrl);
 
-            let skin = GL.stores.phaser.mainCharacter?.skin;
+            let skin = api.stores.phaser.mainCharacter?.skin;
             if(skin && this.skinType === "custom") {
                 this.allowNextSkin = true;
                 skin.updateSkin({ id: "customSkin" });
@@ -105,8 +104,8 @@ export default class CosmeticChanger {
     }
 
     async initCustomSkinFile() {
-        let file = GL.storage.getValue("customSkinFile");
-        let fileName = GL.storage.getValue("customSkinFileName");
+        let file = api.storage.getValue("customSkinFile");
+        let fileName = api.storage.getValue("customSkinFileName");
         if(!file || !fileName) return;
 
         // stolen from some stackoverflow post
@@ -126,7 +125,7 @@ export default class CosmeticChanger {
             skin.updateSkin({ id: this.skinId, editStyles: this.selectedStyles });
         }
 
-        GL.patcher.before(skin, "updateSkin", (_, args) => {
+        api.patcher.before(skin, "updateSkin", (_, args) => {
             if(this.allowNextSkin) {
                 this.allowNextSkin = false;
             } else {
@@ -143,7 +142,7 @@ export default class CosmeticChanger {
             trail.updateAppearance(this.formatTrail(this.trailId));
         }
 
-        GL.patcher.before(trail, "updateAppearance", (_, args) => {
+        api.patcher.before(trail, "updateAppearance", (_, args) => {
             if(this.allowNextTrail) {
                 this.allowNextTrail = false;
             } else {
@@ -162,25 +161,25 @@ export default class CosmeticChanger {
         this.selectedStyles = selectedStyles;
 
         // save items to local storage
-        GL.storage.setValue("skinType", skinType);
-        GL.storage.setValue("skinId", skinId);
-        GL.storage.setValue("selectedStyles", selectedStyles);
+        api.storage.setValue("skinType", skinType);
+        api.storage.setValue("skinId", skinId);
+        api.storage.setValue("selectedStyles", selectedStyles);
         if(!customSkinFile) {
-            GL.storage.deleteValue("customSkinFile");
-            GL.storage.deleteValue("customSkinFileName");
+            api.storage.deleteValue("customSkinFile");
+            api.storage.deleteValue("customSkinFileName");
         } else {
             let reader = new FileReader();
             reader.onload = () => {
-                GL.storage.setValue("customSkinFile", reader.result as string);
-                GL.storage.setValue("customSkinFileName", customSkinFile.name);
+                api.storage.setValue("customSkinFile", reader.result as string);
+                api.storage.setValue("customSkinFileName", customSkinFile.name);
             }
             reader.readAsDataURL(customSkinFile);
         }
         
         // update the skin
-        let skin = GL.stores?.phaser?.mainCharacter?.skin;
+        let skin = api.stores?.phaser?.mainCharacter?.skin;
         if(skin) {
-            let cache = GL.stores.phaser.scene.cache.custom["esotericsoftware.spine.atlas.cache"];
+            let cache = api.stores.phaser.scene.cache.custom["esotericsoftware.spine.atlas.cache"];
             // update the custom skin texture
             let entries = cache.entries.entries;
             let texture = entries["customSkin-atlas"]?.pages?.[0]?.texture;
@@ -223,10 +222,10 @@ export default class CosmeticChanger {
         this.trailId = trailId;
 
         // save items to local storage
-        GL.storage.setValue("trailType", trailType);
-        GL.storage.setValue("trailId", trailId);
+        api.storage.setValue("trailType", trailType);
+        api.storage.setValue("trailId", trailId);
 
-        let characterTrail = GL.stores?.phaser?.mainCharacter?.characterTrail;
+        let characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
         if(characterTrail) {
             this.allowNextTrail = true;
 
@@ -241,13 +240,13 @@ export default class CosmeticChanger {
     reset() {
         this.stopped = true;
 
-        let characterTrail = GL.stores?.phaser?.mainCharacter?.characterTrail;
+        let characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
         if(characterTrail) {
             characterTrail.updateAppearance(this.normalTrail);
             characterTrail.currentAppearanceId = this.normalTrail;
         }
 
-        let skin = GL.stores?.phaser?.mainCharacter?.skin;
+        let skin = api.stores?.phaser?.mainCharacter?.skin;
         if(skin) {
             skin.updateSkin(this.normalSkin);
         }

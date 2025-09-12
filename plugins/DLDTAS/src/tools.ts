@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { ISharedValues, Keycodes } from "../types"
 import { defaultState, generatePhysicsInput } from "./util";
 import { initLasers, updateLasers } from "./updateLasers";
@@ -17,23 +16,23 @@ export default class TASTools {
     slowdownDelayedFrames: number = 0;
 
     constructor(values: ISharedValues, updateTable: () => void) {
-        this.physicsManager = GL.stores.phaser.scene.worldManager.physics;
+        this.physicsManager = api.stores.phaser.scene.worldManager.physics;
         this.values = values;
         this.updateTable = updateTable;
 
         this.nativeStep = this.physicsManager.physicsStep;
         this.physicsManager.physicsStep = (dt: number) => {
             // only rerender, rather than running the physics loop
-            GL.stores.phaser.mainCharacter.physics.postUpdate(dt);
+            api.stores.phaser.mainCharacter.physics.postUpdate(dt);
         }
-        GL.onStop(() => this.physicsManager.physicsStep = this.nativeStep);
+        api.onStop(() => this.physicsManager.physicsStep = this.nativeStep);
 
-        this.physics = GL.stores.phaser.mainCharacter.physics;
+        this.physics = api.stores.phaser.mainCharacter.physics;
         this.rb = this.physics.getBody().rigidBody;
-        this.inputManager = GL.stores.phaser.scene.inputManager;
+        this.inputManager = api.stores.phaser.scene.inputManager;
 
         this.getPhysicsInput = this.inputManager.getPhysicsInput;
-        GL.onStop(() => this.inputManager.getPhysicsInput = this.getPhysicsInput);
+        api.onStop(() => this.inputManager.getPhysicsInput = this.getPhysicsInput);
 
         this.reset();
         initLasers(this.values);
@@ -87,7 +86,7 @@ export default class TASTools {
     stopPlaying() {
         this.physicsManager.physicsStep = (dt: number) => {
             // only rerender, rather than running the physics loop
-            GL.stores.phaser.mainCharacter.physics.postUpdate(dt);
+            api.stores.phaser.mainCharacter.physics.postUpdate(dt);
         }
     }
 
@@ -125,7 +124,7 @@ export default class TASTools {
     stopControlling() {
         this.physicsManager.physicsStep = (dt: number) => {
             // only rerender, rather than running the physics loop
-            GL.stores.phaser.mainCharacter.physics.postUpdate(dt);
+            api.stores.phaser.mainCharacter.physics.postUpdate(dt);
         }
     }
 
@@ -172,6 +171,6 @@ export default class TASTools {
     }
 
     setMoveSpeed() {
-        GL.stores.me.movementSpeed = getMoveSpeed();
+        api.stores.me.movementSpeed = getMoveSpeed();
     }
 }

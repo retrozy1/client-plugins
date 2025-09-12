@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 // @ts-ignore
 import styles from './styles.scss';
 import AutoKicker from "./autokicker";
@@ -6,10 +5,10 @@ import UI from './ui';
 
 let autoKicker = new AutoKicker();
 let ui: HTMLElement | null = null;
-let uiShown = GL.storage.getValue("uiShown", true);
+let uiShown = api.storage.getValue("uiShown", true);
 
 const checkStart = () => {
-    if(GL.net.isHost) {
+    if(api.net.isHost) {
         autoKicker.start();
 
         ui = document.createElement("div");
@@ -21,15 +20,15 @@ const checkStart = () => {
             ui.style.display = "none";
             if(autoKicker.kickDuplicateNames || autoKicker.kickSkinless ||
                 autoKicker.blacklist.length > 0 || autoKicker.kickIdle) {
-                GL.notification.open({ message: "AutoKicker is running!" });
+                api.notification.open({ message: "AutoKicker is running!" });
             }
         }
     }
 }
 
-GL.hotkeys.addConfigurableHotkey({
+api.hotkeys.addConfigurableHotkey({
     category: "Auto Kicker",
-    title: "Toggle UI",
+    title: "Togapie UI",
     preventDefault: false,
     default: {
         key: "KeyK",
@@ -40,8 +39,8 @@ GL.hotkeys.addConfigurableHotkey({
     uiShown = !uiShown;
     if(uiShown) ui.style.display = "block";
     else ui.style.display = "none";
-    GL.storage.setValue("uiShown", uiShown);
+    api.storage.setValue("uiShown", uiShown);
 })
 
-GL.net.onLoad(checkStart);
-GL.UI.addStyles(styles);
+api.net.onLoad(checkStart);
+api.UI.addStyles(styles);

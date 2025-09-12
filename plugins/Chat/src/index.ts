@@ -1,4 +1,3 @@
-import api from 'gimloader';
 import { bytesToFloat, encodeMessage, floatToBytes } from './encoding';
 import { identifier, maxLength, Ops } from './consts';
 import UI from './ui';

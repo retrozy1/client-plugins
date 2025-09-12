@@ -1,4 +1,3 @@
-import api from 'gimloader';
 // @ts-ignore
 import styles from './styles.css';
 import { maxLength } from './consts';

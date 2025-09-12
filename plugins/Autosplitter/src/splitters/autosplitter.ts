@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { BasicData, GamemodeData, SplitsData } from "../types";
 import { getGamemodeData } from "../util";
 
@@ -7,7 +6,7 @@ export abstract class Autosplitter {
 
     constructor(public id: string) {
         this.loadData();
-        GL.onStop(() => this.destroy());
+        api.onStop(() => this.destroy());
     }
 
     loadData() {
@@ -15,7 +14,7 @@ export abstract class Autosplitter {
     }
 
     save() {
-        GL.storage.setValue(`${this.id}Data`, this.data);
+        api.storage.setValue(`${this.id}Data`, this.data);
     }
 
     get attempts() {

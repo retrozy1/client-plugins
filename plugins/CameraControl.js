@@ -2,15 +2,13 @@
  * @name CameraControl
  * @description Lets you freely move and zoom your camera
  * @author TheLazySquid & Blackhole927
- * @version 0.5.4
+ * @version 0.5.5
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CameraControl.js
  * @webpage https://gimloader.github.io/plugins/cameracontrol
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  * @optionalLib CommandLine | https://raw.githubusercontent.com/Blackhole927/gimkitmods/main/libraries/CommandLine/CommandLine.js
  * @hasSettings true
  */
-
-const api = new GL();
 
 let settings = api.lib("QuickSettings")("CameraControl", [
     {

@@ -2,15 +2,13 @@
  * @name PerformantGims
  * @description Replaces configurable gims with images of them. Looks like crap, runs really fast.
  * @author TheLazySquid
- * @version 0.4.0
+ * @version 0.4.1
  * @reloadRequired ingame
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/PerformantGims.js
  * @webpage https://gimloader.github.io/plugins/performantgims
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  * @hasSettings true
  */
-
-const api = new GL();
 
 let settings = api.lib("QuickSettings")("PerformantGims", [
     {

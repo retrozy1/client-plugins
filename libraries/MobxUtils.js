@@ -2,13 +2,12 @@
  * @name MobxUtils
  * @description Some simple utilities for react injection with MobX
  * @author TheLazySquid
- * @version 0.3.0
+ * @version 0.3.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/MobxUtils.js
  * @isLibrary true
  * @reloadRequired true
  */
 
-const api = new GL();
 let observerIntercepts = [];
 
 const wrapObserver = api.rewriter.createShared("ObserverWrapper", (func) => {

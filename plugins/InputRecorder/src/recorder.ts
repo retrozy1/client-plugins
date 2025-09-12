@@ -1,5 +1,3 @@
-import GL from 'gimloader';
-import GLGlobal from 'gimloader/global';
 import { IFrameInfo, IRecording } from "../types"
 import { stopUpdatingLasers, updateLasers } from "./updateLasers";
 
@@ -32,9 +30,9 @@ export default class Recorder {
         // ignore attempts to disable bodies
         physicsManager.bodies.activeBodies.disableBody = () => {};
 
-        this.physics = GL.stores.phaser.mainCharacter.physics;
+        this.physics = api.stores.phaser.mainCharacter.physics;
         this.rb = this.physics.getBody().rigidBody;
-        this.inputManager = GL.stores.phaser.scene.inputManager;
+        this.inputManager = api.stores.phaser.scene.inputManager;
 
         this.getPhysicsInput = this.inputManager.getPhysicsInput;
     }
@@ -52,10 +50,10 @@ export default class Recorder {
 
         this.startPos = this.rb.translation();
         this.startState = JSON.stringify(this.physics.state);
-        this.platformerPhysics = JSON.stringify(GLGlobal.platformerPhysics);
+        this.platformerPhysics = JSON.stringify(GL.platformerPhysics);
         this.frames = [];
 
-        GL.notification.open({ message: "Started Recording" })
+        api.notification.open({ message: "Started Recording" })
 
         this.inputManager.getPhysicsInput = this.getPhysicsInput;
         this.physicsManager.physicsStep = (dt: number) => {
@@ -84,7 +82,7 @@ export default class Recorder {
         let blob = new Blob([JSON.stringify(json)], { type: "application/json" });
         let url = URL.createObjectURL(blob);
 
-        let name = GL.stores.phaser.mainCharacter.nametag.name;
+        let name = api.stores.phaser.mainCharacter.nametag.name;
 
         let a = document.createElement("a");
         a.href = url;
@@ -93,17 +91,17 @@ export default class Recorder {
     }
 
     async playback(data: IRecording) {
-        GL.lib("DLDUtils").cancelRespawn();
+        api.lib("DLDUtils").cancelRespawn();
 
         this.playing = true;
-        this.platformerPhysics = JSON.stringify(GLGlobal.platformerPhysics);
+        this.platformerPhysics = JSON.stringify(GL.platformerPhysics);
 
         this.rb.setTranslation(data.startPos, true);
         this.physics.state = JSON.parse(data.startState);
-        Object.assign(GLGlobal.platformerPhysics, JSON.parse(data.platformerPhysics));
+        Object.assign(GL.platformerPhysics, JSON.parse(data.platformerPhysics));
 
         this.physicsManager.physicsStep = (dt: number) => {
-            GL.stores.phaser.mainCharacter.physics.postUpdate(dt);
+            api.stores.phaser.mainCharacter.physics.postUpdate(dt);
         }
 
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -114,7 +112,7 @@ export default class Recorder {
             let frame = data.frames[currentFrame];
             if(!frame) {
                 this.stopPlayback();
-                GL.notification.open({ message: "Playback finished" });
+                api.notification.open({ message: "Playback finished" });
                 return;
             }
 
@@ -129,7 +127,7 @@ export default class Recorder {
 
     stopPlayback() {
         this.playing = false;
-        Object.assign(GLGlobal.platformerPhysics, JSON.parse(this.platformerPhysics));
+        Object.assign(GL.platformerPhysics, JSON.parse(this.platformerPhysics));
         stopUpdatingLasers();
 
         this.physicsManager.physicsStep = this.nativeStep;

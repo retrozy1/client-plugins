@@ -2,7 +2,7 @@
  * @name GamemodeDetector
  * @description Detects which official 2d gamemode the player is in
  * @author TheLazySquid
- * @version 0.2.0
+ * @version 0.2.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/GamemodeDetector.js
  * @isLibrary true
  */
@@ -25,7 +25,7 @@ const gamemodeMusic = {
 }
 
 export function currentGamemode() {
-    let optionsJson = GL.stores?.world?.mapOptionsJSON;
+    let optionsJson = api.stores?.world?.mapOptionsJSON;
     if(!optionsJson) return null;
 
     let music = JSON.parse(optionsJson).musicUrl;

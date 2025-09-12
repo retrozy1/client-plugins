@@ -2,7 +2,7 @@
  * @name Autosplitter
  * @description Automatically times speedruns for various gamemodes
  * @author TheLazySquid
- * @version 0.5.1
+ * @version 0.5.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Autosplitter/build/Autosplitter.js
  * @webpage https://gimloader.github.io/plugins/autosplitter
  * @needsLib GamemodeDetector | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/GamemodeDetector.js
@@ -10,11 +10,7 @@
  */
 
 
-// node_modules/gimloader/index.js
-var api = new GL();
-var gimloader_default = api;
-
-// node_modules/svelte/src/runtime/internal/utils.js
+// ../../node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
 function run(fn) {
@@ -36,13 +32,13 @@ function is_empty(obj) {
   return Object.keys(obj).length === 0;
 }
 
-// node_modules/svelte/src/runtime/internal/globals.js
+// ../../node_modules/svelte/src/runtime/internal/globals.js
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : (
   // @ts-ignore Node typings have this
   global
 );
 
-// node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
+// ../../node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
 var ResizeObserverSingleton = class _ResizeObserverSingleton {
   /**
    * @private
@@ -88,7 +84,7 @@ var ResizeObserverSingleton = class _ResizeObserverSingleton {
 };
 ResizeObserverSingleton.entries = "WeakMap" in globals ? /* @__PURE__ */ new WeakMap() : void 0;
 
-// node_modules/svelte/src/runtime/internal/dom.js
+// ../../node_modules/svelte/src/runtime/internal/dom.js
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -206,13 +202,13 @@ function get_custom_elements_slots(element2) {
   return result;
 }
 
-// node_modules/svelte/src/runtime/internal/lifecycle.js
+// ../../node_modules/svelte/src/runtime/internal/lifecycle.js
 var current_component;
 function set_current_component(component) {
   current_component = component;
 }
 
-// node_modules/svelte/src/runtime/internal/scheduler.js
+// ../../node_modules/svelte/src/runtime/internal/scheduler.js
 var dirty_components = [];
 var binding_callbacks = [];
 var render_callbacks = [];
@@ -286,7 +282,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 
-// node_modules/svelte/src/runtime/internal/transitions.js
+// ../../node_modules/svelte/src/runtime/internal/transitions.js
 var outroing = /* @__PURE__ */ new Set();
 var outros;
 function group_outros() {
@@ -326,12 +322,12 @@ function transition_out(block, local, detach2, callback) {
   }
 }
 
-// node_modules/svelte/src/runtime/internal/each.js
+// ../../node_modules/svelte/src/runtime/internal/each.js
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
 
-// node_modules/svelte/src/shared/boolean_attributes.js
+// ../../node_modules/svelte/src/shared/boolean_attributes.js
 var _boolean_attributes = (
   /** @type {const} */
   [
@@ -364,7 +360,7 @@ var _boolean_attributes = (
 );
 var boolean_attributes = /* @__PURE__ */ new Set([..._boolean_attributes]);
 
-// node_modules/svelte/src/runtime/internal/Component.js
+// ../../node_modules/svelte/src/runtime/internal/Component.js
 function create_component(block) {
   block && block.c();
 }
@@ -703,10 +699,10 @@ var SvelteComponent = class {
   }
 };
 
-// node_modules/svelte/src/shared/version.js
+// ../../node_modules/svelte/src/shared/version.js
 var PUBLIC_VERSION = "4";
 
-// node_modules/svelte/src/runtime/internal/disclose-version/index.js
+// ../../node_modules/svelte/src/runtime/internal/disclose-version/index.js
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 
@@ -741,7 +737,7 @@ var DLDDefaults = {
   timerPosition: "top right"
 };
 function getDLDData() {
-  let data = gimloader_default.storage.getValue("DLDData", {});
+  let data = api.storage.getValue("DLDData", {});
   return Object.assign(DLDDefaults, data);
 }
 var splitsDefaults = {
@@ -756,11 +752,11 @@ var splitsDefaults = {
   timerPosition: "top right"
 };
 function getFishtopiaData() {
-  let data = gimloader_default.storage.getValue("FishtopiaData", {});
+  let data = api.storage.getValue("FishtopiaData", {});
   return Object.assign(splitsDefaults, data);
 }
 function getOneWayOutData() {
-  let data = gimloader_default.storage.getValue("OneWayOutData", {});
+  let data = api.storage.getValue("OneWayOutData", {});
   return Object.assign(splitsDefaults, data);
 }
 function downloadFile(data, filename) {
@@ -818,14 +814,14 @@ function inBox(coords, box) {
   return coords.x > box.p1.x && coords.x < box.p2.x && coords.y > box.p1.y && coords.y < box.p2.y;
 }
 function onPhysicsStep(callback) {
-  let worldManager = gimloader_default.stores.phaser.scene.worldManager;
-  gimloader_default.patcher.after(worldManager.physics, "physicsStep", () => {
+  let worldManager = api.stores.phaser.scene.worldManager;
+  api.patcher.after(worldManager.physics, "physicsStep", () => {
     callback();
   });
 }
 function onFrame(callback) {
-  let worldManager = gimloader_default.stores.phaser.scene.worldManager;
-  gimloader_default.patcher.after(worldManager, "update", () => {
+  let worldManager = api.stores.phaser.scene.worldManager;
+  api.patcher.after(worldManager, "update", () => {
     callback();
   });
 }
@@ -1905,7 +1901,7 @@ function create_fragment3(ctx) {
 }
 function instance3($$self, $$props, $$invalidate) {
   let { data } = $$props;
-  let hasInputRecorder = gimloader_default.plugins.isEnabled("InputRecorder");
+  let hasInputRecorder = api.plugins.isEnabled("InputRecorder");
   function select_change_handler() {
     data.timerPosition = select_value(this);
     $$invalidate(0, data);
@@ -3437,14 +3433,14 @@ var Autosplitter = class {
   constructor(id) {
     this.id = id;
     this.loadData();
-    gimloader_default.onStop(() => this.destroy());
+    api.onStop(() => this.destroy());
   }
   data;
   loadData() {
     this.data = getGamemodeData(this.id);
   }
   save() {
-    gimloader_default.storage.setValue(`${this.id}Data`, this.data);
+    api.storage.setValue(`${this.id}Data`, this.data);
   }
   get attempts() {
     return this.data.attempts[this.getCategoryId()] ?? 0;
@@ -3676,8 +3672,8 @@ var FishtopiaAutosplitter = class extends SplitsAutosplitter {
   usedChannels = /* @__PURE__ */ new Set();
   constructor() {
     super("Fishtopia");
-    let gameSession = gimloader_default.net.room.state.session.gameSession;
-    gimloader_default.net.room.state.session.listen("loadingPhase", (val) => {
+    let gameSession = api.net.room.state.session.gameSession;
+    api.net.room.state.session.listen("loadingPhase", (val) => {
       if (val) return;
       if (gameSession.phase === "game") {
         this.addAttempt();
@@ -3690,23 +3686,23 @@ var FishtopiaAutosplitter = class extends SplitsAutosplitter {
         this.reset();
       }
     });
-    gimloader_default.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
+    api.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
       let id2 = e.deviceId;
       if (!id2) return;
-      let device = gimloader_default.stores.phaser.scene.worldManager.devices.getDeviceById(id2);
+      let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id2);
       let channel = device?.options?.channel;
       if (!channel) return;
       if (!boatChannels.includes(channel)) return;
       if (this.usedChannels.has(channel)) return;
       this.usedChannels.add(channel);
-      gimloader_default.net.once("PHYSICS_STATE", (e2) => {
+      api.net.once("PHYSICS_STATE", (e2) => {
         if (e2.teleport) {
           this.timer.split();
         }
       });
     });
-    let id = gimloader_default.stores.phaser.mainCharacter.id;
-    gimloader_default.net.room.state.characters.get(id).inventory.slots.onChange((_, key) => {
+    let id = api.stores.phaser.mainCharacter.id;
+    api.net.room.state.characters.get(id).inventory.slots.onChange((_, key) => {
       if (key === "gim-fish") {
         this.timer.split();
         this.timer.stop();
@@ -3729,9 +3725,6 @@ var FishtopiaAutosplitter = class extends SplitsAutosplitter {
     this.ui.remove();
   }
 };
-
-// node_modules/gimloader/global.js
-var global_default = GL;
 
 // assets/restore.svg
 var restore_default = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z" fill="white" /></svg>';
@@ -3839,8 +3832,8 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
   constructor() {
     super("DLD");
     this.category = "Current Patch";
-    if (gimloader_default.plugins.isEnabled("BringBackBoosts")) {
-      let bbbSettings = global_default.storage.getValue("BringBackBoosts", "QS-Settings", {});
+    if (api.plugins.isEnabled("BringBackBoosts")) {
+      let bbbSettings = GL.storage.getValue("BringBackBoosts", "QS-Settings", {});
       if (bbbSettings.useOriginalPhysics) {
         this.category = "Original Physics";
       } else {
@@ -3852,7 +3845,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
     }
     this.updateTimerAndUI();
     onPhysicsStep(() => {
-      let input = gimloader_default.stores.phaser.scene.inputManager.getPhysicsInput();
+      let input = api.stores.phaser.scene.inputManager.getPhysicsInput();
       if (input.jump || input.angle !== null) this.hasMoved = true;
     });
     onFrame(() => {
@@ -3861,7 +3854,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
       else this.updateNoPreboosts();
       this.hasMoved = false;
     });
-    let savestates = gimloader_default.plugin("Savestates");
+    let savestates = api.plugin("Savestates");
     if (savestates) {
       savestates.onStateLoaded(this.onStateLoadedBound);
     }
@@ -3903,7 +3896,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
   }
   ilState = "waiting";
   updatePreboosts() {
-    let body = gimloader_default.stores.phaser.mainCharacter.body;
+    let body = api.stores.phaser.mainCharacter.body;
     let coords = summitCoords[this.data.ilSummit];
     if (this.ilState === "waiting") {
       if (inArea(body, coords)) {
@@ -3927,7 +3920,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
   }
   updateNoPreboosts() {
     if (!this.loadedCorrectSummit) return;
-    let body = gimloader_default.stores.phaser.mainCharacter.body;
+    let body = api.stores.phaser.mainCharacter.body;
     if (this.ilState === "waiting") {
       if (this.hasMoved) {
         this.ilState = "started";
@@ -3946,7 +3939,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
   }
   summit = 0;
   updateFullGame() {
-    let body = gimloader_default.stores.phaser.mainCharacter.body;
+    let body = api.stores.phaser.mainCharacter.body;
     if (this.summit > 0 && body.x < resetCoordinates.x && body.y > resetCoordinates.y) {
       this.reset();
       return;
@@ -3971,7 +3964,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
     this.timer.update();
   }
   getRecorder() {
-    let inputRecorder = gimloader_default.plugin("InputRecorder");
+    let inputRecorder = api.plugin("InputRecorder");
     if (!inputRecorder) return;
     return inputRecorder.getRecorder();
   }
@@ -3995,7 +3988,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
     this.autoRecording = false;
     let isPb = !this.pb || this.timer.elapsed < this.pb;
     if (!isPb) return;
-    let username = gimloader_default.stores.phaser.mainCharacter.nametag.name;
+    let username = api.stores.phaser.mainCharacter.nametag.name;
     let mode = "Full Game";
     if (this.data.mode !== "Full Game") {
       mode = `Summit ${this.data.ilSummit + 1}`;
@@ -4003,7 +3996,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
     }
     let time = fmtMs(this.timer.elapsed);
     recorder.stopRecording(isPb, `recording-${username}-${this.category}-${mode}-${time}.json`);
-    gimloader_default.notification.open({ message: `Auto-saved PB of ${time}`, placement: "topLeft" });
+    api.notification.open({ message: `Auto-saved PB of ${time}`, placement: "topLeft" });
   }
   onStateLoaded(summit) {
     if (summit === "custom") return;
@@ -4035,7 +4028,7 @@ var DLDAutosplitter2 = class extends SplitsAutosplitter {
   }
   destroy() {
     this.ui.remove();
-    let savestates = gimloader_default.plugin("Savestates");
+    let savestates = api.plugin("Savestates");
     if (savestates) {
       savestates.offStateLoaded(this.onStateLoadedBound);
     }
@@ -4067,11 +4060,11 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
   knockouts = 0;
   constructor() {
     super("OneWayOut");
-    let gameSession = gimloader_default.net.room.state.session.gameSession;
-    gimloader_default.net.on("DEVICES_STATES_CHANGES", (msg) => {
+    let gameSession = api.net.room.state.session.gameSession;
+    api.net.on("DEVICES_STATES_CHANGES", (msg) => {
       for (let change of msg.changes) {
-        if (msg.values[change[1][0]] === "GLOBAL_healthPercent") {
-          let device = gimloader_default.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
+        if (msg.values[change[1][0]] === "apiOBAL_healthPercent") {
+          let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
           if (device.propOption.id === "barriers/scifi_barrier_1" && change[2][0] == 0) {
             this.addAttempt();
             this.ui.updateAttempts();
@@ -4080,7 +4073,7 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
         }
       }
     });
-    gimloader_default.net.on("KNOCKOUT", (e) => {
+    api.net.on("KNOCKOUT", (e) => {
       if (e.name !== "Evil Plant") return;
       this.knockouts++;
       let dropped = false;
@@ -4089,23 +4082,23 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
         dropped = true;
         this.drops++;
         this.updateDrops();
-        gimloader_default.net.off("WORLD_CHANGES", addDrop);
+        api.net.off("WORLD_CHANGES", addDrop);
       };
       setTimeout(() => {
-        gimloader_default.net.off("WORLD_CHANGES", addDrop);
+        api.net.off("WORLD_CHANGES", addDrop);
         if (!dropped) this.updateDrops();
       }, 100);
-      gimloader_default.net.on("WORLD_CHANGES", addDrop);
+      api.net.on("WORLD_CHANGES", addDrop);
     });
     gameSession.listen("phase", (phase) => {
       if (phase === "results") {
         this.reset();
       }
     });
-    gimloader_default.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
+    api.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
       let id = e?.deviceId;
       if (!id) return;
-      let device = gimloader_default.stores.phaser.scene.worldManager.devices.getDeviceById(id);
+      let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
       let channel = device?.options?.channel;
       if (!channel) return;
       if (channel === "escaped") {
@@ -4115,7 +4108,7 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
     onFrame(() => {
       this.timer.update();
       if (stageCoords[this.stage]) {
-        let body = gimloader_default.stores.phaser.mainCharacter.body;
+        let body = api.stores.phaser.mainCharacter.body;
         if (inBox(body, stageCoords[this.stage])) {
           this.stage++;
           this.timer.split();
@@ -4150,10 +4143,10 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
 };
 
 // src/index.ts
-gimloader_default.UI.addStyles(styles_default);
+api.UI.addStyles(styles_default);
 var autosplitter;
-var gamemodeDetector = gimloader_default.lib("GamemodeDetector");
-gimloader_default.net.onLoad(() => {
+var gamemodeDetector = api.lib("GamemodeDetector");
+api.net.onLoad(() => {
   let gamemode = gamemodeDetector.currentGamemode();
   if (gamemode === "Don't Look Down") {
     autosplitter = new DLDAutosplitter2();
@@ -4163,12 +4156,12 @@ gimloader_default.net.onLoad(() => {
     autosplitter = new OneWayOutAutosplitter();
   }
 });
-gimloader_default.openSettingsMenu(() => {
+api.openSettingsMenu(() => {
   let div = document.createElement("div");
   let settings = new Settings_default({
     target: div
   });
-  gimloader_default.UI.showModal(div, {
+  api.UI.showModal(div, {
     title: "Manage Autosplitter data",
     buttons: [{ text: "Close", style: "close" }],
     id: "Autosplitter Settings",

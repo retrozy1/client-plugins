@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import BaseLine, { Settings } from "../baseLine";
 
 export default class VisualCoordinates extends BaseLine {
@@ -9,7 +8,7 @@ export default class VisualCoordinates extends BaseLine {
     }};
 
     onFrame() {
-        let body = GL.stores.phaser.mainCharacter.body;
+        let body = api.stores.phaser.mainCharacter.body;
         let decimals = this.settings["visualCoordsDecimalPlaces"].value;
         this.update(`visual x: ${body.x.toFixed(decimals)}, y: ${body.y.toFixed(decimals)}`);
     }

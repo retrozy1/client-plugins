@@ -2,15 +2,11 @@
  * @name CustomUI
  * @description Allows you to customize various things about the Gimkit UI
  * @author TheLazySquid
- * @version 0.3.1
+ * @version 0.3.3
  * @webpage https://gimloader.github.io/plugins/customui
  * @hasSettings true
  */
 
-
-// node_modules/gimloader/index.js
-var api = new GL();
-var gimloader_default = api;
 
 // src/styles.scss
 var styles_default = `.cui-settings {
@@ -180,21 +176,21 @@ var styles_default = `.cui-settings {
 
 // src/ui/themePreview.tsx
 function ThemePreview(props) {
-  const React = gimloader_default.React;
+  const React = GL.React;
   let { theme } = props;
-  return /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  return /* @__PURE__ */ GL.React.createElement("div", { style: {
     backgroundColor: theme.question.background,
     color: theme.question.text
-  }, className: "themePreview", onClick: props.onClick }, props.text ? props.text : theme.name, /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  }, className: "themePreview", onClick: props.onClick }, props.text ? props.text : theme.name, /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", { style: {
     backgroundColor: theme.palette[0].background,
     color: theme.palette[0].text
-  } }), /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } }), /* @__PURE__ */ GL.React.createElement("div", { style: {
     backgroundColor: theme.palette[1].background,
     color: theme.palette[1].text
-  } }), /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } }), /* @__PURE__ */ GL.React.createElement("div", { style: {
     backgroundColor: theme.palette[2].background,
     color: theme.palette[2].text
-  } }), /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } }), /* @__PURE__ */ GL.React.createElement("div", { style: {
     backgroundColor: theme.palette[3].background,
     color: theme.palette[3].text
   } })));
@@ -470,7 +466,7 @@ function parseHex(hex) {
 
 // src/ui/themeCreator.tsx
 function ThemeCreator({ onChange }) {
-  const React = gimloader_default.React;
+  const React = GL.React;
   let [theme, setTheme] = React.useState({
     name: "New theme",
     question: {
@@ -499,7 +495,7 @@ function ThemeCreator({ onChange }) {
   React.useEffect(() => {
     onChange(theme);
   }, [theme]);
-  return /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "themeCreator" }, /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "pickers" }, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Theme Name"), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "themeNameWrap" }, /* @__PURE__ */ gimloader_default.React.createElement(
+  return /* @__PURE__ */ GL.React.createElement("div", { className: "themeCreator" }, /* @__PURE__ */ GL.React.createElement("div", { className: "pickers" }, /* @__PURE__ */ GL.React.createElement("div", null, "Theme Name"), /* @__PURE__ */ GL.React.createElement("div", { className: "themeNameWrap" }, /* @__PURE__ */ GL.React.createElement(
     "input",
     {
       type: "text",
@@ -510,49 +506,49 @@ function ThemeCreator({ onChange }) {
         setTheme({ ...theme });
       }
     }
-  )), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Question Background"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.question.background, onChange: (e) => {
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Question Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.question.background, onChange: (e) => {
     theme.question.background = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Question Text"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.question.text, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Question Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.question.text, onChange: (e) => {
     theme.question.text = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 1 Background"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[0].background, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 1 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[0].background, onChange: (e) => {
     theme.palette[0].background = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 1 Text"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[0].text, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 1 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[0].text, onChange: (e) => {
     theme.palette[0].text = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 2 Background"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[1].background, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 2 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[1].background, onChange: (e) => {
     theme.palette[1].background = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 2 Text"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[1].text, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 2 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[1].text, onChange: (e) => {
     theme.palette[1].text = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 3 Background"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[2].background, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 3 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[2].background, onChange: (e) => {
     theme.palette[2].background = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 3 Text"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[2].text, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 3 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[2].text, onChange: (e) => {
     theme.palette[2].text = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 4 Background"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[3].background, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 4 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[3].background, onChange: (e) => {
     theme.palette[3].background = e.target.value;
     setTheme({ ...theme });
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Option 4 Text"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "color", value: theme.palette[3].text, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 4 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[3].text, onChange: (e) => {
     theme.palette[3].text = e.target.value;
     setTheme({ ...theme });
-  } }))), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "fullPreview" }, /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "question", style: {
+  } }))), /* @__PURE__ */ GL.React.createElement("div", { className: "fullPreview" }, /* @__PURE__ */ GL.React.createElement("div", { className: "question", style: {
     background: theme.question.background,
     color: theme.question.text
-  } }, "Question text"), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "answers" }, /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } }, "Question text"), /* @__PURE__ */ GL.React.createElement("div", { className: "answers" }, /* @__PURE__ */ GL.React.createElement("div", { style: {
     background: theme.palette[0].background,
     color: theme.palette[0].text
-  } }, "Option 1"), /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } }, "Option 1"), /* @__PURE__ */ GL.React.createElement("div", { style: {
     background: theme.palette[1].background,
     color: theme.palette[1].text
-  } }, "Option 2"), /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } }, "Option 2"), /* @__PURE__ */ GL.React.createElement("div", { style: {
     background: theme.palette[2].background,
     color: theme.palette[2].text
-  } }, "Option 3"), /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } }, "Option 3"), /* @__PURE__ */ GL.React.createElement("div", { style: {
     background: theme.palette[3].background,
     color: theme.palette[3].text
   } }, "Option 4"))));
@@ -560,7 +556,7 @@ function ThemeCreator({ onChange }) {
 
 // src/ui/themePicker.tsx
 function ThemePicker(props) {
-  const React = gimloader_default.React;
+  const React = GL.React;
   let [themeType, setThemeType] = React.useState(props.themeType);
   let [themeIndex, setThemeIndex] = React.useState(props.themeIndex);
   let [customThemes, setCustomThemes] = React.useState(props.customThemes);
@@ -580,7 +576,7 @@ function ThemePicker(props) {
   }, [themeType, themeIndex]);
   const openThemeCreator = () => {
     let creatingTheme;
-    gimloader_default.UI.showModal(/* @__PURE__ */ gimloader_default.React.createElement(ThemeCreator, { onChange: (theme) => creatingTheme = theme }), {
+    api.UI.showModal(/* @__PURE__ */ GL.React.createElement(ThemeCreator, { onChange: (theme) => creatingTheme = theme }), {
       id: "ThemeCreator",
       title: "Create New Theme",
       closeOnBackgroundClick: false,
@@ -609,14 +605,14 @@ function ThemePicker(props) {
     newThemes.splice(index, 1);
     setCustomThemes(newThemes);
   };
-  return /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "themePicker" }, /* @__PURE__ */ gimloader_default.React.createElement("h1", null, "Custom Themes"), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "previews" }, customThemes.map((theme, i) => /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "customTheme" }, /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "delete", onClick: () => deleteTheme(i) }, "\u{1F5D1}"), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "customThemePreview", style: {
+  return /* @__PURE__ */ GL.React.createElement("div", { className: "themePicker" }, /* @__PURE__ */ GL.React.createElement("h1", null, "Custom Themes"), /* @__PURE__ */ GL.React.createElement("div", { className: "previews" }, customThemes.map((theme, i) => /* @__PURE__ */ GL.React.createElement("div", { className: "customTheme" }, /* @__PURE__ */ GL.React.createElement("div", { className: "delete", onClick: () => deleteTheme(i) }, "\u{1F5D1}"), /* @__PURE__ */ GL.React.createElement("div", { className: "customThemePreview", style: {
     border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
-  } }, /* @__PURE__ */ gimloader_default.React.createElement(ThemePreview, { theme, onClick: () => {
+  } }, /* @__PURE__ */ GL.React.createElement(ThemePreview, { theme, onClick: () => {
     setThemeIndex(i);
     setThemeType("custom");
-  } })))), /* @__PURE__ */ gimloader_default.React.createElement("button", { className: "addCustomTheme", onClick: openThemeCreator }, "Create New Theme")), /* @__PURE__ */ gimloader_default.React.createElement("h1", null, "Default Themes"), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "previews" }, defaultThemes_default.map((theme, i) => /* @__PURE__ */ gimloader_default.React.createElement("div", { style: {
+  } })))), /* @__PURE__ */ GL.React.createElement("button", { className: "addCustomTheme", onClick: openThemeCreator }, "Create New Theme")), /* @__PURE__ */ GL.React.createElement("h1", null, "Default Themes"), /* @__PURE__ */ GL.React.createElement("div", { className: "previews" }, defaultThemes_default.map((theme, i) => /* @__PURE__ */ GL.React.createElement("div", { style: {
     border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
-  } }, /* @__PURE__ */ gimloader_default.React.createElement(ThemePreview, { theme, onClick: () => {
+  } }, /* @__PURE__ */ GL.React.createElement(ThemePreview, { theme, onClick: () => {
     setThemeIndex(i);
     setThemeType("default");
   } })))));
@@ -624,7 +620,7 @@ function ThemePicker(props) {
 
 // src/ui/ui.tsx
 function UI({ uiChanger: uiChanger2, onConfirm }) {
-  const React = gimloader_default.React;
+  const React = GL.React;
   let [hideTopBar, setHideTopBar] = React.useState(uiChanger2.hideTopBar);
   let [useCustomTheme, setUseCustomTheme] = React.useState(uiChanger2.useCustomTheme);
   let [customThemes, setCustomThemes] = React.useState(uiChanger2.customThemes);
@@ -650,7 +646,7 @@ function UI({ uiChanger: uiChanger2, onConfirm }) {
     );
   });
   const openThemePicker = () => {
-    gimloader_default.UI.showModal(/* @__PURE__ */ gimloader_default.React.createElement(
+    api.UI.showModal(/* @__PURE__ */ GL.React.createElement(
       ThemePicker,
       {
         themeType,
@@ -672,13 +668,13 @@ function UI({ uiChanger: uiChanger2, onConfirm }) {
       style: "width: max(50%, 400px)"
     });
   };
-  return /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "cui-settings" }, /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "row" }, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Auto Hide Top Bar"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "checkbox", checked: hideTopBar, onChange: (e) => {
+  return /* @__PURE__ */ GL.React.createElement("div", { className: "cui-settings" }, /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Auto Hide Top Bar"), /* @__PURE__ */ GL.React.createElement("input", { type: "checkbox", checked: hideTopBar, onChange: (e) => {
     setHideTopBar(e.target.checked);
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "row" }, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Question Panel Opacity"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "range", min: "0", max: "1", step: "0.01", value: questionOpacity, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Question Panel Opacity"), /* @__PURE__ */ GL.React.createElement("input", { type: "range", min: "0", max: "1", step: "0.01", value: questionOpacity, onChange: (e) => {
     setQuestionOpacity(parseFloat(e.target.value));
-  } })), /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "row" }, /* @__PURE__ */ gimloader_default.React.createElement("div", null, "Use Custom Theme"), /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "checkbox", checked: useCustomTheme, onChange: (e) => {
+  } })), /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Use Custom Theme"), /* @__PURE__ */ GL.React.createElement("input", { type: "checkbox", checked: useCustomTheme, onChange: (e) => {
     setUseCustomTheme(e.target.checked);
-  } })), /* @__PURE__ */ gimloader_default.React.createElement(
+  } })), /* @__PURE__ */ GL.React.createElement(
     ThemePreview,
     {
       theme: activeTheme,
@@ -690,16 +686,16 @@ function UI({ uiChanger: uiChanger2, onConfirm }) {
 
 // src/uiChanger.ts
 var UIChanger = class {
-  hideTopBar = gimloader_default.storage.getValue("hideTopBar", false);
-  useCustomTheme = gimloader_default.storage.getValue("useCustomTheme", false);
-  customThemes = gimloader_default.storage.getValue("themes", []);
-  themeType = gimloader_default.storage.getValue("themeType", "default");
-  themeIndex = gimloader_default.storage.getValue("themeIndex", 0);
-  questionOpacity = gimloader_default.storage.getValue("questionOpacity", 1);
+  hideTopBar = api.storage.getValue("hideTopBar", false);
+  useCustomTheme = api.storage.getValue("useCustomTheme", false);
+  customThemes = api.storage.getValue("themes", []);
+  themeType = api.storage.getValue("themeType", "default");
+  themeIndex = api.storage.getValue("themeIndex", 0);
+  questionOpacity = api.storage.getValue("questionOpacity", 1);
   constructor() {
     window.addEventListener("mousemove", this.boundOnMouseMove);
     this.onSettingsUpdate();
-    gimloader_default.onStop(() => this.stop());
+    api.onStop(() => this.stop());
   }
   boundOnMouseMove = this.onMouseMove.bind(this);
   onMouseMove(e) {
@@ -714,12 +710,12 @@ var UIChanger = class {
     this.themeType = themeType;
     this.themeIndex = themeIndex;
     this.questionOpacity = questionOpacity;
-    gimloader_default.storage.setValue("hideTopBar", hideTopBar);
-    gimloader_default.storage.setValue("useCustomTheme", useCustomTheme);
-    gimloader_default.storage.setValue("themes", customThemes);
-    gimloader_default.storage.setValue("themeType", themeType);
-    gimloader_default.storage.setValue("themeIndex", themeIndex);
-    gimloader_default.storage.setValue("questionOpacity", questionOpacity);
+    api.storage.setValue("hideTopBar", hideTopBar);
+    api.storage.setValue("useCustomTheme", useCustomTheme);
+    api.storage.setValue("themes", customThemes);
+    api.storage.setValue("themeType", themeType);
+    api.storage.setValue("themeIndex", themeIndex);
+    api.storage.setValue("questionOpacity", questionOpacity);
     this.onSettingsUpdate();
   }
   onSettingsUpdate() {
@@ -751,13 +747,13 @@ var UIChanger = class {
 
 // src/index.ts
 var uiChanger = new UIChanger();
-gimloader_default.UI.addStyles(styles_default);
-gimloader_default.openSettingsMenu(() => {
+api.UI.addStyles(styles_default);
+api.openSettingsMenu(() => {
   let confirmFunc;
   let onConfirm = (callback) => {
     confirmFunc = callback;
   };
-  gimloader_default.UI.showModal(gimloader_default.React.createElement(UI, { uiChanger, onConfirm }), {
+  api.UI.showModal(GL.React.createElement(UI, { uiChanger, onConfirm }), {
     id: "CustomUI",
     title: "UI Customization Options",
     style: "min-width: 400px",

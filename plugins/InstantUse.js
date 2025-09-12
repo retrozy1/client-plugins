@@ -2,12 +2,10 @@
  * @name InstantUse
  * @description Instantly use nearby devices without any wait
  * @author TheLazySquid
- * @version 0.2.3
+ * @version 0.2.4
  * @webpage https://gimloader.github.io/plugins/instantuse
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InstantUse.js
  */
-
-const api = new GL();
 
 api.hotkeys.addConfigurableHotkey({
     category: "InstantUse",

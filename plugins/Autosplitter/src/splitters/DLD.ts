@@ -1,5 +1,3 @@
-import GL from 'gimloader';
-import GLGlobal from 'gimloader/global';
 import { resetCoordinates, summitCoords, summitStartCoords } from "../constants";
 import BasicTimer from "../timers/basic";
 import SplitsTimer from "../timers/splits";
@@ -24,8 +22,8 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
         super("DLD");
 
         this.category = "Current Patch";
-        if(GL.plugins.isEnabled("BringBackBoosts")) {
-            let bbbSettings = GLGlobal.storage.getValue("BringBackBoosts", "QS-Settings", {})
+        if(api.plugins.isEnabled("BringBackBoosts")) {
+            let bbbSettings = GL.storage.getValue("BringBackBoosts", "QS-Settings", {})
             if(bbbSettings.useOriginalPhysics) {
                 this.category = "Original Physics";
             } else {
@@ -40,7 +38,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
         this.updateTimerAndUI();
 
         onPhysicsStep(() => {
-            let input = GL.stores.phaser.scene.inputManager.getPhysicsInput();
+            let input = api.stores.phaser.scene.inputManager.getPhysicsInput();
 
             if(input.jump || input.angle !== null) this.hasMoved = true;
         });
@@ -54,7 +52,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
             this.hasMoved = false;
         });
 
-        let savestates = GL.plugin("Savestates");
+        let savestates = api.plugin("Savestates");
         if(savestates) {
             savestates.onStateLoaded(this.onStateLoadedBound);
         }
@@ -107,7 +105,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     ilState = "waiting";
 
     updatePreboosts() {
-        let body = GL.stores.phaser.mainCharacter.body;
+        let body = api.stores.phaser.mainCharacter.body;
         let coords = summitCoords[this.data.ilSummit];
         
         if(this.ilState === "waiting") {
@@ -135,7 +133,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
 
     updateNoPreboosts() {
         if(!this.loadedCorrectSummit) return;
-        let body = GL.stores.phaser.mainCharacter.body;
+        let body = api.stores.phaser.mainCharacter.body;
 
         if(this.ilState === "waiting") {
             if(this.hasMoved) {
@@ -157,7 +155,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     summit = 0;
 
     updateFullGame() {
-        let body = GL.stores.phaser.mainCharacter.body;
+        let body = api.stores.phaser.mainCharacter.body;
 
         // check if we're at a position where we should reset
         if(this.summit > 0 && body.x < resetCoordinates.x && body.y > resetCoordinates.y) {
@@ -189,7 +187,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     }
 
     getRecorder() {
-        let inputRecorder = GL.plugin("InputRecorder");
+        let inputRecorder = api.plugin("InputRecorder");
         if(!inputRecorder) return;
 
         return inputRecorder.getRecorder();
@@ -224,7 +222,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
 
         let isPb = !this.pb || this.timer.elapsed < this.pb;
         if(!isPb) return;
-        let username = GL.stores.phaser.mainCharacter.nametag.name;
+        let username = api.stores.phaser.mainCharacter.nametag.name;
         let mode = "Full Game";
         if(this.data.mode !== "Full Game") {
             mode = `Summit ${this.data.ilSummit + 1}`;
@@ -235,7 +233,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
 
         recorder.stopRecording(isPb, `recording-${username}-${this.category}-${mode}-${time}.json`);
 
-        GL.notification.open({ message: `Auto-saved PB of ${time}`, placement: "topLeft" });
+        api.notification.open({ message: `Auto-saved PB of ${time}`, placement: "topLeft" });
     }
 
     onStateLoaded(summit: number | "custom") {
@@ -278,7 +276,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     destroy() {
         this.ui.remove();
 
-        let savestates = GL.plugin("Savestates");
+        let savestates = api.plugin("Savestates");
         if(savestates) {
             savestates.offStateLoaded(this.onStateLoadedBound);
         }

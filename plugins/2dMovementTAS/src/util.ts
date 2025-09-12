@@ -1,5 +1,4 @@
 import type { EasyAccessWritable, IFrame } from './types';
-import GL from 'gimloader';
 // @ts-ignore
 import AnglePicker from './ui/AnglePicker.svelte';
 
@@ -26,7 +25,7 @@ export function showAnglePicker(initial: number) {
             }
         });
 
-        GL.UI.showModal(div, {
+        api.UI.showModal(div, {
             title: "Pick an angle",
             closeOnBackgroundClick: false,
             onClosed() {
@@ -97,7 +96,7 @@ export function getFrameState(state: any) {
 }
 
 export function makeFrameState() {
-    let state = GL.stores.phaser.mainCharacter.physics.state;
+    let state = api.stores.phaser.mainCharacter.physics.state;
     let returnObj: any = {};
     
     for(let key in state) {
@@ -112,7 +111,7 @@ export function makeFrameState() {
 export function updateDeviceState(device: any, key: string, value: any) {
     let deviceId = device.id;
     
-    let states = GL.stores.world.devices.states;
+    let states = api.stores.world.devices.states;
     if(!states.has(deviceId)) {
         states.set(deviceId, { deviceId, properties: new Map() });
     }

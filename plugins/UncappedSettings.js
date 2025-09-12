@@ -2,13 +2,11 @@
  * @name UncappedSettings
  * @description Lets you start games with a much wider range of settings than normal
  * @author TheLazySquid
- * @version 0.2.1
+ * @version 0.2.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/UncappedSettings.js
  * @webpage https://gimloader.github.io/plugins/uncappedsettings
  * @reloadRequired true
  */
-
-const api = new GL();
 
 function changeHooks(res) {
     for(let hook of res.hooks) {

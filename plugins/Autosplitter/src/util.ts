@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { DLDData, SplitsData } from "./types";
 
 export function getGamemodeData(gamemode: string) {
@@ -29,7 +28,7 @@ const DLDDefaults: DLDData = {
 }
 
 export function getDLDData(): DLDData {
-    let data = GL.storage.getValue("DLDData", {});
+    let data = api.storage.getValue("DLDData", {});
     return Object.assign(DLDDefaults, data);
 }
 
@@ -46,12 +45,12 @@ const splitsDefaults: SplitsData = {
 }
 
 export function getFishtopiaData(): SplitsData {
-    let data = GL.storage.getValue("FishtopiaData", {});
+    let data = api.storage.getValue("FishtopiaData", {});
     return Object.assign(splitsDefaults, data);
 }
 
 export function getOneWayOutData(): SplitsData {
-    let data = GL.storage.getValue("OneWayOutData", {});
+    let data = api.storage.getValue("OneWayOutData", {});
     return Object.assign(splitsDefaults, data);
 }
 
@@ -140,17 +139,17 @@ export function inBox(coords: Coords, box: Box) {
 }
 
 export function onPhysicsStep(callback: () => void) {
-    let worldManager = GL.stores.phaser.scene.worldManager;
+    let worldManager = api.stores.phaser.scene.worldManager;
         
-    GL.patcher.after(worldManager.physics, "physicsStep", () => {
+    api.patcher.after(worldManager.physics, "physicsStep", () => {
         callback();
     });
 }
 
 export function onFrame(callback: () => void) {
-    let worldManager = GL.stores.phaser.scene.worldManager;
+    let worldManager = api.stores.phaser.scene.worldManager;
         
-    GL.patcher.after(worldManager, "update", () => {
+    api.patcher.after(worldManager, "update", () => {
         callback();
     });
 }

@@ -1,5 +1,4 @@
-import GL from 'gimloader';
-import { IBlacklistedName } from "./types";
+import type { IBlacklistedName } from "./types";
 import type AutoKicker from "./autokicker";
 
 export default function UI({ autoKicker }: { autoKicker: AutoKicker }) {

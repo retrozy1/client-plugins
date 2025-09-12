@@ -2,18 +2,14 @@
  * @name 2dMovementTAS
  * @description Allows for making TASes of CTF and tag
  * @author TheLazySquid
- * @version 0.3.1
+ * @version 0.3.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/2dMovementTAS/build/2dMovementTAS.js
  * @webpage https://gimloader.github.io/plugins/movementtas
  * @reloadRequired ingame
  */
 
 
-// node_modules/gimloader/index.js
-var api = new GL();
-var gimloader_default = api;
-
-// node_modules/svelte/src/runtime/internal/utils.js
+// ../../node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
 function run(fn) {
@@ -48,13 +44,13 @@ function component_subscribe(component, store, callback) {
   component.$$.on_destroy.push(subscribe(store, callback));
 }
 
-// node_modules/svelte/src/runtime/internal/globals.js
+// ../../node_modules/svelte/src/runtime/internal/globals.js
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : (
   // @ts-ignore Node typings have this
   global
 );
 
-// node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
+// ../../node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
 var ResizeObserverSingleton = class _ResizeObserverSingleton {
   /**
    * @private
@@ -100,7 +96,7 @@ var ResizeObserverSingleton = class _ResizeObserverSingleton {
 };
 ResizeObserverSingleton.entries = "WeakMap" in globals ? /* @__PURE__ */ new WeakMap() : void 0;
 
-// node_modules/svelte/src/runtime/internal/dom.js
+// ../../node_modules/svelte/src/runtime/internal/dom.js
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -215,7 +211,7 @@ function get_custom_elements_slots(element2) {
   return result;
 }
 
-// node_modules/svelte/src/runtime/internal/lifecycle.js
+// ../../node_modules/svelte/src/runtime/internal/lifecycle.js
 var current_component;
 function set_current_component(component) {
   current_component = component;
@@ -227,7 +223,7 @@ function bubble(component, event) {
   }
 }
 
-// node_modules/svelte/src/runtime/internal/scheduler.js
+// ../../node_modules/svelte/src/runtime/internal/scheduler.js
 var dirty_components = [];
 var binding_callbacks = [];
 var render_callbacks = [];
@@ -301,7 +297,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 
-// node_modules/svelte/src/runtime/internal/transitions.js
+// ../../node_modules/svelte/src/runtime/internal/transitions.js
 var outroing = /* @__PURE__ */ new Set();
 var outros;
 function group_outros() {
@@ -341,12 +337,12 @@ function transition_out(block, local, detach2, callback) {
   }
 }
 
-// node_modules/svelte/src/runtime/internal/each.js
+// ../../node_modules/svelte/src/runtime/internal/each.js
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
 
-// node_modules/svelte/src/shared/boolean_attributes.js
+// ../../node_modules/svelte/src/shared/boolean_attributes.js
 var _boolean_attributes = (
   /** @type {const} */
   [
@@ -379,7 +375,7 @@ var _boolean_attributes = (
 );
 var boolean_attributes = /* @__PURE__ */ new Set([..._boolean_attributes]);
 
-// node_modules/svelte/src/runtime/internal/Component.js
+// ../../node_modules/svelte/src/runtime/internal/Component.js
 function create_component(block) {
   block && block.c();
 }
@@ -718,10 +714,10 @@ var SvelteComponent = class {
   }
 };
 
-// node_modules/svelte/src/shared/version.js
+// ../../node_modules/svelte/src/shared/version.js
 var PUBLIC_VERSION = "4";
 
-// node_modules/svelte/src/runtime/internal/disclose-version/index.js
+// ../../node_modules/svelte/src/runtime/internal/disclose-version/index.js
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 
@@ -962,7 +958,7 @@ function showAnglePicker(initial) {
         angle: initial
       }
     });
-    gimloader_default.UI.showModal(div, {
+    api.UI.showModal(div, {
       title: "Pick an angle",
       closeOnBackgroundClick: false,
       onClosed() {
@@ -1025,7 +1021,7 @@ function getFrameState(state) {
   return Object.assign({}, defaultState, state);
 }
 function makeFrameState() {
-  let state = gimloader_default.stores.phaser.mainCharacter.physics.state;
+  let state = api.stores.phaser.mainCharacter.physics.state;
   let returnObj = {};
   for (let key in state) {
     if (JSON.stringify(defaultState[key]) !== JSON.stringify(state[key])) {
@@ -1036,7 +1032,7 @@ function makeFrameState() {
 }
 function updateDeviceState(device, key, value) {
   let deviceId = device.id;
-  let states = gimloader_default.stores.world.devices.states;
+  let states = api.stores.world.devices.states;
   if (!states.has(deviceId)) {
     states.set(deviceId, { deviceId, properties: /* @__PURE__ */ new Map() });
   }
@@ -1075,7 +1071,7 @@ var currentFrame = easyAccessWritable(0);
 
 // src/tools.ts
 var active = false;
-gimloader_default.net.on("PHYSICS_STATE", (_, editFn) => {
+GL.net.on("PHYSICS_STATE", (_, editFn) => {
   if (active) editFn(null);
 });
 window.expectedPoses = [];
@@ -1083,10 +1079,10 @@ var TASTools = class {
   constructor(frames, setFrames, startPos) {
     this.frames = frames;
     this.setFrames = setFrames;
-    this.physicsManager = gimloader_default.stores.phaser.scene.worldManager.physics;
+    this.physicsManager = GL.stores.phaser.scene.worldManager.physics;
     this.nativeStep = this.physicsManager.physicsStep;
     active = true;
-    let mcState = gimloader_default.net.room.state.characters.get(gimloader_default.stores.phaser.mainCharacter.id);
+    let mcState = GL.net.room.state.characters.get(GL.stores.phaser.mainCharacter.id);
     mcState.$callbacks.movementSpeed = [];
     for (let slot of mcState.inventory.slots.values()) {
       slot.$callbacks = {};
@@ -1096,9 +1092,9 @@ var TASTools = class {
         item.$callbacks = {};
       });
     });
-    let mc = gimloader_default.stores.phaser.mainCharacter;
+    let mc = GL.stores.phaser.mainCharacter;
     this.stopPlayback();
-    this.inputManager = gimloader_default.stores.phaser.scene.inputManager;
+    this.inputManager = GL.stores.phaser.scene.inputManager;
     this.rb = mc.physics.getBody().rigidBody;
     if (startPos) {
       this.startPos = startPos;
@@ -1108,9 +1104,9 @@ var TASTools = class {
     }
     this.movement = mc.movement;
     this.movement.state = Object.assign({}, defaultState);
-    let allDevices = gimloader_default.stores.phaser.scene.worldManager.devices.allDevices;
+    let allDevices = GL.stores.phaser.scene.worldManager.devices.allDevices;
     this.tagEnergyDisplay = allDevices.find((d) => d.options?.text == '0/10,000 <item-image item="energy" />');
-    gimloader_default.net.on("DEVICES_STATES_CHANGES", (packet) => {
+    GL.net.on("DEVICES_STATES_CHANGES", (packet) => {
       packet.changes.splice(0, packet.changes.length);
     });
     this.setEnergy(940);
@@ -1139,14 +1135,14 @@ var TASTools = class {
     if (this.tagEnergyDisplay) {
       updateDeviceState(
         this.tagEnergyDisplay,
-        `PLAYER_${gimloader_default.stores.phaser.mainCharacter.id}_text`,
+        `PLAYER_${GL.stores.phaser.mainCharacter.id}_text`,
         `${amount}/${this.tagMaxEnergy} <item-image item="energy" />`
       );
     }
-    gimloader_default.stores.me.inventory.slots.get("energy").amount = amount;
+    GL.stores.me.inventory.slots.get("energy").amount = amount;
   }
   getEnergy() {
-    return gimloader_default.stores.me.inventory.slots.get("energy").amount ?? 0;
+    return GL.stores.me.inventory.slots.get("energy").amount ?? 0;
   }
   goBackToFrame(number) {
     for (let i = currentFrame.value - 1; i >= number; i--) {
@@ -1158,8 +1154,8 @@ var TASTools = class {
     if (!frame) return;
     currentFrame.set(number);
     this.rb.setTranslation(frame.position, true);
-    gimloader_default.stores.phaser.mainCharacter.physics.state = getFrameState(frame.state);
-    gimloader_default.stores.me.movementSpeed = frame.speed;
+    GL.stores.phaser.mainCharacter.physics.state = getFrameState(frame.state);
+    GL.stores.me.movementSpeed = frame.speed;
     this.setEnergy(frame.energy);
     this.energyPerQuestion = frame.epq;
     this.energyUsage = frame.energyUsage;
@@ -1183,8 +1179,8 @@ var TASTools = class {
     currentFrame.set(currentFrame.value + 1);
   }
   hideUI() {
-    gimloader_default.stores.me.currentAction = "none";
-    gimloader_default.stores.gui.none.screen = "home";
+    GL.stores.me.currentAction = "none";
+    GL.stores.gui.none.screen = "home";
   }
   updateDevices(frame) {
     for (let [countdown, purchase] of this.purchaseTimeouts) {
@@ -1194,7 +1190,7 @@ var TASTools = class {
       }
     }
     if (!frame.purchase) return;
-    let devices = gimloader_default.stores.phaser.scene.worldManager.devices;
+    let devices = GL.stores.phaser.scene.worldManager.devices;
     let realPos = this.rb.translation();
     let device = devices.interactives.findClosestInteractiveDevice(devices.devicesInView, realPos.x * 100, realPos.y * 100);
     if (!device) return;
@@ -1236,13 +1232,13 @@ var TASTools = class {
           Math.floor(device.options.interactionDuration * 12) - 1,
           () => {
             updateDeviceState(device, "GLOBAL_active", false);
-            gimloader_default.notification.open({ message: `Purchased ${name}` });
+            GL.notification.open({ message: `Purchased ${name}` });
             switch (name) {
               case "Energy Per Question Upgrade":
                 this.energyPerQuestion += 200;
                 break;
               case "Speed Upgrade":
-                gimloader_default.stores.me.movementSpeed += 46.5;
+                GL.stores.me.movementSpeed += 46.5;
                 break;
               case "Efficiency Upgrade":
                 this.energyUsage -= 7;
@@ -1262,7 +1258,7 @@ var TASTools = class {
           true
         ]);
       } else {
-        gimloader_default.notification.open({ message: "Unable to handle what you're trying to purchase. If this is unexpected, please report it." });
+        GL.notification.open({ message: "Unable to handle what you're trying to purchase. If this is unexpected, please report it." });
       }
     }
   }
@@ -1291,9 +1287,9 @@ var TASTools = class {
         this.setEnergy(this.getEnergy() + 120);
       }
     }
-    let devices = gimloader_default.stores.phaser.scene.worldManager.devices;
+    let devices = GL.stores.phaser.scene.worldManager.devices;
     let teleporters = devices.devicesInView.filter((d) => d.deviceOption?.id === "teleporter");
-    let body = gimloader_default.stores.phaser.mainCharacter.body;
+    let body = GL.stores.phaser.mainCharacter.body;
     for (let teleporter of teleporters) {
       if (teleporter.x > body.x - 90 && teleporter.x < body.x + 90 && teleporter.y > body.y - 85 && teleporter.y < body.y + 100) {
         let target = teleporter.options.targetGroup;
@@ -1308,14 +1304,14 @@ var TASTools = class {
   updateUI() {
     let frame = this.frames[currentFrame.value];
     if (frame.answer) {
-      gimloader_default.stores.phaser.scene.worldManager.devices.allDevices.find((d) => d.options?.openWhenReceivingOn === "answer questions").openDeviceUI();
+      GL.stores.phaser.scene.worldManager.devices.allDevices.find((d) => d.options?.openWhenReceivingOn === "answer questions").openDeviceUI();
     } else {
-      gimloader_default.stores.me.currentAction = "none";
+      GL.stores.me.currentAction = "none";
     }
     if (frame.purchase) {
-      gimloader_default.stores.gui.none.screen = "inventory";
+      GL.stores.gui.none.screen = "inventory";
     } else {
-      gimloader_default.stores.gui.none.screen = "home";
+      GL.stores.gui.none.screen = "home";
     }
   }
   getPhysicsInput(index = currentFrame.value) {
@@ -1342,7 +1338,7 @@ var TASTools = class {
       position: this.rb.translation(),
       state: makeFrameState(),
       energy: this.getEnergy(),
-      speed: gimloader_default.stores.me.movementSpeed,
+      speed: GL.stores.me.movementSpeed,
       epq: this.energyPerQuestion,
       energyUsage: this.energyUsage,
       energyTimeout: this.energyTimeout,
@@ -1365,7 +1361,7 @@ var TASTools = class {
     };
   }
   stopPlayback() {
-    let mc = gimloader_default.stores.phaser.mainCharacter;
+    let mc = GL.stores.phaser.mainCharacter;
     this.physicsManager.physicsStep = (delta) => {
       mc.physics.postUpdate(delta);
     };
@@ -1376,7 +1372,7 @@ var TASTools = class {
       startPos: this.startPos,
       frames: this.frames
     };
-    gimloader_default.storage.setValue("save", val);
+    api.storage.setValue("save", val);
     return val;
   }
   download() {
@@ -2476,7 +2472,7 @@ function create_fragment3(ctx) {
 }
 function instance3($$self, $$props, $$invalidate) {
   let begun = false;
-  let save = gimloader_default.storage.getValue("save");
+  let save = api.storage.getValue("save");
   let frames = [];
   let startPos;
   function continueTAS() {
@@ -2518,9 +2514,9 @@ var Start_default = Start;
 
 // src/index.ts
 var ui;
-gimloader_default.net.onLoad(() => {
+api.net.onLoad(() => {
   ui = new Start_default({
     target: document.body
   });
-  gimloader_default.onStop(() => ui.$destroy());
+  api.onStop(() => ui.$destroy());
 });

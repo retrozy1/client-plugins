@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 // @ts-ignore
 import Settings from './settings/Settings.svelte';
 // @ts-ignore
@@ -8,12 +7,12 @@ import FishtopiaAutosplitter from "./splitters/fishtopia";
 import DLDAutosplitter from "./splitters/DLD";
 import OneWayOutAutosplitter from "./splitters/OneWayOut";
 
-GL.UI.addStyles(styles);
+api.UI.addStyles(styles);
 
 let autosplitter: Autosplitter;
-let gamemodeDetector = GL.lib("GamemodeDetector");
+let gamemodeDetector = api.lib("GamemodeDetector");
 
-GL.net.onLoad(() => {
+api.net.onLoad(() => {
     let gamemode = gamemodeDetector.currentGamemode();
     if(gamemode === "Don't Look Down") {
         autosplitter = new DLDAutosplitter();
@@ -24,14 +23,14 @@ GL.net.onLoad(() => {
     }
 });
 
-GL.openSettingsMenu(() => {
+api.openSettingsMenu(() => {
     let div = document.createElement("div");
     // @ts-ignore
     let settings = new Settings({
         target: div
     });
 
-    GL.UI.showModal(div, {
+    api.UI.showModal(div, {
         title: "Manage Autosplitter data",
         buttons: [{ text: "Close", style: "close" }],
         id: "Autosplitter Settings",

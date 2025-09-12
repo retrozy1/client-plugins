@@ -1,4 +1,3 @@
-import GL from 'gimloader/global';
 // @ts-ignore
 import Settings from './Settings.svelte';
 import type { QSElement, QuickSettingsReturn } from "./types";
@@ -35,7 +34,7 @@ export default function QuickSettings(name: string, els: QSElement[]): QuickSett
             }
         });
 
-        GL.UI.showModal(div, {
+        api.UI.showModal(div, {
             buttons: [{ text: "Close", style: "primary" }],
             // @ts-ignore
             onClosed: () => component.$destroy()

@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { IFrameInfo, ISharedValues } from "../types";
 import { initOverlay, showHitbox, hideHitbox } from "./overlay";
 import TASTools from "./tools";
@@ -7,7 +6,7 @@ import { save } from "./util";
 import controller from '../assets/controller.svg';
 import { getLaserOffset, setLaserOffset } from "./updateLasers";
 
-let frames: IFrameInfo[] = GL.storage.getValue("frames", []);
+let frames: IFrameInfo[] = api.storage.getValue("frames", []);
 let values: ISharedValues = { frames, currentFrame: 0 }
 
 export function createUI() {

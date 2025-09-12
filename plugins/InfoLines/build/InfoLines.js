@@ -2,28 +2,24 @@
  * @name InfoLines
  * @description Displays a configurable list of info on the screen
  * @author TheLazySquid
- * @version 0.1.2
+ * @version 0.1.3
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InfoLines/build/InfoLines.js
  * @webpage https://gimloader.github.io/plugins/infolines
  * @hasSettings true
  */
 
 
-// node_modules/gimloader/index.js
-var api = new GL();
-var gimloader_default = api;
-
 // src/baseLine.ts
 var frameCallbacks = [];
 var physicsTickCallbacks = [];
-gimloader_default.net.onLoad(() => {
-  let worldManager = gimloader_default.stores.phaser.scene.worldManager;
-  gimloader_default.patcher.after(worldManager, "update", () => {
+api.net.onLoad(() => {
+  let worldManager = api.stores.phaser.scene.worldManager;
+  api.patcher.after(worldManager, "update", () => {
     for (let callback of frameCallbacks) {
       callback();
     }
   });
-  gimloader_default.patcher.after(worldManager.physics, "physicsStep", () => {
+  api.patcher.after(worldManager.physics, "physicsStep", () => {
     for (let callback of physicsTickCallbacks) {
       callback();
     }
@@ -37,7 +33,7 @@ var BaseLine = class {
   subscribedCallbacks = [];
   constructor() {
     setTimeout(() => {
-      this.enabled = gimloader_default.storage.getValue(this.name, this.enabledDefault);
+      this.enabled = api.storage.getValue(this.name, this.enabledDefault);
       this.setupSettings();
       if (this.onFrame) {
         frameCallbacks.push(() => {
@@ -51,7 +47,7 @@ var BaseLine = class {
           this.onPhysicsTick?.();
         });
       }
-      gimloader_default.net.onLoad(() => {
+      api.net.onLoad(() => {
         if (this.init) this.init();
       });
     }, 0);
@@ -60,7 +56,7 @@ var BaseLine = class {
     if (this.settings) {
       for (let id in this.settings) {
         let setting = this.settings[id];
-        setting.value = gimloader_default.storage.getValue(id, setting.default);
+        setting.value = api.storage.getValue(id, setting.default);
       }
     }
   }
@@ -90,7 +86,7 @@ var VisualCoordinates = class extends BaseLine {
     default: 0
   } };
   onFrame() {
-    let body = gimloader_default.stores.phaser.mainCharacter.body;
+    let body = api.stores.phaser.mainCharacter.body;
     let decimals = this.settings["visualCoordsDecimalPlaces"].value;
     this.update(`visual x: ${body.x.toFixed(decimals)}, y: ${body.y.toFixed(decimals)}`);
   }
@@ -98,20 +94,20 @@ var VisualCoordinates = class extends BaseLine {
 
 // src/Settings.tsx
 function Settings2({ infoLines: infoLines2 }) {
-  const React = gimloader_default.React;
+  const React = GL.React;
   let [lines, setLines] = React.useState(infoLines2.lines);
   let [position, setPosition] = React.useState(infoLines2.position);
-  return /* @__PURE__ */ gimloader_default.React.createElement("div", { id: "il-settings" }, /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "position" }, "Position", /* @__PURE__ */ gimloader_default.React.createElement("select", { value: position, onChange: (e) => {
+  return /* @__PURE__ */ GL.React.createElement("div", { id: "il-settings" }, /* @__PURE__ */ GL.React.createElement("div", { className: "position" }, "Position", /* @__PURE__ */ GL.React.createElement("select", { value: position, onChange: (e) => {
     setPosition(e.target.value);
-    gimloader_default.storage.setValue("position", e.target.value);
+    api.storage.setValue("position", e.target.value);
     if (infoLines2.element) infoLines2.element.className = e.target.value;
-  } }, /* @__PURE__ */ gimloader_default.React.createElement("option", { value: "top left" }, "Top Left"), /* @__PURE__ */ gimloader_default.React.createElement("option", { value: "top right" }, "Top Right"), /* @__PURE__ */ gimloader_default.React.createElement("option", { value: "bottom left" }, "Bottom Left"), /* @__PURE__ */ gimloader_default.React.createElement("option", { value: "bottom right" }, "Bottom Right"))), /* @__PURE__ */ gimloader_default.React.createElement("hr", null), lines.map((line) => /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("div", null, /* @__PURE__ */ gimloader_default.React.createElement("input", { type: "checkbox", checked: line.enabled, onChange: (e) => {
+  } }, /* @__PURE__ */ GL.React.createElement("option", { value: "top left" }, "Top Left"), /* @__PURE__ */ GL.React.createElement("option", { value: "top right" }, "Top Right"), /* @__PURE__ */ GL.React.createElement("option", { value: "bottom left" }, "Bottom Left"), /* @__PURE__ */ GL.React.createElement("option", { value: "bottom right" }, "Bottom Right"))), /* @__PURE__ */ GL.React.createElement("hr", null), lines.map((line) => /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("input", { type: "checkbox", checked: line.enabled, onChange: (e) => {
     line.enabled = e.target.checked;
-    gimloader_default.storage.setValue(line.name, line.enabled);
+    api.storage.setValue(line.name, line.enabled);
     if (line.enabled) line.enable();
     else line.disable();
     setLines([...lines]);
-  } }), line.name), line.settings && Object.entries(line.settings).map(([id, setting]) => /* @__PURE__ */ gimloader_default.React.createElement("div", { className: "setting" }, setting.label, /* @__PURE__ */ gimloader_default.React.createElement(
+  } }), line.name), line.settings && Object.entries(line.settings).map(([id, setting]) => /* @__PURE__ */ GL.React.createElement("div", { className: "setting" }, setting.label, /* @__PURE__ */ GL.React.createElement(
     "input",
     {
       type: "range",
@@ -121,12 +117,12 @@ function Settings2({ infoLines: infoLines2 }) {
       value: setting.value,
       onChange: (e) => {
         setting.value = parseInt(e.target.value);
-        gimloader_default.storage.setValue(id, setting.value);
+        api.storage.setValue(id, setting.value);
         if (line.enabled) line.onSettingsChange?.();
         setLines([...lines]);
       }
     }
-  ), setting.value)), /* @__PURE__ */ gimloader_default.React.createElement("hr", null))));
+  ), setting.value)), /* @__PURE__ */ GL.React.createElement("hr", null))));
 }
 
 // src/styles.scss
@@ -171,7 +167,7 @@ var Velocity = class extends BaseLine {
   } };
   rb;
   init() {
-    let physics = gimloader_default.stores.phaser.mainCharacter.physics;
+    let physics = api.stores.phaser.mainCharacter.physics;
     this.rb = physics.getBody().rigidBody;
   }
   onPhysicsTick() {
@@ -194,7 +190,7 @@ var PhysicsCoordinates = class extends BaseLine {
   } };
   rb;
   init() {
-    let physics = gimloader_default.stores.phaser.mainCharacter.physics;
+    let physics = api.stores.phaser.mainCharacter.physics;
     this.rb = physics.getBody().rigidBody;
   }
   onPhysicsTick() {
@@ -228,7 +224,7 @@ var FPS = class extends BaseLine {
 };
 
 // src/index.ts
-gimloader_default.UI.addStyles(styles_default);
+api.UI.addStyles(styles_default);
 var InfoLines = class {
   lines = [
     new VisualCoordinates(),
@@ -237,9 +233,9 @@ var InfoLines = class {
     new FPS()
   ];
   element;
-  position = gimloader_default.storage.getValue("position", "top right");
+  position = api.storage.getValue("position", "top right");
   constructor() {
-    gimloader_default.net.onLoad(() => {
+    api.net.onLoad(() => {
       this.create();
     });
   }
@@ -265,9 +261,9 @@ var InfoLines = class {
   }
 };
 var infoLines = new InfoLines();
-gimloader_default.onStop(() => infoLines.destroy());
-gimloader_default.openSettingsMenu(() => {
-  gimloader_default.UI.showModal(gimloader_default.React.createElement(Settings2, { infoLines }), {
+api.onStop(() => infoLines.destroy());
+api.openSettingsMenu(() => {
+  api.UI.showModal(api.React.createElement(Settings2, { infoLines }), {
     title: "InfoLines settings",
     id: "infoLinesSettings",
     buttons: [{ text: "Close", "style": "close" }]

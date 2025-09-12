@@ -2,12 +2,11 @@
  * @name IdleForXp
  * @description Automatically performs actions to let you gain XP while idle
  * @author TheLazySquid
- * @version 0.3.0
+ * @version 0.3.1
  * @webpage https://gimloader.github.io/plugins/idleforxp
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/IdleForXp.js
  * @reloadRequired ingame
  */
-const api = new GL();
 
 let questions = [];
 let answerDeviceId, currentQuestionId;

@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { Theme } from "../types";
 
 export default function ThemeCreator({ onChange }: { onChange: (theme: Theme) => void }) {

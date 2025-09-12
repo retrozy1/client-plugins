@@ -2,13 +2,11 @@
  * @name DLDUtils
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
- * @version 0.3.5
+ * @version 0.3.6
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
  * @needsLib Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js
  */
-
-const api = new GL();
 
 const respawnHeight = 621.093;
 const floorHeight = 638.37;

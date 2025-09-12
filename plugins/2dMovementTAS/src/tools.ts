@@ -1,5 +1,4 @@
 import type { IFrame, IPreviousFrame } from "./types";
-import GL from 'gimloader';
 import { defaultState, downloadFile, getFrameState, makeFrameState, updateDeviceState, uploadFile } from "./util";
 import { currentFrame } from "./stores";
 
@@ -387,7 +386,7 @@ export default class TASTools {
             startPos: this.startPos,
             frames: this.frames
         }
-        GL.storage.setValue("save", val);
+        api.storage.setValue("save", val);
         return val;
     }
 

@@ -2,12 +2,10 @@
  * @name Healthbars
  * @description Adds healthbars underneath players' names
  * @author TheLazySquid
- * @version 0.1.0
+ * @version 0.1.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Healthbars.js
  * @webpage https://gimloader.github.io/plugins/healthbars
  */
-
-const api = new GL();
 
 api.net.onLoad(() => {
     const options = JSON.parse(api.stores.world.mapOptionsJSON);

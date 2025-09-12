@@ -5,7 +5,7 @@
         "plugins/*",
         "libraries/*"
     ],
-    "dependencies": {
-        "gimloader": "^1.6.3"
+    "devDependencies": {
+        "@types/gimloader": "^1.6.0"
     }
 }

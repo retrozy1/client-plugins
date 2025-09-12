@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import BaseLine, { Settings } from "../baseLine";
 
 export default class PhysicsCoordinates extends BaseLine {
@@ -11,7 +10,7 @@ export default class PhysicsCoordinates extends BaseLine {
     rb: any;
 
     init() {
-        let physics = GL.stores.phaser.mainCharacter.physics;
+        let physics = api.stores.phaser.mainCharacter.physics;
         this.rb = physics.getBody().rigidBody;
     }
 

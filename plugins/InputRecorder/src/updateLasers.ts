@@ -1,7 +1,6 @@
-import GL from 'gimloader';
 let lasers: any[] = [];
 
-GL.net.on("DEVICES_STATES_CHANGES", (packet: any) => {
+api.net.on("DEVICES_STATES_CHANGES", (packet: any) => {
     for(let i = 0; i < packet.changes.length; i++) {
         let device = packet.changes[i];
         if(lasers.some(l => l.id === device[0])) {
@@ -17,16 +16,16 @@ export function stopUpdatingLasers() {
 
 export function updateLasers(frame: number) {
     if(lasers.length === 0) {
-        lasers = GL.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
+        lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
     }
 
     // lasers turn on for 36 frames and off for 30 frames
-    let states = GL.stores.world.devices.states
-    let devices = GL.stores.phaser.scene.worldManager.devices
+    let states = api.stores.world.devices.states
+    let devices = api.stores.phaser.scene.worldManager.devices
     let active = frame % 66 < 36;
 
     if(!states.has(lasers[0].id)) {
-        lasers = GL.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
+        lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
     }
 
     for(let laser of lasers) {

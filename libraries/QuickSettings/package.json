@@ -1,6 +1,6 @@
 {
   "name": "quicksettings",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Easily make simple settings menus",
   "author": "TheLazySquid",
   "main": "src/index.ts",
@@ -15,7 +15,6 @@
     "svelte": "4.2.19"
   },
   "dependencies": {
-    "gimloader": "^1.0.2",
     "svelte-toggle": "^4.0.1"
   }
 }

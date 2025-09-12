@@ -2,12 +2,10 @@
  * @name Desync
  * @description Stop synchronizing the client's position with the server
  * @author TheLazySquid
- * @version 0.1.0
+ * @version 0.1.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js
  * @isLibrary true
  */
-
-const api = new GL();
 
 let enabled = false;
 api.onStop(() => enabled = false);

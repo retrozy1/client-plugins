@@ -1,10 +1,9 @@
-import GL from 'gimloader';
 import { ISharedValues } from "../types";
 
 let lasers: any[] = [];
-let laserOffset: number = GL.storage.getValue("laserOffset", 0);
+let laserOffset: number = api.storage.getValue("laserOffset", 0);
 
-GL.net.on("DEVICES_STATES_CHANGES", (packet: any) => {
+api.net.on("DEVICES_STATES_CHANGES", (packet: any) => {
     for(let i = 0; i < packet.changes.length; i++) {
         let device = packet.changes[i];
         if(lasers.some(l => l.id === device[0])) {
@@ -15,11 +14,11 @@ GL.net.on("DEVICES_STATES_CHANGES", (packet: any) => {
 })
 
 export function initLasers(values: ISharedValues) {
-    GL.hotkeys.addHotkey({
+    api.hotkeys.addHotkey({
         key: "KeyL",
         alt: true
     }, () => {
-        GL.hotkeys.releaseAll();
+        api.hotkeys.releaseAll();
 
         let offset = prompt(`Enter the laser offset in frames, from 0 to 65 (currently ${laserOffset})`)
         if(offset === null) return;
@@ -42,21 +41,21 @@ export function getLaserOffset() {
 
 export function setLaserOffset(offset: number) {
     laserOffset = offset;
-    GL.storage.getValue("laserOffset", offset);
+    api.storage.getValue("laserOffset", offset);
 }
 
 export function updateLasers(frame: number) {
     if(lasers.length === 0) {
-        lasers = GL.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
+        lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
     }
 
     // lasers turn on for 36 frames and off for 30 frames
-    let states = GL.stores.world.devices.states
-    let devices = GL.stores.phaser.scene.worldManager.devices
+    let states = api.stores.world.devices.states
+    let devices = api.stores.phaser.scene.worldManager.devices
     let active = (frame + laserOffset) % 66 < 36;
 
     if(!states.has(lasers[0].id)) {
-        lasers = GL.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
+        lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d: any) => d.laser)
     }
 
     for(let laser of lasers) {

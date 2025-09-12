@@ -2,7 +2,7 @@
  * @name InputRecorder
  * @description Records your inputs in Don't Look Down
  * @author TheLazySquid
- * @version 0.2.3
+ * @version 0.2.4
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InputRecorder/build/InputRecorder.js
  * @webpage https://gimloader.github.io/plugins/inputrecorder
  * @reloadRequired ingame
@@ -10,16 +10,9 @@
  */
 
 
-// ../../node_modules/gimloader/index.js
-var api = new GL();
-var gimloader_default = api;
-
-// ../../node_modules/gimloader/global.js
-var global_default = GL;
-
 // src/updateLasers.ts
 var lasers = [];
-gimloader_default.net.on("DEVICES_STATES_CHANGES", (packet) => {
+api.net.on("DEVICES_STATES_CHANGES", (packet) => {
   for (let i = 0; i < packet.changes.length; i++) {
     let device = packet.changes[i];
     if (lasers.some((l) => l.id === device[0])) {
@@ -33,13 +26,13 @@ function stopUpdatingLasers() {
 }
 function updateLasers(frame) {
   if (lasers.length === 0) {
-    lasers = gimloader_default.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
+    lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
   }
-  let states = gimloader_default.stores.world.devices.states;
-  let devices = gimloader_default.stores.phaser.scene.worldManager.devices;
+  let states = api.stores.world.devices.states;
+  let devices = api.stores.phaser.scene.worldManager.devices;
   let active = frame % 66 < 36;
   if (!states.has(lasers[0].id)) {
-    lasers = gimloader_default.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
+    lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
   }
   for (let laser of lasers) {
     if (!states.has(laser.id)) {
@@ -75,9 +68,9 @@ var Recorder = class {
     }
     physicsManager.bodies.activeBodies.disableBody = () => {
     };
-    this.physics = gimloader_default.stores.phaser.mainCharacter.physics;
+    this.physics = api.stores.phaser.mainCharacter.physics;
     this.rb = this.physics.getBody().rigidBody;
-    this.inputManager = gimloader_default.stores.phaser.scene.inputManager;
+    this.inputManager = api.stores.phaser.scene.inputManager;
     this.getPhysicsInput = this.inputManager.getPhysicsInput;
   }
   toggleRecording() {
@@ -90,9 +83,9 @@ var Recorder = class {
     this.recording = true;
     this.startPos = this.rb.translation();
     this.startState = JSON.stringify(this.physics.state);
-    this.platformerPhysics = JSON.stringify(global_default.platformerPhysics);
+    this.platformerPhysics = JSON.stringify(GL.platformerPhysics);
     this.frames = [];
-    gimloader_default.notification.open({ message: "Started Recording" });
+    api.notification.open({ message: "Started Recording" });
     this.inputManager.getPhysicsInput = this.getPhysicsInput;
     this.physicsManager.physicsStep = (dt) => {
       this.frames.push(this.inputManager.getPhysicsInput());
@@ -113,21 +106,21 @@ var Recorder = class {
     };
     let blob = new Blob([JSON.stringify(json)], { type: "application/json" });
     let url = URL.createObjectURL(blob);
-    let name = gimloader_default.stores.phaser.mainCharacter.nametag.name;
+    let name = api.stores.phaser.mainCharacter.nametag.name;
     let a = document.createElement("a");
     a.href = url;
     a.download = fileName ?? `recording-${name}.json`;
     a.click();
   }
   async playback(data) {
-    gimloader_default.lib("DLDUtils").cancelRespawn();
+    api.lib("DLDUtils").cancelRespawn();
     this.playing = true;
-    this.platformerPhysics = JSON.stringify(global_default.platformerPhysics);
+    this.platformerPhysics = JSON.stringify(GL.platformerPhysics);
     this.rb.setTranslation(data.startPos, true);
     this.physics.state = JSON.parse(data.startState);
-    Object.assign(global_default.platformerPhysics, JSON.parse(data.platformerPhysics));
+    Object.assign(GL.platformerPhysics, JSON.parse(data.platformerPhysics));
     this.physicsManager.physicsStep = (dt) => {
-      gimloader_default.stores.phaser.mainCharacter.physics.postUpdate(dt);
+      api.stores.phaser.mainCharacter.physics.postUpdate(dt);
     };
     await new Promise((resolve) => setTimeout(resolve, 1500));
     let currentFrame = 0;
@@ -135,7 +128,7 @@ var Recorder = class {
       let frame = data.frames[currentFrame];
       if (!frame) {
         this.stopPlayback();
-        gimloader_default.notification.open({ message: "Playback finished" });
+        api.notification.open({ message: "Playback finished" });
         return;
       }
       this.inputManager.getPhysicsInput = () => frame;
@@ -146,7 +139,7 @@ var Recorder = class {
   }
   stopPlayback() {
     this.playing = false;
-    Object.assign(global_default.platformerPhysics, JSON.parse(this.platformerPhysics));
+    Object.assign(GL.platformerPhysics, JSON.parse(this.platformerPhysics));
     stopUpdatingLasers();
     this.physicsManager.physicsStep = this.nativeStep;
     this.inputManager.getPhysicsInput = this.getPhysicsInput;
@@ -155,50 +148,50 @@ var Recorder = class {
 
 // src/index.ts
 var recorder;
-gimloader_default.hotkeys.addHotkey({
+api.hotkeys.addHotkey({
   key: "KeyR",
   alt: true
 }, () => {
   if (!recorder) return;
   if (recorder.playing) {
-    gimloader_default.notification.open({ message: "Cannot record while playing", type: "error" });
+    api.notification.open({ message: "Cannot record while playing", type: "error" });
     return;
   }
   if (recorder.recording) {
-    gimloader_default.hotkeys.releaseAll();
+    api.hotkeys.releaseAll();
   }
   recorder.toggleRecording();
 });
-gimloader_default.hotkeys.addHotkey({
+api.hotkeys.addHotkey({
   key: "KeyB",
   alt: true
 }, () => {
   if (!recorder) return;
   if (recorder.recording) {
-    gimloader_default.notification.open({ message: "Cannot playback while recording", type: "error" });
+    api.notification.open({ message: "Cannot playback while recording", type: "error" });
     return;
   }
   if (recorder.playing) {
     recorder.stopPlayback();
-    gimloader_default.notification.open({ message: "Playback canceled" });
+    api.notification.open({ message: "Playback canceled" });
   } else {
     let input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
     input.onchange = async () => {
-      gimloader_default.hotkeys.releaseAll();
+      api.hotkeys.releaseAll();
       let file = input.files?.[0];
       if (!file) return;
       let json = await file.text();
       let data = JSON.parse(json);
-      gimloader_default.notification.open({ message: "Starting Playback" });
+      api.notification.open({ message: "Starting Playback" });
       recorder.playback(data);
     };
     input.click();
   }
 });
-gimloader_default.net.onLoad(() => {
-  recorder = new Recorder(gimloader_default.stores.phaser.scene.worldManager.physics);
+api.net.onLoad(() => {
+  recorder = new Recorder(api.stores.phaser.scene.worldManager.physics);
 });
 function getRecorder() {
   return recorder;

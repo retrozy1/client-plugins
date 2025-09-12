@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import defaultThemes from '../defaultThemes.json';
 import ThemePreview from './themePreview';
 import { Theme } from '../types';
@@ -38,7 +37,7 @@ export default function ThemePicker(props: {
     const openThemeCreator = () => {
         let creatingTheme: Theme;
 
-        GL.UI.showModal(<ThemeCreator onChange={(theme) => creatingTheme = theme} />, {
+        api.UI.showModal(<ThemeCreator onChange={(theme) => creatingTheme = theme} />, {
             id: "ThemeCreator",
             title: "Create New Theme",
             closeOnBackgroundClick: false,

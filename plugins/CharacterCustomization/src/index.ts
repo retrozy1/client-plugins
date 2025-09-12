@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 // @ts-ignore
 import UI from './UI.svelte';
 import CosmeticChanger from './cosmeticChanger';
@@ -15,7 +14,7 @@ function showUI() {
         }
     });
 
-    GL.UI.showModal(div, {
+    api.UI.showModal(div, {
         id: "CharacterCustomization",
         title: "Character Customization",
         closeOnBackgroundClick: false,
@@ -40,8 +39,8 @@ function showUI() {
     });
 }
 
-GL.hotkeys.addHotkey({
+api.hotkeys.addHotkey({
     key: "KeyC",
     alt: true
 }, showUI);
-GL.openSettingsMenu(() => showUI());
+api.openSettingsMenu(() => showUI());

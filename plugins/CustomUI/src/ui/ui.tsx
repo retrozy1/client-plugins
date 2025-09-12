@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import type UIChanger from "../uiChanger";
 import ThemePreview from "./themePreview";
 import defaultThemes from '../defaultThemes.json';
@@ -31,7 +30,7 @@ export default function UI({ uiChanger, onConfirm }: { uiChanger: UIChanger, onC
     })
 
     const openThemePicker = () => {
-        GL.UI.showModal(<ThemePicker
+        api.UI.showModal(<ThemePicker
             themeType={themeType} setThemeType={setThemeType}
             themeIndex={themeIndex} setThemeIndex={setThemeIndex}
             customThemes={customThemes} setCustomThemes={setCustomThemes}

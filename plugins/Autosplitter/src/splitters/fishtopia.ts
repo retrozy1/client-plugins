@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { boatChannels, fishtopiaSplits } from "../constants";
 import SplitsUI from "../ui/splits";
 import { SplitsAutosplitter } from "./autosplitter";
@@ -14,9 +13,9 @@ export default class FishtopiaAutosplitter extends SplitsAutosplitter {
     constructor() {
         super("Fishtopia");
 
-        let gameSession = GL.net.room.state.session.gameSession;
+        let gameSession = api.net.room.state.session.gameSession;
 
-        GL.net.room.state.session.listen("loadingPhase", (val: boolean) => {
+        api.net.room.state.session.listen("loadingPhase", (val: boolean) => {
             if(val) return;
 
             if(gameSession.phase === "game") {
@@ -33,10 +32,10 @@ export default class FishtopiaAutosplitter extends SplitsAutosplitter {
             }
         });
 
-        GL.net.on("send:MESSAGE_FOR_DEVICE", (e: any) => {
+        api.net.on("send:MESSAGE_FOR_DEVICE", (e: any) => {
             let id = e.deviceId;
             if(!id) return;
-            let device = GL.stores.phaser.scene.worldManager.devices.getDeviceById(id);
+            let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
             let channel = device?.options?.channel;
             if(!channel) return;
             if(!boatChannels.includes(channel)) return;
@@ -45,15 +44,15 @@ export default class FishtopiaAutosplitter extends SplitsAutosplitter {
             if(this.usedChannels.has(channel)) return;
             this.usedChannels.add(channel);
 
-            GL.net.once("PHYSICS_STATE", (e: any) => {
+            api.net.once("PHYSICS_STATE", (e: any) => {
                 if(e.teleport) {
                     this.timer.split();
                 }
             });
         });
 
-        let id = GL.stores.phaser.mainCharacter.id;
-        GL.net.room.state.characters.get(id).inventory.slots.onChange((_: any, key: string) => {
+        let id = api.stores.phaser.mainCharacter.id;
+        api.net.room.state.characters.get(id).inventory.slots.onChange((_: any, key: string) => {
             if(key === "gim-fish") {
                 this.timer.split();
                 this.timer.stop();

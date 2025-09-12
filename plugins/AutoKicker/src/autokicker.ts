@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { IBlacklistedName } from "./types";
 import outOfCharacter from "out-of-character";
 
@@ -23,11 +22,11 @@ export default class AutoKicker {
     constructor() {
         this.loadSettings();
 
-        GL.onStop(() => this.dispose());
+        api.onStop(() => this.dispose());
     }
 
     loadSettings() {
-        let settings = GL.storage.getValue("Settings", {});
+        let settings = api.storage.getValue("Settings", {});
 
         this.kickDuplicateNames = settings.kickDuplicateNames ?? false;
         this.kickSkinless = settings.kickSkinless ?? false;
@@ -38,7 +37,7 @@ export default class AutoKicker {
     }
 
     saveSettings() {
-        GL.storage.setValue("Settings", {
+        api.storage.setValue("Settings", {
             kickDuplicateNames: this.kickDuplicateNames,
             kickSkinless: this.kickSkinless,
             blacklist: this.blacklist,
@@ -49,9 +48,9 @@ export default class AutoKicker {
     }
 
     start() {                
-        if(GL.net.type === "Colyseus") {
-            this.myId = GL.stores.phaser.mainCharacter.id;
-            let chars = GL.net.room.serializer.state.characters;
+        if(api.net.type === "Colyseus") {
+            this.myId = api.stores.phaser.mainCharacter.id;
+            let chars = api.net.room.serializer.state.characters;
 
             this.unOnAdd = chars.onAdd((e: any) => {
                 if(!e || e.id === this.myId) return;
@@ -81,7 +80,7 @@ export default class AutoKicker {
                 this.scanPlayersColyseus();
             })
         } else {
-            GL.net.on("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
+            api.net.on("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
         }
     }
 
@@ -115,10 +114,10 @@ export default class AutoKicker {
 
     setKickIdle(value: boolean) {
         this.kickIdle = value;
-        if(GL.net.type !== "Colyseus") return;
+        if(api.net.type !== "Colyseus") return;
 
         if(value) {
-            for(let [id, char] of GL.net.room.serializer.state.characters.entries()) {
+            for(let [id, char] of api.net.room.serializer.state.characters.entries()) {
                 if(id === this.myId) continue;
                 if(this.idleKickTimeouts.has(id)) continue;
 
@@ -144,7 +143,7 @@ export default class AutoKicker {
     }
 
     scanPlayers() {
-        if(GL.net.type === "Colyseus") this.scanPlayersColyseus();
+        if(api.net.type === "Colyseus") this.scanPlayersColyseus();
         else this.scanPlayersBlueboat();
     }
 
@@ -179,7 +178,7 @@ export default class AutoKicker {
     }
 
     scanPlayersColyseus() {
-        let characters = GL.net.room.state.characters;
+        let characters = api.net.room.state.characters;
         let nameCount = new Map<string, number>();
 
         // tally name counts
@@ -257,10 +256,10 @@ export default class AutoKicker {
         if(this.kicked.has(id)) return;
         this.kicked.add(id);
 
-        let char = GL.net.room.state.characters.get(id)!;
+        let char = api.net.room.state.characters.get(id)!;
         
-        GL.net.send("KICK_PLAYER", { characterId: id });
-        GL.notification.open({ message: `Kicked ${char.name} for ${reason}` })
+        api.net.send("KICK_PLAYER", { characterId: id });
+        api.notification.open({ message: `Kicked ${char.name} for ${reason}` })
     }
 
     blueboatKick(id: string, reason: string) {
@@ -269,12 +268,12 @@ export default class AutoKicker {
 
         let playername = this.lastLeaderboard.find((e: any) => e.id === id)?.name;
 
-        GL.net.send("KICK_PLAYER", id);
-        GL.notification.open({ message: `Kicked ${playername} for ${reason}` })
+        api.net.send("KICK_PLAYER", id);
+        api.notification.open({ message: `Kicked ${playername} for ${reason}` })
     }
 
     dispose() {
         this.unOnAdd?.();
-        GL.net.off("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
+        api.net.off("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
     }
 }

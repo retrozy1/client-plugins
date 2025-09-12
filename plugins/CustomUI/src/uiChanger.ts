@@ -1,23 +1,22 @@
-import GL from 'gimloader';
 import { Theme } from './types';
 import defaultThemes from './defaultThemes.json';
 
 export default class UIChanger {
-    hideTopBar: boolean = GL.storage.getValue("hideTopBar", false);
+    hideTopBar: boolean = api.storage.getValue("hideTopBar", false);
 
-    useCustomTheme: boolean = GL.storage.getValue("useCustomTheme", false);
-    customThemes: Theme[] = GL.storage.getValue("themes", []);
-    themeType: "default" | "custom" = GL.storage.getValue("themeType", "default");
-    themeIndex: number = GL.storage.getValue("themeIndex", 0);
+    useCustomTheme: boolean = api.storage.getValue("useCustomTheme", false);
+    customThemes: Theme[] = api.storage.getValue("themes", []);
+    themeType: "default" | "custom" = api.storage.getValue("themeType", "default");
+    themeIndex: number = api.storage.getValue("themeIndex", 0);
 
-    questionOpacity: number = GL.storage.getValue("questionOpacity", 1);
+    questionOpacity: number = api.storage.getValue("questionOpacity", 1);
 
     constructor() {
         window.addEventListener("mousemove", this.boundOnMouseMove);
 
         this.onSettingsUpdate();
 
-        GL.onStop(() => this.stop());
+        api.onStop(() => this.stop());
     }
 
     boundOnMouseMove = this.onMouseMove.bind(this);
@@ -45,12 +44,12 @@ export default class UIChanger {
         this.questionOpacity = questionOpacity;
 
         // save settings
-        GL.storage.setValue("hideTopBar", hideTopBar);
-        GL.storage.setValue("useCustomTheme", useCustomTheme);
-        GL.storage.setValue("themes", customThemes);
-        GL.storage.setValue("themeType", themeType);
-        GL.storage.setValue("themeIndex", themeIndex);
-        GL.storage.setValue("questionOpacity", questionOpacity);
+        api.storage.setValue("hideTopBar", hideTopBar);
+        api.storage.setValue("useCustomTheme", useCustomTheme);
+        api.storage.setValue("themes", customThemes);
+        api.storage.setValue("themeType", themeType);
+        api.storage.setValue("themeIndex", themeIndex);
+        api.storage.setValue("questionOpacity", questionOpacity);
 
         this.onSettingsUpdate();
     }

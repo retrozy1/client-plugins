@@ -2,7 +2,7 @@
  * @name CharacterCustomization
  * @description Allows you to use any gim or a custom gim client-side
  * @author TheLazySquid
- * @version 0.6.0
+ * @version 0.6.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CharacterCustomization/build/CharacterCustomization.js
  * @webpage https://gimloader.github.io/plugins/charactercustomization
  * @hasSettings true
@@ -619,10 +619,6 @@ var require_dist = __commonJS({
     } });
   }
 });
-
-// ../../node_modules/gimloader/index.js
-var api = new GL();
-var gimloader_default = api;
 
 // ../../node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
@@ -1304,15 +1300,15 @@ function add_css(target) {
 }
 function get_each_context(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[18] = list[i];
-  child_ctx[19] = list;
-  child_ctx[20] = i;
+  child_ctx[17] = list[i];
+  child_ctx[18] = list;
+  child_ctx[19] = i;
   return child_ctx;
 }
 function get_each_context_1(ctx, list, i) {
   const child_ctx = ctx.slice();
-  child_ctx[21] = list[i];
-  child_ctx[23] = i;
+  child_ctx[20] = list[i];
+  child_ctx[22] = i;
   return child_ctx;
 }
 function create_if_block_4(ctx) {
@@ -1516,7 +1512,7 @@ function create_else_block(ctx) {
   let t;
   let each_value_1 = ensure_array_like(
     /*category*/
-    ctx[18].options
+    ctx[17].options
   );
   let each_blocks = [];
   for (let i = 0; i < each_value_1.length; i += 1) {
@@ -1545,7 +1541,7 @@ function create_else_block(ctx) {
       96) {
         each_value_1 = ensure_array_like(
           /*category*/
-          ctx2[18].options
+          ctx2[17].options
         );
         let i;
         for (i = 0; i < each_value_1.length; i += 1) {
@@ -1580,7 +1576,7 @@ function create_if_block_3(ctx) {
     ctx[13].call(
       input,
       /*category*/
-      ctx[18]
+      ctx[17]
     );
   }
   return {
@@ -1595,7 +1591,7 @@ function create_if_block_3(ctx) {
         /*selectedStyles*/
         ctx[5][
           /*category*/
-          ctx[18].name
+          ctx[17].name
         ]
       );
       if (!mounted) {
@@ -1612,7 +1608,7 @@ function create_if_block_3(ctx) {
           /*selectedStyles*/
           ctx[5][
             /*category*/
-            ctx[18].name
+            ctx[17].name
           ]
         );
       }
@@ -1635,9 +1631,9 @@ function create_each_block_1(ctx) {
       /*click_handler*/
       ctx[14](
         /*category*/
-        ctx[18],
+        ctx[17],
         /*option*/
-        ctx[21]
+        ctx[20]
       )
     );
   }
@@ -1649,7 +1645,7 @@ function create_each_block_1(ctx) {
         button,
         "background-color",
         /*option*/
-        ctx[21].preview.color
+        ctx[20].preview.color
       );
       toggle_class(
         button,
@@ -1657,17 +1653,17 @@ function create_each_block_1(ctx) {
         /*selectedStyles*/
         ctx[5][
           /*category*/
-          ctx[18].name
+          ctx[17].name
         ] ? (
           /*selectedStyles*/
           ctx[5][
             /*category*/
-            ctx[18].name
+            ctx[17].name
           ] === /*option*/
-          ctx[21].name
+          ctx[20].name
         ) : (
           /*i*/
-          ctx[23] === 0
+          ctx[22] === 0
         )
       );
     },
@@ -1686,7 +1682,7 @@ function create_each_block_1(ctx) {
           button,
           "background-color",
           /*option*/
-          ctx[21].preview.color
+          ctx[20].preview.color
         );
       }
       if (dirty & /*selectedStyles, styles*/
@@ -1697,17 +1693,17 @@ function create_each_block_1(ctx) {
           /*selectedStyles*/
           ctx[5][
             /*category*/
-            ctx[18].name
+            ctx[17].name
           ] ? (
             /*selectedStyles*/
             ctx[5][
               /*category*/
-              ctx[18].name
+              ctx[17].name
             ] === /*option*/
-            ctx[21].name
+            ctx[20].name
           ) : (
             /*i*/
-            ctx[23] === 0
+            ctx[22] === 0
           )
         );
       }
@@ -1725,7 +1721,7 @@ function create_each_block(ctx) {
   let h2;
   let t0_value = (
     /*category*/
-    ctx[18].name + ""
+    ctx[17].name + ""
   );
   let t0;
   let t1;
@@ -1733,7 +1729,7 @@ function create_each_block(ctx) {
   function select_block_type_1(ctx2, dirty) {
     if (
       /*category*/
-      ctx2[18].type === "color"
+      ctx2[17].type === "color"
     ) return create_if_block_3;
     return create_else_block;
   }
@@ -1757,7 +1753,7 @@ function create_each_block(ctx) {
     p(ctx2, dirty) {
       if (dirty & /*styles*/
       64 && t0_value !== (t0_value = /*category*/
-      ctx2[18].name + "")) set_data(t0, t0_value);
+      ctx2[17].name + "")) set_data(t0, t0_value);
       if (current_block_type === (current_block_type = select_block_type_1(ctx2, dirty)) && if_block) {
         if_block.p(ctx2, dirty);
       } else {
@@ -2028,33 +2024,6 @@ function create_fragment(ctx) {
 }
 var keydown_handler = (e) => e.stopPropagation();
 function instance($$self, $$props, $$invalidate) {
-  var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
-    function adopt(value) {
-      return value instanceof P ? value : new P(function(resolve) {
-        resolve(value);
-      });
-    }
-    return new (P || (P = Promise))(function(resolve, reject) {
-      function fulfilled(value) {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function rejected(value) {
-        try {
-          step(generator["throw"](value));
-        } catch (e) {
-          reject(e);
-        }
-      }
-      function step(result) {
-        result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-      }
-      step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-  };
   let { cosmeticChanger: cosmeticChanger2 } = $$props;
   let skinType = cosmeticChanger2.skinType;
   let skinId = cosmeticChanger2.skinId;
@@ -2067,8 +2036,7 @@ function instance($$self, $$props, $$invalidate) {
     input.type = "file";
     input.accept = ".png";
     input.onchange = () => {
-      var _a;
-      let file = (_a = input.files) === null || _a === void 0 ? void 0 : _a[0];
+      let file = input.files?.[0];
       if (!file) {
         $$invalidate(4, customSkinFile = null);
       } else {
@@ -2078,27 +2046,24 @@ function instance($$self, $$props, $$invalidate) {
     input.click();
   }
   let styles;
-  function onSkinIdEntered() {
-    return __awaiter(this, void 0, void 0, function* () {
-      var _a;
-      $$invalidate(6, styles = null);
-      if (!skinId) return;
-      let url = `https://www.gimkit.com/assets/map/characters/spine/${skinId}.json`;
-      let res = yield fetch(url);
-      if ((_a = res.headers.get("content-type")) === null || _a === void 0 ? void 0 : _a.startsWith("text/html")) {
-        return;
+  async function onSkinIdEntered() {
+    $$invalidate(6, styles = null);
+    if (!skinId) return;
+    let url = `https://www.gimkit.com/assets/map/characters/spine/${skinId}.json`;
+    let res = await fetch(url);
+    if (res.headers.get("content-type")?.startsWith("text/html")) {
+      return;
+    }
+    let json = await res.json();
+    let skinData = (0, import_compress_json.decompress)(json);
+    if (!skinData.style) return;
+    $$invalidate(6, styles = skinData.style);
+    console.log(styles);
+    for (let style of styles.categories) {
+      if (style.type === "color") {
+        $$invalidate(5, selectedStyles[style.name] = style.color.defaultColor, selectedStyles);
       }
-      let json = yield res.json();
-      let skinData = (0, import_compress_json.decompress)(json);
-      if (!skinData.style) return;
-      $$invalidate(6, styles = skinData.style);
-      console.log(styles);
-      for (let style of styles.categories) {
-        if (style.type === "color") {
-          $$invalidate(5, selectedStyles[style.name] = style.color.defaultColor, selectedStyles);
-        }
-      }
-    });
+    }
   }
   function save() {
     cosmeticChanger2.setSkin(skinType, skinId, customSkinFile, selectedStyles);
@@ -2168,11 +2133,11 @@ var gim_json_default = '[["skeleton","bones","slots","transform","physics","skin
 
 // src/cosmeticChanger.ts
 var CosmeticChanger = class {
-  skinType = gimloader_default.storage.getValue("skinType", "default");
-  trailType = gimloader_default.storage.getValue("trailType", "default");
-  skinId = gimloader_default.storage.getValue("skinId", "");
-  trailId = gimloader_default.storage.getValue("trailId", "");
-  selectedStyles = gimloader_default.storage.getValue("selectedStyles", {});
+  skinType = api.storage.getValue("skinType", "default");
+  trailType = api.storage.getValue("trailType", "default");
+  skinId = api.storage.getValue("skinId", "");
+  trailId = api.storage.getValue("trailId", "");
+  selectedStyles = api.storage.getValue("selectedStyles", {});
   normalSkin;
   allowNextSkin = false;
   normalTrail = "";
@@ -2182,10 +2147,10 @@ var CosmeticChanger = class {
   stopped = false;
   constructor() {
     this.initCustomSkinFile();
-    gimloader_default.net.onLoad((type) => {
+    api.net.onLoad((type) => {
       if (type !== "Colyseus") return;
       this.loadCustomSkin();
-      const mc = gimloader_default.stores?.phaser?.mainCharacter;
+      const mc = api.stores?.phaser?.mainCharacter;
       const skin = mc?.skin;
       const characterTrail = mc?.characterTrail;
       this.normalSkin = { id: skin.skinId, editStyles: Object.assign({}, skin.editStyles) };
@@ -2193,10 +2158,10 @@ var CosmeticChanger = class {
       this.normalTrail = characterTrail.currentAppearanceId;
       this.patchTrail(characterTrail);
     });
-    gimloader_default.onStop(() => this.reset());
+    api.onStop(() => this.reset());
   }
   get authId() {
-    return gimloader_default.stores?.network.authId;
+    return api.stores?.network.authId;
   }
   loadCustomSkin() {
     if (!this.customSkinFile) return;
@@ -2219,9 +2184,9 @@ var CosmeticChanger = class {
         super(loader, key, url, config);
       }
     }
-    gimloader_default.onStop(() => fileTypes.ImageFile = imgFile);
+    api.onStop(() => fileTypes.ImageFile = imgFile);
     fileTypes.ImageFile = newImgFile;
-    let load = gimloader_default.stores.phaser.scene.load;
+    let load = api.stores.phaser.scene.load;
     let jsonRes = load.spineJson("customSkin-data", jsonUrl);
     let atlasRes = load.spineAtlas("customSkin-atlas", atlasUrl);
     let running = 2;
@@ -2231,7 +2196,7 @@ var CosmeticChanger = class {
       URL.revokeObjectURL(textureUrl);
       URL.revokeObjectURL(atlasUrl);
       URL.revokeObjectURL(jsonUrl);
-      let skin = gimloader_default.stores.phaser.mainCharacter?.skin;
+      let skin = api.stores.phaser.mainCharacter?.skin;
       if (skin && this.skinType === "custom") {
         this.allowNextSkin = true;
         skin.updateSkin({ id: "customSkin" });
@@ -2243,8 +2208,8 @@ var CosmeticChanger = class {
     atlasRes.start();
   }
   async initCustomSkinFile() {
-    let file = gimloader_default.storage.getValue("customSkinFile");
-    let fileName = gimloader_default.storage.getValue("customSkinFileName");
+    let file = api.storage.getValue("customSkinFile");
+    let fileName = api.storage.getValue("customSkinFileName");
     if (!file || !fileName) return;
     let byteString = atob(file.substring(file.indexOf(",") + 1));
     let ab = new ArrayBuffer(byteString.length);
@@ -2259,7 +2224,7 @@ var CosmeticChanger = class {
       console.log({ id: this.skinId, editStyles: this.selectedStyles });
       skin.updateSkin({ id: this.skinId, editStyles: this.selectedStyles });
     }
-    gimloader_default.patcher.before(skin, "updateSkin", (_, args) => {
+    api.patcher.before(skin, "updateSkin", (_, args) => {
       if (this.allowNextSkin) {
         this.allowNextSkin = false;
       } else {
@@ -2272,7 +2237,7 @@ var CosmeticChanger = class {
     if (this.trailType === "id") {
       trail.updateAppearance(this.formatTrail(this.trailId));
     }
-    gimloader_default.patcher.before(trail, "updateAppearance", (_, args) => {
+    api.patcher.before(trail, "updateAppearance", (_, args) => {
       if (this.allowNextTrail) {
         this.allowNextTrail = false;
       } else {
@@ -2286,23 +2251,23 @@ var CosmeticChanger = class {
     this.skinId = skinId;
     this.customSkinFile = customSkinFile;
     this.selectedStyles = selectedStyles;
-    gimloader_default.storage.setValue("skinType", skinType);
-    gimloader_default.storage.setValue("skinId", skinId);
-    gimloader_default.storage.setValue("selectedStyles", selectedStyles);
+    api.storage.setValue("skinType", skinType);
+    api.storage.setValue("skinId", skinId);
+    api.storage.setValue("selectedStyles", selectedStyles);
     if (!customSkinFile) {
-      gimloader_default.storage.deleteValue("customSkinFile");
-      gimloader_default.storage.deleteValue("customSkinFileName");
+      api.storage.deleteValue("customSkinFile");
+      api.storage.deleteValue("customSkinFileName");
     } else {
       let reader = new FileReader();
       reader.onload = () => {
-        gimloader_default.storage.setValue("customSkinFile", reader.result);
-        gimloader_default.storage.setValue("customSkinFileName", customSkinFile.name);
+        api.storage.setValue("customSkinFile", reader.result);
+        api.storage.setValue("customSkinFileName", customSkinFile.name);
       };
       reader.readAsDataURL(customSkinFile);
     }
-    let skin = gimloader_default.stores?.phaser?.mainCharacter?.skin;
+    let skin = api.stores?.phaser?.mainCharacter?.skin;
     if (skin) {
-      let cache = gimloader_default.stores.phaser.scene.cache.custom["esotericsoftware.spine.atlas.cache"];
+      let cache = api.stores.phaser.scene.cache.custom["esotericsoftware.spine.atlas.cache"];
       let entries = cache.entries.entries;
       let texture = entries["customSkin-atlas"]?.pages?.[0]?.texture;
       if (texture && this.customSkinFile) {
@@ -2335,9 +2300,9 @@ var CosmeticChanger = class {
   setTrail(trailType, trailId) {
     this.trailType = trailType;
     this.trailId = trailId;
-    gimloader_default.storage.setValue("trailType", trailType);
-    gimloader_default.storage.setValue("trailId", trailId);
-    let characterTrail = gimloader_default.stores?.phaser?.mainCharacter?.characterTrail;
+    api.storage.setValue("trailType", trailType);
+    api.storage.setValue("trailId", trailId);
+    let characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
     if (characterTrail) {
       this.allowNextTrail = true;
       if (trailType === "id") {
@@ -2349,12 +2314,12 @@ var CosmeticChanger = class {
   }
   reset() {
     this.stopped = true;
-    let characterTrail = gimloader_default.stores?.phaser?.mainCharacter?.characterTrail;
+    let characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
     if (characterTrail) {
       characterTrail.updateAppearance(this.normalTrail);
       characterTrail.currentAppearanceId = this.normalTrail;
     }
-    let skin = gimloader_default.stores?.phaser?.mainCharacter?.skin;
+    let skin = api.stores?.phaser?.mainCharacter?.skin;
     if (skin) {
       skin.updateSkin(this.normalSkin);
     }
@@ -2374,7 +2339,7 @@ function showUI() {
       cosmeticChanger
     }
   });
-  gimloader_default.UI.showModal(div, {
+  api.UI.showModal(div, {
     id: "CharacterCustomization",
     title: "Character Customization",
     closeOnBackgroundClick: false,
@@ -2397,8 +2362,8 @@ function showUI() {
     ]
   });
 }
-gimloader_default.hotkeys.addHotkey({
+api.hotkeys.addHotkey({
   key: "KeyC",
   alt: true
 }, showUI);
-gimloader_default.openSettingsMenu(() => showUI());
+api.openSettingsMenu(() => showUI());

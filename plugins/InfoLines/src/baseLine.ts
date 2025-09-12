@@ -1,20 +1,18 @@
-import GL from 'gimloader';
-
 let frameCallbacks: (() => void)[] = [];
 let physicsTickCallbacks: (() => void)[] = [];
 
-GL.net.onLoad(() => {
-    let worldManager = GL.stores.phaser.scene.worldManager;
+api.net.onLoad(() => {
+    let worldManager = api.stores.phaser.scene.worldManager;
 
     // whenever a frame passes
-    GL.patcher.after(worldManager, "update", () => {
+    api.patcher.after(worldManager, "update", () => {
         for(let callback of frameCallbacks) {
             callback();
         }
     });
 
     // whenever a physics tick passes
-    GL.patcher.after(worldManager.physics, "physicsStep", () => {
+    api.patcher.after(worldManager.physics, "physicsStep", () => {
         for(let callback of physicsTickCallbacks) {
             callback();
         }
@@ -42,7 +40,7 @@ export default abstract class BaseLine {
     constructor() {
         // scuffed way to make sure settings are loaded after the constructor has run
         setTimeout(() => {
-            this.enabled = GL.storage.getValue(this.name, this.enabledDefault);
+            this.enabled = api.storage.getValue(this.name, this.enabledDefault);
             this.setupSettings()
 
             if(this.onFrame) {
@@ -59,7 +57,7 @@ export default abstract class BaseLine {
                 });
             }
     
-            GL.net.onLoad(() => {
+            api.net.onLoad(() => {
                 if(this.init) this.init();
             });
         }, 0);
@@ -69,7 +67,7 @@ export default abstract class BaseLine {
         if(this.settings) {
             for(let id in this.settings) {
                 let setting = this.settings[id];
-                setting.value = GL.storage.getValue(id, setting.default);
+                setting.value = api.storage.getValue(id, setting.default);
             }
         }
     }

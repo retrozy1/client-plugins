@@ -2,13 +2,12 @@
  * @name CrazyFlag
  * @description Make the flags in capture the flag or creative swing like crazy!
  * @author TheLazySquid
- * @version 1.2.0
+ * @version 1.2.1
  * @webpage https://gimloader.github.io/plugins/crazyflag
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  * @hasSettings true
  * @reloadRequired ingame
  */
-const api = new GL();
 
 let settings = api.lib("QuickSettings")("CrazyFlag", [
     { type: "heading", text: "Crazy Flag Settings" },

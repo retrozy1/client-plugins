@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 import { Theme } from "../types";
 
 export default function ThemePreview(props: { theme: Theme, text?: string, onClick?: () => void }) {

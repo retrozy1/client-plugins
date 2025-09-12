@@ -1,4 +1,3 @@
-import GL from 'gimloader';
 // @ts-ignore
 import styles from './styles.scss';
 import UI from './ui/ui';
@@ -6,15 +5,15 @@ import UIChanger from './uiChanger';
 
 let uiChanger = new UIChanger();
 
-GL.UI.addStyles(styles);
+api.UI.addStyles(styles);
 
-GL.openSettingsMenu(() => {
+api.openSettingsMenu(() => {
     let confirmFunc: () => void;
     let onConfirm = (callback: () => void) => {
         confirmFunc = callback;
     }
 
-    GL.UI.showModal(GL.React.createElement(UI, { uiChanger, onConfirm }), {
+    api.UI.showModal(GL.React.createElement(UI, { uiChanger, onConfirm }), {
         id: "CustomUI",
         title: "UI Customization Options",
         style: "min-width: 400px",
