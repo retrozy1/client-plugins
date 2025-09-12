@@ -1,4 +1,4 @@
-import { IBlacklistedName } from "./types";
+import type { IBlacklistedName } from "./types";
 import outOfCharacter from "out-of-character";
 
 export default class AutoKicker {
