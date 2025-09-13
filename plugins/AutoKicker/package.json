@@ -5,7 +5,8 @@
   "main": "build/AutoKicker.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gl build",
+    "serve": "gl serve"
   },
   "repository": {
     "type": "git",

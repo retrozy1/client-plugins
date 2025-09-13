@@ -9,7 +9,8 @@
   },
   "description": "Allows you to customize various things about the Gimkit UI",
   "scripts": {
-    "build": "gl build"
+    "build": "gl build",
+    "serve": "gl serve"
   },
   "type": "module"
 }

@@ -1,4 +1,4 @@
-import { ISharedValues } from "../types";
+import type { ISharedValues } from "../types";
 
 let lasers: any[] = [];
 let laserOffset: number = api.storage.getValue("laserOffset", 0);

@@ -15,7 +15,8 @@
   ],
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gl build",
+    "serve": "gl serve"
   },
   "type": "module"
 }

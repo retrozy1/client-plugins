@@ -12,7 +12,8 @@
   },
   "description": "Automatically times speedruns for various gamemodes",
   "scripts": {
-    "build": "gl build"
+    "build": "gl build",
+    "serve": "gl serve"
   },
   "type": "module"
 }

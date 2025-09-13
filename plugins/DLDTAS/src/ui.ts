@@ -1,4 +1,4 @@
-import { IFrameInfo, ISharedValues } from "../types";
+import type { IFrameInfo, ISharedValues } from "../types";
 import { initOverlay, showHitbox, hideHitbox } from "./overlay";
 import TASTools from "./tools";
 import { save } from "./util";

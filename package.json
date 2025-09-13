@@ -1,11 +1,8 @@
 {
     "name": "client-plugins",
     "description": "Official client-side plugins for Gimloader",
-    "workspaces": [
-        "plugins/*",
-        "libraries/*"
-    ],
     "devDependencies": {
+        "@gimloader/build": "^1.0.3",
         "@types/gimloader": "^1.6.0"
     }
 }

@@ -26,7 +26,8 @@
   ],
   "license": "MIT",
   "scripts": {
-    "generateJson": "node jsonGen/index.js"
+    "build": "gl build",
+    "serve": "gl serve"
   },
   "type": "module"
 }
