@@ -1,4 +1,4 @@
-import { Theme } from "../types";
+import type { Theme } from "../types";
 
 export default function ThemePreview(props: { theme: Theme, text?: string, onClick?: () => void }) {
     const React = GL.React;

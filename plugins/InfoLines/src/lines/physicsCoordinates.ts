@@ -1,4 +1,4 @@
-import BaseLine, { Settings } from "../baseLine";
+import BaseLine, { type Settings } from "../baseLine";
 
 export default class PhysicsCoordinates extends BaseLine {
     name = "Physics Coordinates";

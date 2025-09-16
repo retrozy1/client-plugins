@@ -1,4 +1,4 @@
-import { Theme } from './types';
+import type { Theme } from './types';
 import defaultThemes from './defaultThemes.json';
 
 export default class UIChanger {

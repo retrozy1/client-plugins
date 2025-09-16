@@ -1,4 +1,4 @@
-import BaseLine, { Settings } from "../baseLine";
+import BaseLine, { type Settings } from "../baseLine";
 
 export default class VisualCoordinates extends BaseLine {
     enabledDefault = true;

@@ -1,4 +1,4 @@
-import { Theme } from "../types";
+import type { Theme } from "../types";
 
 export default function ThemeCreator({ onChange }: { onChange: (theme: Theme) => void }) {
     const React = GL.React;

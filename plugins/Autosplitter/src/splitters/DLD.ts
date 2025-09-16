@@ -1,7 +1,7 @@
+import type { DLDData } from "../types";
 import { resetCoordinates, summitCoords, summitStartCoords } from "../constants";
 import BasicTimer from "../timers/basic";
 import SplitsTimer from "../timers/splits";
-import { DLDData } from "../types";
 import { DLDFullGameUI, DLDSummitUI } from "../ui/DLD";
 import { fmtMs, inArea, onFrame, onPhysicsStep } from "../util";
 import { SplitsAutosplitter } from "./autosplitter";

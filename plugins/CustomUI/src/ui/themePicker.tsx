@@ -1,6 +1,6 @@
+import type { Theme } from '../types';
 import defaultThemes from '../defaultThemes.json';
 import ThemePreview from './themePreview';
-import { Theme } from '../types';
 import { getBorderColor } from "../util";
 import ThemeCreator from './themeCreator';
 

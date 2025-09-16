@@ -1,4 +1,4 @@
-import { IFrameInfo, IRecording } from "../types"
+import type { IFrameInfo, IRecording } from "../types"
 import { stopUpdatingLasers, updateLasers } from "./updateLasers";
 
 export default class Recorder {

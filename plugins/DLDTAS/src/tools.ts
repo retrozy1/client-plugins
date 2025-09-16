@@ -1,4 +1,5 @@
-import { ISharedValues, Keycodes } from "../types"
+import type { ISharedValues } from "../types";
+import { Keycodes } from "../types";
 import { defaultState, generatePhysicsInput } from "./util";
 import { initLasers, updateLasers } from "./updateLasers";
 import { getMoveSpeed } from './index';

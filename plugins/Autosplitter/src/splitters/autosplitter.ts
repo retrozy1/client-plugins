@@ -1,4 +1,4 @@
-import { BasicData, GamemodeData, SplitsData } from "../types";
+import type { BasicData, GamemodeData, SplitsData } from "../types";
 import { getGamemodeData } from "../util";
 
 export abstract class Autosplitter {

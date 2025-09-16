@@ -1,4 +1,4 @@
-import { DLDData, SplitsData } from "./types";
+import type { DLDData, SplitsData } from "./types";
 
 export function getGamemodeData(gamemode: string) {
     switch(gamemode) {
