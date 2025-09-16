@@ -1,5 +1,5 @@
+import { invisRegex } from "./consts";
 import type { IBlacklistedName } from "./types";
-import outOfCharacter from "out-of-character";
 
 export default class AutoKicker {
     myId: string;
@@ -246,8 +246,7 @@ export default class AutoKicker {
     }
 
     checkIfNameBlank(name: string) {
-        let newName = outOfCharacter.replace(name).replaceAll(/\s/g, "");
-        console.log("name", name.length, "new name", newName.length);
+        let newName = name.replaceAll(invisRegex, "");
         if(newName.length === 0) return true;
         return false;
     }

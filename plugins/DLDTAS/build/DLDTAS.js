@@ -8,7 +8,6 @@
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  */
 
-
 // src/styles.scss
 var styles_default = `#startTasBtn {
   position: fixed;

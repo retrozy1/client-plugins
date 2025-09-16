@@ -7,7 +7,6 @@
  * @webpage https://gimloader.github.io/plugins/chat
  */
 
-
 // src/consts.ts
 var identifier = [163, 58, 3, 206];
 var maxLength = 1e3;

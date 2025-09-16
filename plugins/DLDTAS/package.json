@@ -1,19 +1,12 @@
 {
-  "name": "platformertas",
+  "private": true,
+  "name": "dldtas",
   "version": "0.4.1",
   "author": "TheLazySquid",
-  "main": "build/PlatformerTAS.js",
   "devDependencies": {
-    "@gimloader/build": "^1.0.1",
     "esbuild-sass-plugin": "^3.3.1"
   },
   "description": "A TAS tool for Gimkit platformer modes",
-  "keywords": [
-    "Gimkit",
-    "TAS",
-    "Gimloader"
-  ],
-  "license": "MIT",
   "scripts": {
     "build": "gl build",
     "serve": "gl serve"

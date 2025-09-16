@@ -9,7 +9,6 @@
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  */
 
-
 // src/updateLasers.ts
 var lasers = [];
 api.net.on("DEVICES_STATES_CHANGES", (packet) => {

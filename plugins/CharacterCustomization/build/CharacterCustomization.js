@@ -7,7 +7,6 @@
  * @webpage https://gimloader.github.io/plugins/charactercustomization
  * @hasSettings true
  */
-
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -39,19 +38,18 @@ var require_debug = __commonJS({
   "../../node_modules/compress-json/dist/debug.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.throwUnsupportedData = exports.throwUnknownDataType = exports.getType = void 0;
+    exports.getType = getType;
+    exports.throwUnknownDataType = throwUnknownDataType;
+    exports.throwUnsupportedData = throwUnsupportedData;
     function getType(o) {
       return Object.prototype.toString.call(o);
     }
-    exports.getType = getType;
     function throwUnknownDataType(o) {
       throw new TypeError("unsupported data type: " + getType(o));
     }
-    exports.throwUnknownDataType = throwUnknownDataType;
     function throwUnsupportedData(name) {
       throw new TypeError("unsupported data type: " + name);
     }
-    exports.throwUnsupportedData = throwUnsupportedData;
   }
 });
 
@@ -60,7 +58,13 @@ var require_number = __commonJS({
   "../../node_modules/compress-json/dist/number.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.s_to_num = exports.int_str_to_s = exports.num_to_s = exports.big_int_to_s = exports.int_to_s = exports.s_to_big_int = exports.s_to_int = void 0;
+    exports.s_to_int = s_to_int;
+    exports.s_to_big_int = s_to_big_int;
+    exports.int_to_s = int_to_s;
+    exports.big_int_to_s = big_int_to_s;
+    exports.num_to_s = num_to_s;
+    exports.int_str_to_s = int_str_to_s;
+    exports.s_to_num = s_to_num;
     var i_to_s = "";
     for (let i = 0; i < 10; i++) {
       const c = String.fromCharCode(48 + i);
@@ -92,7 +96,6 @@ var require_number = __commonJS({
       }
       return acc;
     }
-    exports.s_to_int = s_to_int;
     function s_to_big_int(s) {
       let acc = BigInt(0);
       let pow = BigInt(1);
@@ -106,7 +109,6 @@ var require_number = __commonJS({
       }
       return acc;
     }
-    exports.s_to_big_int = s_to_big_int;
     function int_to_s(int) {
       if (int === 0) {
         return i_to_s[0];
@@ -121,7 +123,6 @@ var require_number = __commonJS({
       }
       return acc.reverse().join("");
     }
-    exports.int_to_s = int_to_s;
     function big_int_to_s(int) {
       const zero = BigInt(0);
       const n = BigInt(N);
@@ -137,7 +138,6 @@ var require_number = __commonJS({
       }
       return acc.reverse().join("");
     }
-    exports.big_int_to_s = big_int_to_s;
     function reverse(s) {
       return s.split("").reverse().join("");
     }
@@ -179,7 +179,6 @@ var require_number = __commonJS({
       }
       return str;
     }
-    exports.num_to_s = num_to_s;
     function int_str_to_s(int_str) {
       const num = +int_str;
       if (num.toString() === int_str && num + 1 !== num && num - 1 !== num) {
@@ -187,7 +186,6 @@ var require_number = __commonJS({
       }
       return ":" + big_int_to_s(BigInt(int_str));
     }
-    exports.int_str_to_s = int_str_to_s;
     function s_to_int_str(s) {
       if (s[0] === ":") {
         return s_to_big_int(s.substring(1)).toString();
@@ -218,7 +216,6 @@ var require_number = __commonJS({
       }
       return +str;
     }
-    exports.s_to_num = s_to_num;
   }
 });
 
@@ -227,26 +224,45 @@ var require_encode = __commonJS({
   "../../node_modules/compress-json/dist/encode.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.decodeStr = exports.encodeStr = exports.decodeBool = exports.encodeBool = exports.decodeKey = exports.decodeNum = exports.encodeNum = void 0;
+    exports.encodeNum = encodeNum;
+    exports.decodeNum = decodeNum;
+    exports.decodeKey = decodeKey;
+    exports.encodeBool = encodeBool;
+    exports.decodeBool = decodeBool;
+    exports.encodeStr = encodeStr;
+    exports.decodeStr = decodeStr;
     var number_1 = require_number();
     function encodeNum(num) {
+      if (num === Infinity) {
+        return "N|+";
+      }
+      if (num === -Infinity) {
+        return "N|-";
+      }
+      if (Number.isNaN(num)) {
+        return "N|0";
+      }
       const a = "n|" + (0, number_1.num_to_s)(num);
       return a;
     }
-    exports.encodeNum = encodeNum;
     function decodeNum(s) {
+      switch (s) {
+        case "N|+":
+          return Infinity;
+        case "N|-":
+          return -Infinity;
+        case "N|0":
+          return NaN;
+      }
       s = s.replace("n|", "");
       return (0, number_1.s_to_num)(s);
     }
-    exports.decodeNum = decodeNum;
     function decodeKey(key) {
       return typeof key === "number" ? key : (0, number_1.s_to_int)(key);
     }
-    exports.decodeKey = decodeKey;
     function encodeBool(b) {
       return b ? "b|T" : "b|F";
     }
-    exports.encodeBool = encodeBool;
     function decodeBool(s) {
       switch (s) {
         case "b|T":
@@ -256,7 +272,6 @@ var require_encode = __commonJS({
       }
       return !!s;
     }
-    exports.decodeBool = decodeBool;
     function encodeStr(str) {
       const prefix = str[0] + str[1];
       switch (prefix) {
@@ -269,12 +284,10 @@ var require_encode = __commonJS({
       }
       return str;
     }
-    exports.encodeStr = encodeStr;
     function decodeStr(s) {
       const prefix = s[0] + s[1];
       return prefix === "s|" ? s.substr(2) : s;
     }
-    exports.decodeStr = decodeStr;
   }
 });
 
@@ -299,7 +312,11 @@ var require_memory = __commonJS({
   "../../node_modules/compress-json/dist/memory.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.addValue = exports.makeInMemoryMemory = exports.makeInMemoryCache = exports.makeInMemoryStore = exports.memToValues = void 0;
+    exports.memToValues = memToValues;
+    exports.makeInMemoryStore = makeInMemoryStore;
+    exports.makeInMemoryCache = makeInMemoryCache;
+    exports.makeInMemoryMemory = makeInMemoryMemory;
+    exports.addValue = addValue;
     var config_1 = require_config();
     var debug_1 = require_debug();
     var encode_1 = require_encode();
@@ -307,7 +324,6 @@ var require_memory = __commonJS({
     function memToValues(mem) {
       return mem.store.toArray();
     }
-    exports.memToValues = memToValues;
     function makeInMemoryStore() {
       const mem = [];
       return {
@@ -326,7 +342,6 @@ var require_memory = __commonJS({
         }
       };
     }
-    exports.makeInMemoryStore = makeInMemoryStore;
     function makeInMemoryCache() {
       const valueMem = /* @__PURE__ */ Object.create(null);
       const schemaMem = /* @__PURE__ */ Object.create(null);
@@ -365,7 +380,6 @@ var require_memory = __commonJS({
         }
       };
     }
-    exports.makeInMemoryCache = makeInMemoryCache;
     function makeInMemoryMemory() {
       return {
         store: makeInMemoryStore(),
@@ -373,7 +387,6 @@ var require_memory = __commonJS({
         keyCount: 0
       };
     }
-    exports.makeInMemoryMemory = makeInMemoryMemory;
     function getValueKey(mem, value) {
       if (mem.cache.hasValue(value)) {
         return mem.cache.getValue(value);
@@ -457,7 +470,6 @@ var require_memory = __commonJS({
       }
       return (0, debug_1.throwUnknownDataType)(o);
     }
-    exports.addValue = addValue;
   }
 });
 
@@ -466,7 +478,9 @@ var require_core = __commonJS({
   "../../node_modules/compress-json/dist/core.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.decompress = exports.decode = exports.compress = void 0;
+    exports.compress = compress;
+    exports.decode = decode;
+    exports.decompress = decompress2;
     var debug_1 = require_debug();
     var encode_1 = require_encode();
     var memory_1 = require_memory();
@@ -476,7 +490,6 @@ var require_core = __commonJS({
       const values = (0, memory_1.memToValues)(mem);
       return [values, root];
     }
-    exports.compress = compress;
     function decodeObject(values, s) {
       if (s === "o|") {
         return {};
@@ -533,6 +546,9 @@ var require_core = __commonJS({
             case "o|":
               return decodeObject(values, v);
             case "n|":
+            case "N|+":
+            case "N|-":
+            case "N|0":
               return (0, encode_1.decodeNum)(v);
             case "a|":
               return decodeArray(values, v);
@@ -542,12 +558,10 @@ var require_core = __commonJS({
       }
       return (0, debug_1.throwUnknownDataType)(v);
     }
-    exports.decode = decode;
     function decompress2(c) {
       const [values, root] = c;
       return decode(values, root);
     }
-    exports.decompress = decompress2;
   }
 });
 
@@ -556,7 +570,8 @@ var require_helpers = __commonJS({
   "../../node_modules/compress-json/dist/helpers.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.trimUndefinedRecursively = exports.trimUndefined = void 0;
+    exports.trimUndefined = trimUndefined;
+    exports.trimUndefinedRecursively = trimUndefinedRecursively;
     function trimUndefined(object) {
       for (const key in object) {
         if (object[key] === void 0) {
@@ -564,11 +579,9 @@ var require_helpers = __commonJS({
         }
       }
     }
-    exports.trimUndefined = trimUndefined;
     function trimUndefinedRecursively(object) {
       trimUndefinedRecursivelyLoop(object, /* @__PURE__ */ new Set());
     }
-    exports.trimUndefinedRecursively = trimUndefinedRecursively;
     function trimUndefinedRecursivelyLoop(object, tracks) {
       tracks.add(object);
       for (const key in object) {
@@ -1082,6 +1095,12 @@ if (typeof HTMLElement === "function") {
         if (unsub) {
           unsub();
           this.$$l_u.delete(listener);
+        }
+      }
+      if (this.$$l[type]) {
+        const idx = this.$$l[type].indexOf(listener);
+        if (idx >= 0) {
+          this.$$l[type].splice(idx, 1);
         }
       }
     }

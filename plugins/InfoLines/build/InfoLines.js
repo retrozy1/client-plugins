@@ -8,7 +8,6 @@
  * @hasSettings true
  */
 
-
 // src/baseLine.ts
 var frameCallbacks = [];
 var physicsTickCallbacks = [];
@@ -93,7 +92,7 @@ var VisualCoordinates = class extends BaseLine {
 };
 
 // src/Settings.tsx
-function Settings2({ infoLines: infoLines2 }) {
+function Settings({ infoLines: infoLines2 }) {
   const React = GL.React;
   let [lines, setLines] = React.useState(infoLines2.lines);
   let [position, setPosition] = React.useState(infoLines2.position);
@@ -263,7 +262,7 @@ var InfoLines = class {
 var infoLines = new InfoLines();
 api.onStop(() => infoLines.destroy());
 api.openSettingsMenu(() => {
-  api.UI.showModal(api.React.createElement(Settings2, { infoLines }), {
+  api.UI.showModal(api.React.createElement(Settings, { infoLines }), {
     title: "InfoLines settings",
     id: "infoLinesSettings",
     buttons: [{ text: "Close", "style": "close" }]

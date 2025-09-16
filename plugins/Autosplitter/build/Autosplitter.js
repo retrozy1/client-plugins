@@ -9,7 +9,6 @@
  * @hasSettings true
  */
 
-
 // ../../node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
@@ -497,6 +496,12 @@ if (typeof HTMLElement === "function") {
           this.$$l_u.delete(listener);
         }
       }
+      if (this.$$l[type]) {
+        const idx = this.$$l[type].indexOf(listener);
+        if (idx >= 0) {
+          this.$$l[type].splice(idx, 1);
+        }
+      }
     }
     async connectedCallback() {
       this.$$cn = true;
@@ -706,6 +711,68 @@ var PUBLIC_VERSION = "4";
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 
+// src/constants.ts
+var gamemodes = ["DLD", "Fishtopia", "OneWayOut"];
+var DLDSplits = ["Summit 1", "Summit 2", "Summit 3", "Summit 4", "Summit 5", "Summit 6"];
+var fishtopiaSplits = ["Fishtopia", "Purple Pond", "Sandy Shores", "Cosmic Cove", "Lucky Lake"];
+var boatChannels = [
+  "attempt travel purple pond",
+  "attempt travel sandy shores",
+  "attempt travel cosmic cove",
+  "attempt travel lucky lake"
+];
+var summitStartCoords = [
+  { x: 9071, y: 65e3, direction: "right" },
+  // summit 1
+  { x: 28788.9, y: 53278, direction: "left" },
+  // summit 2
+  { x: 21387.95, y: 50078, direction: "right" },
+  // summit 3
+  { x: 39693.5, y: 41374, direction: "right" },
+  // summit 4
+  { x: 35212, y: 35166, direction: "right" },
+  // summit 5
+  { x: 39755.93, y: 28573, direction: "right" },
+  // summit 6
+  { x: 40395.91, y: 13854, direction: "right" }
+  // finish
+];
+var summitCoords = [{
+  x: 9022.997283935547,
+  y: 63837.7685546875,
+  direction: "right"
+}, {
+  x: 28544.000244140625,
+  y: 53278.0029296875,
+  direction: "left"
+}, {
+  x: 21755.00030517578,
+  y: 50077.99987792969,
+  direction: "right"
+}, {
+  x: 40033.99963378906,
+  y: 41373.9990234375,
+  direction: "right"
+}, {
+  x: 35654.00085449219,
+  y: 35166.00036621094,
+  direction: "right"
+}, {
+  x: 40126.99890136719,
+  y: 28573.9990234375,
+  direction: "right"
+}];
+var resetCoordinates = { x: 9050, y: 6300 };
+var categories = ["Current Patch", "Creative Platforming Patch", "Original Physics"];
+var oneWayOutSplits = ["Stage 1", "Stage 2", "Stage 3"];
+var stageCoords = [{
+  p1: { x: 12008, y: 3147 },
+  p2: { x: 13072, y: 5770 }
+}, {
+  p1: { x: 10813, y: 8962 },
+  p2: { x: 13312, y: 9888 }
+}];
+
 // src/util.ts
 function getGamemodeData(gamemode) {
   switch (gamemode) {
@@ -825,68 +892,6 @@ function onFrame(callback) {
     callback();
   });
 }
-
-// src/constants.ts
-var gamemodes = ["DLD", "Fishtopia", "OneWayOut"];
-var DLDSplits = ["Summit 1", "Summit 2", "Summit 3", "Summit 4", "Summit 5", "Summit 6"];
-var fishtopiaSplits = ["Fishtopia", "Purple Pond", "Sandy Shores", "Cosmic Cove", "Lucky Lake"];
-var boatChannels = [
-  "attempt travel purple pond",
-  "attempt travel sandy shores",
-  "attempt travel cosmic cove",
-  "attempt travel lucky lake"
-];
-var summitStartCoords = [
-  { x: 9071, y: 65e3, direction: "right" },
-  // summit 1
-  { x: 28788.9, y: 53278, direction: "left" },
-  // summit 2
-  { x: 21387.95, y: 50078, direction: "right" },
-  // summit 3
-  { x: 39693.5, y: 41374, direction: "right" },
-  // summit 4
-  { x: 35212, y: 35166, direction: "right" },
-  // summit 5
-  { x: 39755.93, y: 28573, direction: "right" },
-  // summit 6
-  { x: 40395.91, y: 13854, direction: "right" }
-  // finish
-];
-var summitCoords = [{
-  x: 9022.997283935547,
-  y: 63837.7685546875,
-  direction: "right"
-}, {
-  x: 28544.000244140625,
-  y: 53278.0029296875,
-  direction: "left"
-}, {
-  x: 21755.00030517578,
-  y: 50077.99987792969,
-  direction: "right"
-}, {
-  x: 40033.99963378906,
-  y: 41373.9990234375,
-  direction: "right"
-}, {
-  x: 35654.00085449219,
-  y: 35166.00036621094,
-  direction: "right"
-}, {
-  x: 40126.99890136719,
-  y: 28573.9990234375,
-  direction: "right"
-}];
-var resetCoordinates = { x: 9050, y: 6300 };
-var categories = ["Current Patch", "Creative Platforming Patch", "Original Physics"];
-var oneWayOutSplits = ["Stage 1", "Stage 2", "Stage 3"];
-var stageCoords = [{
-  p1: { x: 12008, y: 3147 },
-  p2: { x: 13072, y: 5770 }
-}, {
-  p1: { x: 10813, y: 8962 },
-  p2: { x: 13312, y: 9888 }
-}];
 
 // src/settings/FullGame.svelte
 function get_each_context(ctx, list, i) {

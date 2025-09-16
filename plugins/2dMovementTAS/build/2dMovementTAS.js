@@ -8,7 +8,6 @@
  * @reloadRequired ingame
  */
 
-
 // ../../node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
@@ -510,6 +509,12 @@ if (typeof HTMLElement === "function") {
         if (unsub) {
           unsub();
           this.$$l_u.delete(listener);
+        }
+      }
+      if (this.$$l[type]) {
+        const idx = this.$$l[type].indexOf(listener);
+        if (idx >= 0) {
+          this.$$l[type].splice(idx, 1);
         }
       }
     }

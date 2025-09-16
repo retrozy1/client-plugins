@@ -7,7 +7,6 @@
  * @hasSettings true
  */
 
-
 // src/styles.scss
 var styles_default = `.cui-settings {
   overflow-x: hidden;
