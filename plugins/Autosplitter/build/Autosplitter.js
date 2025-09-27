@@ -2,7 +2,7 @@
  * @name Autosplitter
  * @description Automatically times speedruns for various gamemodes
  * @author TheLazySquid
- * @version 0.5.3
+ * @version 0.5.4
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Autosplitter/build/Autosplitter.js
  * @webpage https://gimloader.github.io/plugins/autosplitter
  * @hasSettings true
@@ -4153,11 +4153,11 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
 api.UI.addStyles(styles_default);
 var autosplitter;
 api.net.onLoad((_, gamemode) => {
-  if (gamemode === "dontLookDown") {
+  if (gamemode === "dontlookdown") {
     autosplitter = new DLDAutosplitter2();
   } else if (gamemode === "fishtopia") {
     autosplitter = new FishtopiaAutosplitter();
-  } else if (gamemode === "oneWayOut") {
+  } else if (gamemode === "onwWayout") {
     autosplitter = new OneWayOutAutosplitter();
   }
 });

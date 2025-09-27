@@ -12,11 +12,11 @@ api.UI.addStyles(styles);
 let autosplitter: Autosplitter;
 
 api.net.onLoad((_, gamemode) => { 
-    if(gamemode === "dontLookDown") {
+    if(gamemode === "dontlookdown") {
         autosplitter = new DLDAutosplitter();
     } else if(gamemode === "fishtopia") {
         autosplitter = new FishtopiaAutosplitter();        
-    } else if(gamemode === "oneWayOut") {
+    } else if(gamemode === "onwWayout") {
         autosplitter = new OneWayOutAutosplitter();
     }
 });
