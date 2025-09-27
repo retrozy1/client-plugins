@@ -13,5 +13,6 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InfoLines/build/InfoLines.js",
     webpage: 'https://gimloader.github.io/plugins/infolines',
     hasSettings: true,
-    plugins: [sassPlugin({ type: "css-text" })]
+    plugins: [sassPlugin({ type: "css-text" })],
+    gamemodes: ["2d"]
 };

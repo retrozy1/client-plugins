@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "autosplitter",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "author": "TheLazySquid",
   "devDependencies": {
     "esbuild-sass-plugin": "^3.3.1",

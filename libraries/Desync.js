@@ -5,6 +5,7 @@
  * @version 0.1.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js
  * @isLibrary true
+ * @gamemode 2d
  */
 
 let enabled = false;
@@ -14,9 +15,7 @@ export function enable() {
     enabled = true;
 }
 
-api.net.onLoad((type) => {
-    if(type !== "Colyseus") return;
-
+api.net.onLoad(() => {
     let allowNext = false;
     let firstPhase = true;
 

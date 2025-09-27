@@ -23,8 +23,7 @@ export default class CosmeticChanger {
     constructor() {
         this.initCustomSkinFile();
 
-        api.net.onLoad((type) => {
-            if(type !== "Colyseus") return;
+        api.net.onLoad(() => {
             this.loadCustomSkin();
 
             const mc = api.stores?.phaser?.mainCharacter;

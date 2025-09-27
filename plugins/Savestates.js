@@ -2,11 +2,12 @@
  * @name Savestates
  * @description Allows you to save and load states/summits in Don't Look Down. Only client side, nobody else can see you move.
  * @author TheLazySquid
- * @version 0.3.6
+ * @version 0.3.7
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Savestates.js
  * @webpage https://gimloader.github.io/plugins/savestates
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @optionalLib CommandLine | https://raw.githubusercontent.com/Blackhole927/gimkitmods/main/libraries/CommandLine/CommandLine.js
+ * @gamemode dontLookDown
  */
 
 const DLDUtils = api.lib("DLDUtils");

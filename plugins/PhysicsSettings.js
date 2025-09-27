@@ -7,6 +7,7 @@
  * @webpage https://gimloader.github.io/plugins/physicssettings
  * @hasSettings true
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
+ * @gamemode 2d
  */
 
 const settings = api.lib("QuickSettings")("PhysicsSettings", [

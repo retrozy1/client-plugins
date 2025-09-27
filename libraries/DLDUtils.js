@@ -2,10 +2,11 @@
  * @name DLDUtils
  * @description Allows plugins to move characters without the server's permission
  * @author TheLazySquid
- * @version 0.3.6
+ * @version 0.3.7
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
  * @isLibrary true
  * @needsLib Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/Desync.js
+ * @gamemode dontLookDown
  */
 
 const respawnHeight = 621.093;
@@ -199,14 +200,7 @@ const enable = () => {
     physics.bodies.activeBodies.disableBody = () => {};
 }
 
-function isDLD() {
-    let options = JSON.parse(api.stores.world.mapOptionsJSON);
-    return options.musicUrl === "/assets/map/modes/dontLookDown/music.mp3";
-}
-
 api.net.onLoad(() => {
-    if(!isDLD()) return;
-
     enable();
     GL.lib("Desync").enable();
 });

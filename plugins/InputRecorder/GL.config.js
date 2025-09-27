@@ -14,5 +14,6 @@ export default {
     webpage: 'https://gimloader.github.io/plugins/inputrecorder',
     libs: [
         "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js"
-    ]
+    ],
+    gamemodes: ["dontLookDown"]
 }

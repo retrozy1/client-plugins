@@ -10,15 +10,13 @@ import OneWayOutAutosplitter from "./splitters/OneWayOut";
 api.UI.addStyles(styles);
 
 let autosplitter: Autosplitter;
-let gamemodeDetector = api.lib("GamemodeDetector");
 
-api.net.onLoad(() => {
-    let gamemode = gamemodeDetector.currentGamemode();
-    if(gamemode === "Don't Look Down") {
+api.net.onLoad((_, gamemode) => { 
+    if(gamemode === "dontLookDown") {
         autosplitter = new DLDAutosplitter();
-    } else if(gamemode === "Fishtopia") {
+    } else if(gamemode === "fishtopia") {
         autosplitter = new FishtopiaAutosplitter();        
-    } else if(gamemode === "One Way Out") {
+    } else if(gamemode === "oneWayOut") {
         autosplitter = new OneWayOutAutosplitter();
     }
 });

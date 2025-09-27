@@ -2,12 +2,13 @@
  * @name CameraControl
  * @description Lets you freely move and zoom your camera
  * @author TheLazySquid & Blackhole927
- * @version 0.5.5
+ * @version 0.5.6
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CameraControl.js
  * @webpage https://gimloader.github.io/plugins/cameracontrol
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/libraries/QuickSettings/build/QuickSettings.js
  * @optionalLib CommandLine | https://raw.githubusercontent.com/Blackhole927/gimkitmods/main/libraries/CommandLine/CommandLine.js
  * @hasSettings true
+ * @gamemode 2d
  */
 
 let settings = api.lib("QuickSettings")("CameraControl", [
@@ -78,8 +79,7 @@ let updateScroll = (dt) => {
     }
 }
 
-api.net.onLoad((type) => {
-    if(type !== "Colyseus") return;
+api.net.onLoad(() => {
     let worldManager = api.stores.phaser.scene.worldManager;
 
     // whenever a frame passes

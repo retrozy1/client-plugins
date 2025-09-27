@@ -14,7 +14,6 @@ export default {
     version: pkg.version,
     downloadUrl: 'https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Autosplitter/build/Autosplitter.js',
     webpage: 'https://gimloader.github.io/plugins/autosplitter',
-    libs: ["GamemodeDetector | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/GamemodeDetector.js"],
     hasSettings: true,
     plugins: [
         svelte({
@@ -29,5 +28,6 @@ export default {
         loader: {
             ".svg": "text"
         }
-    }
+    },
+    gamemodes: ["dontLookDown", "fishtopia", "oneWayOut"]
 };

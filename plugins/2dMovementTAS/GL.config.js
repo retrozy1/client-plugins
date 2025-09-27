@@ -21,5 +21,6 @@ export default {
                 css: "injected"
             }
         })
-    ]
+    ],
+    gamemodes: ['ctf', 'tag']
 };

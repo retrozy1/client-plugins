@@ -15,5 +15,6 @@ export default {
         loader: {
             ".css": "text"
         }
-    }
+    },
+    gamemodes: ["2d"]
 }

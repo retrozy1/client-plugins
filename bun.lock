@@ -4,8 +4,8 @@
     "": {
       "name": "client-plugins",
       "devDependencies": {
-        "@gimloader/build": "^1.0.5",
-        "@types/gimloader": "^1.7.0",
+        "@gimloader/build": "^1.1.1",
+        "@types/gimloader": "^1.8.0",
       },
     },
     "libraries/QuickSettings": {
@@ -146,7 +146,7 @@
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.25.9", "", { "os": "win32", "cpu": "x64" }, "sha512-PPOl1mi6lpLNQxnGoyAfschAodRFYXJ+9fs6WHXz7CSWKbOqiMZsubC+BQsVKuul+3vKLuwTHsS2c2y9EoKwxQ=="],
 
-    "@gimloader/build": ["@gimloader/build@1.0.5", "", { "dependencies": { "chokidar": "^4.0.3", "esbuild": "^0.25.9", "yargs": "^17.7.2" }, "bin": { "gimloader": "dist/cli.js", "gl": "dist/cli.js" } }, "sha512-yAZoSrVog5ePx/bQ1d+KuFqgquX8y6LezK0aEqeRGgfTO/S/5+e0Py4D5cjhqVKxh04OVYOlk9jecuUsSVPc5Q=="],
+    "@gimloader/build": ["@gimloader/build@1.1.1", "", { "dependencies": { "chokidar": "^4.0.3", "esbuild": "^0.25.9", "yargs": "^17.7.2" }, "bin": { "gimloader": "dist/cli.js", "gl": "dist/cli.js" } }, "sha512-WFImaZMckT4RSuhtwKCAiRfIMDf95Z5hUo2xDn1ST1NQw3h9Tce0e2TiWGXJJRQwCATYlLnjJOim0luCn7Mbmg=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 
@@ -186,7 +186,7 @@
 
     "@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
 
-    "@types/gimloader": ["@types/gimloader@1.7.0", "", { "dependencies": { "@types/react": "*", "@types/react-dom": "*" } }, "sha512-skHY2q4Ans3TPFKw2T1gWqXjiiFEOT6jlqQjkqCS/nYXpU64/ZeTvlgmaZnjA06JptIr2QtlhVaAt2urCHhCpA=="],
+    "@types/gimloader": ["@types/gimloader@1.8.0", "", { "dependencies": { "@types/react": "*", "@types/react-dom": "*" } }, "sha512-8CCHNEeiHtVN4bgNMXzVw5E53hCKMxy+fMirDXABCoFTiwqEHnXcmmZCP5u0PeIRMmieDv2BsYdT6T0Bqzuk5A=="],
 
     "@types/react": ["@types/react@19.1.13", "", { "dependencies": { "csstype": "^3.0.2" } }, "sha512-hHkbU/eoO3EG5/MZkuFSKmYqPbSVk5byPFa3e7y/8TybHiLMACgI8seVYlicwk7H5K/rI2px9xrQp/C+AUDTiQ=="],
 

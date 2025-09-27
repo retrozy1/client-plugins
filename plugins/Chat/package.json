@@ -1,6 +1,6 @@
 {
   "name": "chat",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "TheLazySquid",
   "description": "Adds an in-game chat to 2d gamemodes",
   "private": true,

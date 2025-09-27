@@ -2,9 +2,10 @@
  * @name Chat
  * @description Adds an in-game chat to 2d gamemodes
  * @author TheLazySquid
- * @version 0.2.2
+ * @version 0.2.3
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Chat/build/Chat.js
  * @webpage https://gimloader.github.io/plugins/chat
+ * @gamemode 2d
  */
 
 // src/consts.ts
@@ -167,8 +168,7 @@ var UI = class {
 };
 
 // src/index.ts
-api.net.onLoad((type) => {
-  if (type !== "Colyseus") return;
+api.net.onLoad(() => {
   let myId = api.stores.network.authId;
   let sending = false;
   let ignoreNextAngle = false;

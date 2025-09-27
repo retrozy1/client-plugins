@@ -20,5 +20,6 @@ export default {
         loader: {
             ".svg": "text"
         }
-    }
+    },
+    gamemodes: ["dontLookDown"]
 }

@@ -2,10 +2,12 @@
  * @name 2dMovementTAS
  * @description Allows for making TASes of CTF and tag
  * @author TheLazySquid
- * @version 0.3.2
+ * @version 0.3.3
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/2dMovementTAS/build/2dMovementTAS.js
  * @webpage https://gimloader.github.io/plugins/movementtas
  * @reloadRequired ingame
+ * @gamemode ctf
+ * @gamemode tag
  */
 
 // ../../node_modules/svelte/src/runtime/internal/utils.js
@@ -2332,9 +2334,9 @@ function create_else_block(ctx) {
   };
 }
 function create_if_block(ctx) {
-  let ui2;
+  let ui;
   let current;
-  ui2 = new UI_default({
+  ui = new UI_default({
     props: {
       frames: (
         /*frames*/
@@ -2348,10 +2350,10 @@ function create_if_block(ctx) {
   });
   return {
     c() {
-      create_component(ui2.$$.fragment);
+      create_component(ui.$$.fragment);
     },
     m(target, anchor) {
-      mount_component(ui2, target, anchor);
+      mount_component(ui, target, anchor);
       current = true;
     },
     p(ctx2, dirty) {
@@ -2362,19 +2364,19 @@ function create_if_block(ctx) {
       if (dirty & /*startPos*/
       4) ui_changes.startPos = /*startPos*/
       ctx2[2];
-      ui2.$set(ui_changes);
+      ui.$set(ui_changes);
     },
     i(local) {
       if (current) return;
-      transition_in(ui2.$$.fragment, local);
+      transition_in(ui.$$.fragment, local);
       current = true;
     },
     o(local) {
-      transition_out(ui2.$$.fragment, local);
+      transition_out(ui.$$.fragment, local);
       current = false;
     },
     d(detaching) {
-      destroy_component(ui2, detaching);
+      destroy_component(ui, detaching);
     }
   };
 }
@@ -2518,9 +2520,8 @@ var Start = class extends SvelteComponent {
 var Start_default = Start;
 
 // src/index.ts
-var ui;
 api.net.onLoad(() => {
-  ui = new Start_default({
+  let ui = new Start_default({
     target: document.body
   });
   api.onStop(() => ui.$destroy());

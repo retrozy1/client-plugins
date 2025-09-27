@@ -2,11 +2,13 @@
  * @name Autosplitter
  * @description Automatically times speedruns for various gamemodes
  * @author TheLazySquid
- * @version 0.5.2
+ * @version 0.5.3
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Autosplitter/build/Autosplitter.js
  * @webpage https://gimloader.github.io/plugins/autosplitter
- * @needsLib GamemodeDetector | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/GamemodeDetector.js
  * @hasSettings true
+ * @gamemode dontLookDown
+ * @gamemode fishtopia
+ * @gamemode oneWayOut
  */
 
 // ../../node_modules/svelte/src/runtime/internal/utils.js
@@ -4150,14 +4152,12 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
 // src/index.ts
 api.UI.addStyles(styles_default);
 var autosplitter;
-var gamemodeDetector = api.lib("GamemodeDetector");
-api.net.onLoad(() => {
-  let gamemode = gamemodeDetector.currentGamemode();
-  if (gamemode === "Don't Look Down") {
+api.net.onLoad((_, gamemode) => {
+  if (gamemode === "dontLookDown") {
     autosplitter = new DLDAutosplitter2();
-  } else if (gamemode === "Fishtopia") {
+  } else if (gamemode === "fishtopia") {
     autosplitter = new FishtopiaAutosplitter();
-  } else if (gamemode === "One Way Out") {
+  } else if (gamemode === "oneWayOut") {
     autosplitter = new OneWayOutAutosplitter();
   }
 });

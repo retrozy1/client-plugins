@@ -1,8 +1,8 @@
 {
     "name": "client-plugins",
     "devDependencies": {
-        "@gimloader/build": "^1.0.5",
-        "@types/gimloader": "^1.7.0"
+        "@gimloader/build": "^1.1.1",
+        "@types/gimloader": "^1.8.0"
     },
     "description": "Official client-side plugins for Gimloader",
     "scripts": {

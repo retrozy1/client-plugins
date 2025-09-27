@@ -2,10 +2,11 @@
  * @name CharacterCustomization
  * @description Allows you to use any gim or a custom gim client-side
  * @author TheLazySquid
- * @version 0.6.1
+ * @version 0.6.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/CharacterCustomization/build/CharacterCustomization.js
  * @webpage https://gimloader.github.io/plugins/charactercustomization
  * @hasSettings true
+ * @gamemode 2d
  */
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -2166,8 +2167,7 @@ var CosmeticChanger = class {
   stopped = false;
   constructor() {
     this.initCustomSkinFile();
-    api.net.onLoad((type) => {
-      if (type !== "Colyseus") return;
+    api.net.onLoad(() => {
       this.loadCustomSkin();
       const mc = api.stores?.phaser?.mainCharacter;
       const skin = mc?.skin;
