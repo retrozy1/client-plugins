@@ -2,7 +2,7 @@
  * @name InputRecorder
  * @description Records your inputs in Don't Look Down
  * @author TheLazySquid
- * @version 0.2.5
+ * @version 0.3.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InputRecorder/build/InputRecorder.js
  * @webpage https://gimloader.github.io/plugins/inputrecorder
  * @reloadRequired ingame
@@ -148,9 +148,13 @@ var Recorder = class {
 
 // src/index.ts
 var recorder;
-api.hotkeys.addHotkey({
-  key: "KeyR",
-  alt: true
+api.hotkeys.addConfigurableHotkey({
+  category: "Input Recorder",
+  title: "Start Recording",
+  default: {
+    key: "KeyR",
+    alt: true
+  }
 }, () => {
   if (!recorder) return;
   if (recorder.playing) {
@@ -162,9 +166,13 @@ api.hotkeys.addHotkey({
   }
   recorder.toggleRecording();
 });
-api.hotkeys.addHotkey({
-  key: "KeyB",
-  alt: true
+api.hotkeys.addConfigurableHotkey({
+  category: "Input Recorder",
+  title: "Play Back Recording",
+  default: {
+    key: "KeyB",
+    alt: true
+  }
 }, () => {
   if (!recorder) return;
   if (recorder.recording) {

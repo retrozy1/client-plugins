@@ -2,9 +2,13 @@ import Recorder from './recorder';
 
 let recorder: Recorder;
 
-api.hotkeys.addHotkey({
-    key: "KeyR",
-    alt: true
+api.hotkeys.addConfigurableHotkey({
+    category: "Input Recorder",
+    title: "Start Recording",
+    default: {
+        key: "KeyR",
+        alt: true
+    }
 }, () => {
     if(!recorder) return;
 
@@ -20,9 +24,13 @@ api.hotkeys.addHotkey({
     recorder.toggleRecording();
 });
 
-api.hotkeys.addHotkey({
-    key: "KeyB",
-    alt: true
+api.hotkeys.addConfigurableHotkey({
+    category: "Input Recorder",
+    title: "Play Back Recording",
+    default: {
+        key: "KeyB",
+        alt: true
+    }
 }, () => {
     if(!recorder) return;
 

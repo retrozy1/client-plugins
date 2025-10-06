@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "inputrecorder",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "author": "TheLazySquid",
   "description": "A plugin that allows you to record and play back movements in Gimkit Don't Look Down",
   "license": "MIT",

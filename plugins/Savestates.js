@@ -2,7 +2,7 @@
  * @name Savestates
  * @description Allows you to save and load states/summits in Don't Look Down. Only client side, nobody else can see you move.
  * @author TheLazySquid
- * @version 0.3.7
+ * @version 0.4.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Savestates.js
  * @webpage https://gimloader.github.io/plugins/savestates
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
@@ -88,15 +88,7 @@ const loadState = () => {
 }
 
 api.net.onLoad(() => { 
-    gameLoaded = true;   
-    // add hotkeys for summits
-    for(let i = 0; i <= 6; i++) {        
-        api.hotkeys.addHotkey({
-            key: `Digit${i}`,
-            shift: true,
-            alt: true
-        }, () => tp(i));
-    }
+    gameLoaded = true;
 
     // optional command line integration
     let commandLine = api.lib("CommandLine");
@@ -137,6 +129,19 @@ api.hotkeys.addConfigurableHotkey({
         alt: true
     }
 }, loadState);
+
+// add hotkeys for summits
+for(let i = 0; i <= 6; i++) {        
+    api.hotkeys.addConfigurableHotkey({
+        category: "Savestates",
+        title: `Teleport to Summit ${i}`,
+        default: {
+            key: `Digit${i}`,
+            shift: true,
+            alt: true
+        }
+    }, () => tp(i));
+}
 
 export function onStateLoaded(callback) {
     stateLoadCallbacks.push(callback);
