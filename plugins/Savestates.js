@@ -2,7 +2,7 @@
  * @name Savestates
  * @description Allows you to save and load states/summits in Don't Look Down. Only client side, nobody else can see you move.
  * @author TheLazySquid
- * @version 0.4.0
+ * @version 0.4.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/Savestates.js
  * @webpage https://gimloader.github.io/plugins/savestates
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js
@@ -40,6 +40,7 @@ const defaultState =  '{"gravity":0.001,"velocity":{"x":0,"y":0},"movement":{"di
 let stateLoadCallbacks = [];
 
 const tp = (summit) => {
+    if(!gameLoaded) return;
     let physics = api.stores.phaser.mainCharacter.physics;
     let rb = physics.getBody().rigidBody;
 
