@@ -74,7 +74,7 @@ export default class CosmeticChanger {
 
         fileTypes.ImageFile = newImgFile;
 
-        let load = api.stores.phaser.scene.load;
+        let load = api.stores.phaser.scene.load as any;
         let jsonRes = load.spineJson("customSkin-data", jsonUrl);
         let atlasRes = load.spineAtlas("customSkin-atlas", atlasUrl);
 

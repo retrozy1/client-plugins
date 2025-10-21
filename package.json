@@ -2,11 +2,12 @@
     "name": "client-plugins",
     "devDependencies": {
         "@gimloader/build": "^1.1.1",
-        "@types/gimloader": "^1.8.0"
+        "@types/gimloader": "^1.8.2"
     },
     "description": "Official client-side plugins for Gimloader",
     "scripts": {
-        "typecheck": "tsc"
+        "typecheck": "tsc",
+        "buildAll": "bun run --workspaces build"
     },
     "workspaces": [
         "libraries/*",

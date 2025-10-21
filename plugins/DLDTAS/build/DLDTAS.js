@@ -115,7 +115,7 @@ function initOverlay() {
         ellipse.isFilled = false;
         ellipse.isStroked = true;
         propHitboxes.push(ellipse);
-      } else {
+      } else if (w && h) {
         let rect = scene.add.rectangle(x, y, w, h, 16711680).setDepth(99999999999).setStrokeStyle(3, 16711680);
         rect.angle = angle;
         rect.isFilled = false;
@@ -148,7 +148,7 @@ function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   let physics = GL.stores.phaser.mainCharacter.physics;
   let collider = physics.getBody().collider;
-  let { halfHeight, radius } = collider._shape;
+  let { halfHeight, radius } = collider.shape;
   let { x: cX, y: cY } = GL.stores.phaser.scene.cameras.cameras[0].midPoint;
   let { x, y } = physics.getBody().rigidBody.translation();
   let { x: vX, y: vY } = physics.getBody().rigidBody.linvel();
@@ -263,7 +263,7 @@ function updateLasers(frame) {
     if (!states.has(laser.id)) {
       let propsMap = /* @__PURE__ */ new Map();
       propsMap.set("GLOBAL_active", active);
-      states.set(laser.id, { properties: propsMap });
+      states.set(laser.id, { deviceId: laser.id, properties: propsMap });
     } else {
       states.get(laser.id).properties.set("GLOBAL_active", active);
     }

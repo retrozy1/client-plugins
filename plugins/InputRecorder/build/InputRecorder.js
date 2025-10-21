@@ -38,7 +38,7 @@ function updateLasers(frame) {
     if (!states.has(laser.id)) {
       let propsMap = /* @__PURE__ */ new Map();
       propsMap.set("GLOBAL_active", active);
-      states.set(laser.id, { properties: propsMap });
+      states.set(laser.id, { deviceId: laser.id, properties: propsMap });
     } else {
       states.get(laser.id).properties.set("GLOBAL_active", active);
     }

@@ -37,7 +37,7 @@ export function initOverlay() {
                 ellipse.isStroked = true;
 
                 propHitboxes.push(ellipse);
-            } else {
+            } else if(w && h) {
                 let rect = scene.add.rectangle(x, y, w, h, 0xff0000)
                     .setDepth(99999999999)
                     .setStrokeStyle(3, 0xff0000)                    
@@ -82,7 +82,7 @@ function render() {
 
     let physics = GL.stores.phaser.mainCharacter.physics;
     let collider = physics.getBody().collider;
-    let { halfHeight, radius } = collider._shape;
+    let { halfHeight, radius } = collider.shape as any;
     let { x: cX, y: cY } = GL.stores.phaser.scene.cameras.cameras[0].midPoint;
     let { x, y }  = physics.getBody().rigidBody.translation();
     let { x: vX, y: vY } = physics.getBody().rigidBody.linvel();
