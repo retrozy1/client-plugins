@@ -1,4 +1,3 @@
-// @ts-ignore
 import styles from './styles.scss';
 import UI from './ui/ui';
 import UIChanger from './uiChanger';

@@ -5,10 +5,12 @@
         "moduleResolution": "bundler",
         "jsx": "preserve",
         "verbatimModuleSyntax": true,
-        "noEmit": true
+        "noEmit": true,
+        "skipLibCheck": true
     },
     "include": [
         "./plugins/**/*.ts",
-        "./libraries/**/*.ts"
+        "./libraries/**/*.ts",
+        "./main.d.ts"
     ]
 }

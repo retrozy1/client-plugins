@@ -7,7 +7,7 @@
  * @hasSettings true
  */
 
-// src/styles.scss
+// plugins/CustomUI/src/styles.scss
 var styles_default = `.cui-settings {
   overflow-x: hidden;
   padding: 5px;
@@ -173,7 +173,7 @@ var styles_default = `.cui-settings {
   opacity: var(--question-opacity);
 }`;
 
-// src/ui/themePreview.tsx
+// plugins/CustomUI/src/ui/themePreview.tsx
 function ThemePreview(props) {
   const React = GL.React;
   let { theme } = props;
@@ -195,7 +195,7 @@ function ThemePreview(props) {
   } })));
 }
 
-// src/defaultThemes.json
+// plugins/CustomUI/src/defaultThemes.json
 var defaultThemes_default = [
   {
     name: "Default",
@@ -449,7 +449,7 @@ var defaultThemes_default = [
   }
 ];
 
-// src/util.ts
+// plugins/CustomUI/src/util.ts
 function getBorderColor(theme) {
   let rgb = parseHex(theme.question.background);
   let brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1e3;
@@ -463,7 +463,7 @@ function parseHex(hex) {
   };
 }
 
-// src/ui/themeCreator.tsx
+// plugins/CustomUI/src/ui/themeCreator.tsx
 function ThemeCreator({ onChange }) {
   const React = GL.React;
   let [theme, setTheme] = React.useState({
@@ -553,7 +553,7 @@ function ThemeCreator({ onChange }) {
   } }, "Option 4"))));
 }
 
-// src/ui/themePicker.tsx
+// plugins/CustomUI/src/ui/themePicker.tsx
 function ThemePicker(props) {
   const React = GL.React;
   let [themeType, setThemeType] = React.useState(props.themeType);
@@ -617,7 +617,7 @@ function ThemePicker(props) {
   } })))));
 }
 
-// src/ui/ui.tsx
+// plugins/CustomUI/src/ui/ui.tsx
 function UI({ uiChanger: uiChanger2, onConfirm }) {
   const React = GL.React;
   let [hideTopBar, setHideTopBar] = React.useState(uiChanger2.hideTopBar);
@@ -683,7 +683,7 @@ function UI({ uiChanger: uiChanger2, onConfirm }) {
   ));
 }
 
-// src/uiChanger.ts
+// plugins/CustomUI/src/uiChanger.ts
 var UIChanger = class {
   hideTopBar = api.storage.getValue("hideTopBar", false);
   useCustomTheme = api.storage.getValue("useCustomTheme", false);
@@ -744,7 +744,7 @@ var UIChanger = class {
   }
 };
 
-// src/index.ts
+// plugins/CustomUI/src/index.ts
 var uiChanger = new UIChanger();
 api.UI.addStyles(styles_default);
 api.openSettingsMenu(() => {

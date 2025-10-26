@@ -1,4 +1,3 @@
-// @ts-ignore
 import Settings from './Settings.svelte';
 import type { QSElement, QuickSettingsReturn } from "./types";
 
