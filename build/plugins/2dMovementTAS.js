@@ -10,7 +10,7 @@
  * @gamemode tag
  */
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/utils.js
+// node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
 function run(fn) {
@@ -45,13 +45,13 @@ function component_subscribe(component, store, callback) {
   component.$$.on_destroy.push(subscribe(store, callback));
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/globals.js
+// node_modules/svelte/src/runtime/internal/globals.js
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : (
   // @ts-ignore Node typings have this
   global
 );
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
+// node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
 var ResizeObserverSingleton = class _ResizeObserverSingleton {
   /**
    * @private
@@ -97,7 +97,7 @@ var ResizeObserverSingleton = class _ResizeObserverSingleton {
 };
 ResizeObserverSingleton.entries = "WeakMap" in globals ? /* @__PURE__ */ new WeakMap() : void 0;
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/dom.js
+// node_modules/svelte/src/runtime/internal/dom.js
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -212,7 +212,7 @@ function get_custom_elements_slots(element2) {
   return result;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/lifecycle.js
+// node_modules/svelte/src/runtime/internal/lifecycle.js
 var current_component;
 function set_current_component(component) {
   current_component = component;
@@ -224,7 +224,7 @@ function bubble(component, event) {
   }
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/scheduler.js
+// node_modules/svelte/src/runtime/internal/scheduler.js
 var dirty_components = [];
 var binding_callbacks = [];
 var render_callbacks = [];
@@ -298,7 +298,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/transitions.js
+// node_modules/svelte/src/runtime/internal/transitions.js
 var outroing = /* @__PURE__ */ new Set();
 var outros;
 function group_outros() {
@@ -338,12 +338,12 @@ function transition_out(block, local, detach2, callback) {
   }
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/each.js
+// node_modules/svelte/src/runtime/internal/each.js
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/shared/boolean_attributes.js
+// node_modules/svelte/src/shared/boolean_attributes.js
 var _boolean_attributes = (
   /** @type {const} */
   [
@@ -376,7 +376,7 @@ var _boolean_attributes = (
 );
 var boolean_attributes = /* @__PURE__ */ new Set([..._boolean_attributes]);
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/Component.js
+// node_modules/svelte/src/runtime/internal/Component.js
 function create_component(block) {
   block && block.c();
 }
@@ -721,10 +721,10 @@ var SvelteComponent = class {
   }
 };
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/shared/version.js
+// node_modules/svelte/src/shared/version.js
 var PUBLIC_VERSION = "4";
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/disclose-version/index.js
+// node_modules/svelte/src/runtime/internal/disclose-version/index.js
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 

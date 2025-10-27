@@ -1,3 +1,5 @@
+import type { Vector, Capsule } from "@dimforge/rapier2d-compat";
+
 const respawnHeight = 621.093;
 const floorHeight = 638.37;
 let lastCheckpointReached = 0;
@@ -7,18 +9,18 @@ api.net.onLoad(() => {
     let savestates = api.plugin("Savestates");
     if(savestates) {
         savestates.onStateLoaded((summit: string | number) => {
-            if(typeof summit === "number") {
-                lastCheckpointReached = summit;
-                if(summit <= 1) canRespawn = false;
-            }
+            if(typeof summit !== "number") return;
+            
+            lastCheckpointReached = summit;
+            if(summit <= 1) canRespawn = false;
         });
     }
 
-    api.net.room.state.session.gameSession.listen("phase", (phase) => {
-        if(phase === "results") {
-            canRespawn = false;
-            lastCheckpointReached = 0;
-        }
+    api.net.room.state.session.gameSession.listen("phase", (phase: string) => {
+        if(phase !== "results") return;
+
+        canRespawn = false;
+        lastCheckpointReached = 0;
     });
 });
 
@@ -26,47 +28,34 @@ export function cancelRespawn() {
     canRespawn = false;
 }
 
-const checkpointCoords = [{
-    x: 38.25554275512695,
-    y: 638.3899536132812
-}, {
-    x: 90.22997283935547,
-    y: 638.377685546875
-}, {
-    x: 285.44000244140625,
-    y: 532.780029296875
-}, {
-    x: 217.5500030517578,
-    y: 500.7799987792969
-}, {
-    x: 400.3399963378906,
-    y: 413.739990234375
-}, {
-    x: 356.5400085449219,
-    y: 351.6600036621094
-}, {
-    x: 401.2699890136719,
-    y: 285.739990234375
-}];
+const checkpointCoords: Vector[] = [
+    { x: 38.25554275512695, y: 638.3899536132812 },
+    { x: 90.22997283935547, y: 638.377685546875 },
+    { x: 285.44000244140625, y: 532.780029296875 }, 
+    { x: 217.5500030517578, y: 500.7799987792969 },
+    { x: 400.3399963378906, y: 413.739990234375},
+    { x: 356.5400085449219, y: 351.6600036621094},
+    { x: 401.2699890136719, y: 285.739990234375 }
+];
 
 let doLaserRespawn = true;
 
-export function setLaserRespawnEnabled(enabled) {
+export function setLaserRespawnEnabled(enabled: boolean) {
     doLaserRespawn = enabled;
 }
 
 // for backwards compatibility
-export function setLaserWarningEnabled(enabled) {
+export function setLaserWarningEnabled(enabled: boolean) {
     doLaserRespawn = enabled;
 }
 
 const enable = () => {
+    const states = api.stores.world.devices.states;
+    const body = api.stores.phaser.mainCharacter.physics.getBody();
+    const shape = body.collider.shape as Capsule;
+
     let hurtFrames = 0;
     let maxHurtFrames = 1;
-
-    let states = api.stores.world.devices.states;
-    let body = api.stores.phaser.mainCharacter.physics.getBody();
-    let shape = body.collider.shape;
     
     // override the physics update to manually check for laser collisions
     let physics = api.stores.phaser.scene.worldManager.physics;
@@ -82,12 +71,12 @@ const enable = () => {
         if(api.net.room.state.session.gameSession.phase === "results") return;
         if(!doLaserRespawn || startImmunityActive) return;
 
-        let devicesInView = api.stores.phaser.scene.worldManager.devices.devicesInView;
-        let lasers = devicesInView.filter(d => d.laser);
+        const devicesInView = api.stores.phaser.scene.worldManager.devices.devicesInView;
+        const lasers = devicesInView.filter(d => d.laser);
         if(lasers.length === 0) return;
 
         // all the lasers always have the same state
-        let lasersOn = states.get(lasers[0].id).properties.get("GLOBAL_active");
+        let lasersOn = states.get(lasers[0].id)?.properties.get("GLOBAL_active");
 
         // some leniency between lasers turning on and doing damage
         if(!wasOnLastFrame && lasersOn) {
@@ -95,16 +84,16 @@ const enable = () => {
             setTimeout(() => startImmunityActive = false, 360);
         }
         wasOnLastFrame = lasersOn;
-        if(!lasersOn || startImmunityActive) return;
 
+        if(!lasersOn || startImmunityActive) return;
         let translation = body.rigidBody.translation();
     
         // calculate the bounding box of the player
-        let topLeft = {
+        const topLeft = {
             x: (translation.x - shape.radius) * 100,
             y: (translation.y - shape.halfHeight - shape.radius) * 100
         }
-        let bottomRight = {
+        const bottomRight = {
             x: (translation.x + shape.radius) * 100,
             y: (translation.y + shape.halfHeight + shape.radius) * 100
         }
@@ -136,22 +125,28 @@ const enable = () => {
             hurtFrames++;
             if(hurtFrames >= maxHurtFrames) {
                 hurtFrames = 0;
-                moveCharToPos(checkpointCoords[lastCheckpointReached].x, checkpointCoords[lastCheckpointReached].y);
+                body.rigidBody.setTranslation(checkpointCoords[lastCheckpointReached], true);
                 api.stores.me.isRespawning = true;
                 setTimeout(() => api.stores.me.isRespawning = false, 1000);
             }
-        } else hurtFrames = 0;
+        } else {
+            hurtFrames = 0;
+        }
 
         // check if we've reached a checkpoint
         for(let i = lastCheckpointReached + 1; i < checkpointCoords.length; i++) {
             let checkpoint = checkpointCoords[i];
-            if(boundingBoxOverlap(topLeft, bottomRight, {
+
+            const summitStart: Vector = {
                 x: checkpoint.x * 100,
                 y: checkpoint.y * 100 + 100
-            }, {
+            }
+            const summitEnd: Vector = {
                 x: checkpoint.x * 100 + 100,
                 y: checkpoint.y * 100
-            })) {
+            }
+
+            if(boundingBoxOverlap(summitStart, summitEnd, topLeft, bottomRight)) {
                 console.log("Reached Checkpoint", i);
                 lastCheckpointReached = i;
                 break;
@@ -166,7 +161,7 @@ const enable = () => {
         if(canRespawn && translation.y > floorHeight) {
             canRespawn = false;
             setTimeout(() => {
-                moveCharToPos(checkpointCoords[lastCheckpointReached].x, checkpointCoords[lastCheckpointReached].y);
+                body.rigidBody.setTranslation(checkpointCoords[lastCheckpointReached], true);
                 api.stores.me.isRespawning = true;
                 setTimeout(() => api.stores.me.isRespawning = false, 1000);
             }, 300);
@@ -174,11 +169,7 @@ const enable = () => {
     })
 
     // move the player to the initial position
-    let rb = api.stores.phaser.mainCharacter.physics.getBody().rigidBody;
-    rb.setTranslation({
-        "x": 33.87,
-        "y": 638.38
-    }, true);
+    body.rigidBody.setTranslation({ x: 33.87, y: 638.38 }, true);
 
     // make the physics deterministic
     for(let id of physics.bodies.staticBodies) {
@@ -194,14 +185,7 @@ api.net.onLoad(() => {
     GL.lib("Desync").enable();
 });
 
-function moveCharToPos(x, y) {
-    let rb = api.stores?.phaser?.mainCharacter?.physics?.getBody().rigidBody;
-    if(!rb) return;
-
-    rb.setTranslation({ x, y }, true);
-}
-
-function boundingBoxOverlap(start, end, topLeft, bottomRight) {
+function boundingBoxOverlap(start: Vector, end: Vector, topLeft: Vector, bottomRight: Vector) {
     // check if the line intersects with any of the bounding box sides
     return lineIntersects(start, end, topLeft, { x: bottomRight.x, y: topLeft.y }) ||
         lineIntersects(start, end, topLeft, { x: topLeft.x, y: bottomRight.y }) ||
@@ -209,7 +193,7 @@ function boundingBoxOverlap(start, end, topLeft, bottomRight) {
         lineIntersects(start, end, { x: topLeft.x, y: bottomRight.y }, bottomRight);
 }
 
-function lineIntersects(start1, end1, start2, end2) {
+function lineIntersects(start1: Vector, end1: Vector, start2: Vector, end2: Vector) {
     let denominator = ((end1.x - start1.x) * (end2.y - start2.y)) - ((end1.y - start1.y) * (end2.x - start2.x));
     let numerator1 = ((start1.y - start2.y) * (end2.x - start2.x)) - ((start1.x - start2.x) * (end2.y - start2.y));
     let numerator2 = ((start1.y - start2.y) * (end1.x - start1.x)) - ((start1.x - start2.x) * (end1.y - start1.y));

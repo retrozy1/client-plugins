@@ -7,7 +7,7 @@
  * @isLibrary true
  */
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/utils.js
+// node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
 function assign(tar, src) {
@@ -92,13 +92,13 @@ function compute_rest_props(props, keys) {
 }
 var contenteditable_truthy_values = ["", true, 1, "true", "contenteditable"];
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/globals.js
+// node_modules/svelte/src/runtime/internal/globals.js
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : (
   // @ts-ignore Node typings have this
   global
 );
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
+// node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
 var ResizeObserverSingleton = class _ResizeObserverSingleton {
   /**
    * @private
@@ -144,7 +144,7 @@ var ResizeObserverSingleton = class _ResizeObserverSingleton {
 };
 ResizeObserverSingleton.entries = "WeakMap" in globals ? /* @__PURE__ */ new WeakMap() : void 0;
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/dom.js
+// node_modules/svelte/src/runtime/internal/dom.js
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -302,7 +302,7 @@ function get_custom_elements_slots(element2) {
   return result;
 }
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/lifecycle.js
+// node_modules/svelte/src/runtime/internal/lifecycle.js
 var current_component;
 function set_current_component(component) {
   current_component = component;
@@ -337,7 +337,7 @@ function bubble(component, event) {
   }
 }
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/scheduler.js
+// node_modules/svelte/src/runtime/internal/scheduler.js
 var dirty_components = [];
 var binding_callbacks = [];
 var render_callbacks = [];
@@ -414,7 +414,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/transitions.js
+// node_modules/svelte/src/runtime/internal/transitions.js
 var outroing = /* @__PURE__ */ new Set();
 var outros;
 function group_outros() {
@@ -454,12 +454,12 @@ function transition_out(block, local, detach2, callback) {
   }
 }
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/each.js
+// node_modules/svelte/src/runtime/internal/each.js
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/spread.js
+// node_modules/svelte/src/runtime/internal/spread.js
 function get_spread_update(levels, updates) {
   const update2 = {};
   const to_null_out = {};
@@ -491,7 +491,7 @@ function get_spread_update(levels, updates) {
   return update2;
 }
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/shared/boolean_attributes.js
+// node_modules/svelte/src/shared/boolean_attributes.js
 var _boolean_attributes = (
   /** @type {const} */
   [
@@ -524,7 +524,7 @@ var _boolean_attributes = (
 );
 var boolean_attributes = /* @__PURE__ */ new Set([..._boolean_attributes]);
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/Component.js
+// node_modules/svelte/src/runtime/internal/Component.js
 function bind(component, name, callback) {
   const index = component.$$.props[name];
   if (index !== void 0) {
@@ -666,6 +666,12 @@ if (typeof HTMLElement === "function") {
         if (unsub) {
           unsub();
           this.$$l_u.delete(listener);
+        }
+      }
+      if (this.$$l[type]) {
+        const idx = this.$$l[type].indexOf(listener);
+        if (idx >= 0) {
+          this.$$l[type].splice(idx, 1);
         }
       }
     }
@@ -870,14 +876,14 @@ var SvelteComponent = class {
   }
 };
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/shared/version.js
+// node_modules/svelte/src/shared/version.js
 var PUBLIC_VERSION = "4";
 
-// node_modules/.bun/svelte@4.2.19/node_modules/svelte/src/runtime/internal/disclose-version/index.js
+// node_modules/svelte/src/runtime/internal/disclose-version/index.js
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 
-// node_modules/.bun/svelte-toggle@4.0.1/node_modules/svelte-toggle/src/ToggleCore.svelte
+// node_modules/svelte-toggle/src/ToggleCore.svelte
 var get_default_slot_changes = (dirty) => ({
   label: dirty & /*label*/
   2,
@@ -997,7 +1003,7 @@ var ToggleCore = class extends SvelteComponent {
 };
 var ToggleCore_default = ToggleCore;
 
-// node_modules/.bun/svelte-toggle@4.0.1/node_modules/svelte-toggle/src/Toggle.svelte
+// node_modules/svelte-toggle/src/Toggle.svelte
 function add_css(target) {
   append_styles(target, "svelte-1y1be9d", 'label.svelte-1y1be9d{display:block;margin-bottom:0.25rem;font-size:0.75rem}.hideLabel.svelte-1y1be9d{position:absolute;height:1px;width:1px;overflow:hidden;clip:rect(1px 1px 1px 1px);clip:rect(1px, 1px, 1px, 1px);white-space:nowrap}button.svelte-1y1be9d{position:relative;padding:0 0.25rem;border:0;border-radius:1rem;height:1.25rem;width:2.5rem;font:inherit;color:inherit;line-height:inherit}button.svelte-1y1be9d:not([disabled]){cursor:pointer}button[disabled].svelte-1y1be9d{cursor:not-allowed;opacity:0.6}button.svelte-1y1be9d:before{position:absolute;content:"";top:0;bottom:0;left:0.125rem;margin:auto;height:1rem;width:1rem;text-align:center;border-radius:50%;background-color:currentColor;transition:transform 150ms ease-out}button[aria-checked="true"].svelte-1y1be9d:before{transform:translateX(1.25rem)}button.small.svelte-1y1be9d{height:1rem;width:1.75rem}button.small.svelte-1y1be9d:before{height:0.75rem;width:0.75rem}button.small[aria-checked="true"].svelte-1y1be9d:before{transform:translateX(0.75rem)}div.svelte-1y1be9d{display:flex;align-items:center}span.svelte-1y1be9d{margin-left:0.5rem}');
 }

@@ -34,9 +34,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/debug.js
+// node_modules/compress-json/dist/debug.js
 var require_debug = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/debug.js"(exports) {
+  "node_modules/compress-json/dist/debug.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getType = getType;
@@ -54,9 +54,9 @@ var require_debug = __commonJS({
   }
 });
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/number.js
+// node_modules/compress-json/dist/number.js
 var require_number = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/number.js"(exports) {
+  "node_modules/compress-json/dist/number.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.s_to_int = s_to_int;
@@ -220,9 +220,9 @@ var require_number = __commonJS({
   }
 });
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/encode.js
+// node_modules/compress-json/dist/encode.js
 var require_encode = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/encode.js"(exports) {
+  "node_modules/compress-json/dist/encode.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.encodeNum = encodeNum;
@@ -243,20 +243,20 @@ var require_encode = __commonJS({
       if (Number.isNaN(num)) {
         return "N|0";
       }
-      const a = "n|" + (0, number_1.num_to_s)(num);
-      return a;
+      return "n|" + (0, number_1.num_to_s)(num);
     }
     function decodeNum(s) {
-      switch (s) {
-        case "N|+":
-          return Infinity;
-        case "N|-":
-          return -Infinity;
-        case "N|0":
-          return NaN;
+      if (s.length === 3 && s[0] === "N" && s[1] === "|") {
+        switch (s[2]) {
+          case "+":
+            return Infinity;
+          case "-":
+            return -Infinity;
+          case "0":
+            return NaN;
+        }
       }
-      s = s.replace("n|", "");
-      return (0, number_1.s_to_num)(s);
+      return (0, number_1.s_to_num)(s.slice(2));
     }
     function decodeKey(key) {
       return typeof key === "number" ? key : (0, number_1.s_to_int)(key);
@@ -265,36 +265,38 @@ var require_encode = __commonJS({
       return b ? "b|T" : "b|F";
     }
     function decodeBool(s) {
-      switch (s) {
-        case "b|T":
-          return true;
-        case "b|F":
-          return false;
+      if (s.length === 3 && s[0] === "b" && s[1] === "|") {
+        switch (s[2]) {
+          case "T":
+            return true;
+          case "F":
+            return false;
+        }
       }
       return !!s;
     }
     function encodeStr(str) {
-      const prefix = str[0] + str[1];
-      switch (prefix) {
-        case "b|":
-        case "o|":
-        case "n|":
-        case "a|":
-        case "s|":
-          str = "s|" + str;
+      if (str[1] === "|") {
+        switch (str[0]) {
+          case "b":
+          case "o":
+          case "n":
+          case "a":
+          case "s":
+            return "s|" + str;
+        }
       }
       return str;
     }
     function decodeStr(s) {
-      const prefix = s[0] + s[1];
-      return prefix === "s|" ? s.substr(2) : s;
+      return s[0] === "s" && s[1] === "|" ? s.substr(2) : s;
     }
   }
 });
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/config.js
+// node_modules/compress-json/dist/config.js
 var require_config = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/config.js"(exports) {
+  "node_modules/compress-json/dist/config.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.config = void 0;
@@ -302,15 +304,17 @@ var require_config = __commonJS({
       // default will not sort the object key
       sort_key: false,
       // default will convert into null silently like JSON.stringify
+      preserve_nan: false,
       error_on_nan: false,
+      preserve_infinite: false,
       error_on_infinite: false
     };
   }
 });
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/memory.js
+// node_modules/compress-json/dist/memory.js
 var require_memory = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/memory.js"(exports) {
+  "node_modules/compress-json/dist/memory.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.memToValues = memToValues;
@@ -454,14 +458,29 @@ var require_memory = __commonJS({
           return getValueKey(mem, (0, encode_1.encodeBool)(o));
         case "number":
           if (Number.isNaN(o)) {
+            if (config_1.config.preserve_nan) {
+              return getValueKey(mem, "N|0");
+            }
             if (config_1.config.error_on_nan) {
               (0, debug_1.throwUnsupportedData)("[number NaN]");
             }
             return "";
           }
-          if (Number.POSITIVE_INFINITY === o || Number.NEGATIVE_INFINITY === o) {
+          if (Number.POSITIVE_INFINITY === o) {
+            if (config_1.config.preserve_infinite) {
+              return getValueKey(mem, "N|+");
+            }
             if (config_1.config.error_on_infinite) {
               (0, debug_1.throwUnsupportedData)("[number Infinity]");
+            }
+            return "";
+          }
+          if (Number.NEGATIVE_INFINITY === o) {
+            if (config_1.config.preserve_infinite) {
+              return getValueKey(mem, "N|-");
+            }
+            if (config_1.config.error_on_infinite) {
+              (0, debug_1.throwUnsupportedData)("[number -Infinity]");
             }
             return "";
           }
@@ -474,9 +493,9 @@ var require_memory = __commonJS({
   }
 });
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/core.js
+// node_modules/compress-json/dist/core.js
 var require_core = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/core.js"(exports) {
+  "node_modules/compress-json/dist/core.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.compress = compress;
@@ -485,6 +504,7 @@ var require_core = __commonJS({
     var debug_1 = require_debug();
     var encode_1 = require_encode();
     var memory_1 = require_memory();
+    var number_1 = require_number();
     function compress(o) {
       const mem = (0, memory_1.makeInMemoryMemory)();
       const root = (0, memory_1.addValue)(mem, o, void 0);
@@ -540,22 +560,39 @@ var require_core = __commonJS({
         case "number":
           return v;
         case "string":
-          const prefix = v[0] + v[1];
-          switch (prefix) {
-            case "b|":
-              return (0, encode_1.decodeBool)(v);
-            case "o|":
-              return decodeObject(values, v);
-            case "n|":
-            case "N|+":
-            case "N|-":
-            case "N|0":
-              return (0, encode_1.decodeNum)(v);
-            case "a|":
-              return decodeArray(values, v);
-            default:
-              return (0, encode_1.decodeStr)(v);
+          if (v[1] === "|") {
+            switch (v[0]) {
+              case "b": {
+                switch (v[2]) {
+                  case "T":
+                    return true;
+                  case "F":
+                    return false;
+                  default:
+                    return (0, debug_1.throwUnknownDataType)(v);
+                }
+              }
+              case "o":
+                return decodeObject(values, v);
+              case "n":
+                return (0, number_1.s_to_num)(v.slice(2));
+              case "N": {
+                switch (v[2]) {
+                  case "+":
+                    return Infinity;
+                  case "-":
+                    return -Infinity;
+                  case "0":
+                    return NaN;
+                  default:
+                    return (0, debug_1.throwUnknownDataType)(v);
+                }
+              }
+              case "a":
+                return decodeArray(values, v);
+            }
           }
+          return (0, encode_1.decodeStr)(v);
       }
       return (0, debug_1.throwUnknownDataType)(v);
     }
@@ -566,9 +603,9 @@ var require_core = __commonJS({
   }
 });
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/helpers.js
+// node_modules/compress-json/dist/helpers.js
 var require_helpers = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/helpers.js"(exports) {
+  "node_modules/compress-json/dist/helpers.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.trimUndefined = trimUndefined;
@@ -599,9 +636,9 @@ var require_helpers = __commonJS({
   }
 });
 
-// node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/index.js
+// node_modules/compress-json/dist/index.js
 var require_dist = __commonJS({
-  "node_modules/.bun/compress-json@3.3.0/node_modules/compress-json/dist/index.js"(exports) {
+  "node_modules/compress-json/dist/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.config = exports.trimUndefinedRecursively = exports.trimUndefined = exports.addValue = exports.decode = exports.decompress = exports.compress = void 0;
@@ -634,7 +671,7 @@ var require_dist = __commonJS({
   }
 });
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/utils.js
+// node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
 function run(fn) {
@@ -656,13 +693,13 @@ function is_empty(obj) {
   return Object.keys(obj).length === 0;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/globals.js
+// node_modules/svelte/src/runtime/internal/globals.js
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : (
   // @ts-ignore Node typings have this
   global
 );
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
+// node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
 var ResizeObserverSingleton = class _ResizeObserverSingleton {
   /**
    * @private
@@ -708,7 +745,7 @@ var ResizeObserverSingleton = class _ResizeObserverSingleton {
 };
 ResizeObserverSingleton.entries = "WeakMap" in globals ? /* @__PURE__ */ new WeakMap() : void 0;
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/dom.js
+// node_modules/svelte/src/runtime/internal/dom.js
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -830,7 +867,7 @@ function get_custom_elements_slots(element2) {
   return result;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/lifecycle.js
+// node_modules/svelte/src/runtime/internal/lifecycle.js
 var current_component;
 function set_current_component(component) {
   current_component = component;
@@ -843,7 +880,7 @@ function onMount(fn) {
   get_current_component().$$.on_mount.push(fn);
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/scheduler.js
+// node_modules/svelte/src/runtime/internal/scheduler.js
 var dirty_components = [];
 var binding_callbacks = [];
 var render_callbacks = [];
@@ -917,7 +954,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/transitions.js
+// node_modules/svelte/src/runtime/internal/transitions.js
 var outroing = /* @__PURE__ */ new Set();
 function transition_in(block, local) {
   if (block && block.i) {
@@ -926,12 +963,12 @@ function transition_in(block, local) {
   }
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/each.js
+// node_modules/svelte/src/runtime/internal/each.js
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/shared/boolean_attributes.js
+// node_modules/svelte/src/shared/boolean_attributes.js
 var _boolean_attributes = (
   /** @type {const} */
   [
@@ -964,7 +1001,7 @@ var _boolean_attributes = (
 );
 var boolean_attributes = /* @__PURE__ */ new Set([..._boolean_attributes]);
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/Component.js
+// node_modules/svelte/src/runtime/internal/Component.js
 function mount_component(component, target, anchor) {
   const { fragment, after_update } = component.$$;
   fragment && fragment.m(target, anchor);
@@ -1306,10 +1343,10 @@ var SvelteComponent = class {
   }
 };
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/shared/version.js
+// node_modules/svelte/src/shared/version.js
 var PUBLIC_VERSION = "4";
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/disclose-version/index.js
+// node_modules/svelte/src/runtime/internal/disclose-version/index.js
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 

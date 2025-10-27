@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "strict": false,
+        "strict": true,
         "target": "es2022",
         "moduleResolution": "bundler",
         "jsx": "preserve",

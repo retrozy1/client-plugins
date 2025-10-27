@@ -10,7 +10,6 @@
 // libraries/MobxUtils/src/index.ts
 var observerIntercepts = [];
 var wrapObserver = api.rewriter.createShared("ObserverWrapper", (func) => {
-  console.log("Wrapping", func);
   return function() {
     if (GL.libs.isEnabled("MobxUtils")) {
       let str = arguments[0].toString();
@@ -26,13 +25,13 @@ var wrapObserver = api.rewriter.createShared("ObserverWrapper", (func) => {
 });
 api.rewriter.addParseHook("mobxreact", (code) => {
   const index = code.indexOf("[mobx-react-lite]");
-  if (index === -1) return;
+  if (index === -1) return code;
   const funcStart = code.lastIndexOf("function", index);
   const nameEnd = code.indexOf("(", funcStart);
   const name = code.slice(funcStart + 9, nameEnd);
   const funcEnd = code.indexOf("}", code.indexOf(".forwardRef", index)) + 1;
   const func = code.slice(funcStart, funcEnd);
-  code = code.slice(0, funcStart) + `const ${name}=(${wrapObserver} ?? (v => v))(${func});` + code.slice(funcEnd);
+  code = code.slice(0, funcStart) + `const ${name}=(${wrapObserver}??(v => v))(${func});` + code.slice(funcEnd);
   return code;
 });
 function interceptObserver(id, match, callback) {
