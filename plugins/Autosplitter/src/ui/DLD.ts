@@ -2,8 +2,7 @@ import { categories, DLDSplits } from "../constants";
 import DLDAutosplitter from "../splitters/DLD";
 import BasicUI from "./basic";
 import SplitsUI from "./splits";
-// @ts-ignore
-import restore from '../../assets/restore.svg';
+import restore from "$assets/restore.svg";
 
 function addDLDUI(element: HTMLElement, autosplitter: DLDAutosplitter) {
     let topBar = element.querySelector(".bar")!;

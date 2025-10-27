@@ -2,8 +2,7 @@ import type { IFrameInfo, ISharedValues } from "../types";
 import { initOverlay, showHitbox, hideHitbox } from "./overlay";
 import TASTools from "./tools";
 import { save } from "./util";
-// @ts-ignore
-import controller from '../assets/controller.svg';
+import controller from '$assets/controller.svg';
 import { getLaserOffset, setLaserOffset } from "./updateLasers";
 
 let frames: IFrameInfo[] = api.storage.getValue("frames", []);

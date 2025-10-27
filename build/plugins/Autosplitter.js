@@ -11,7 +11,7 @@
  * @gamemode oneWayOut
  */
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/utils.js
+// node_modules/svelte/src/runtime/internal/utils.js
 function noop() {
 }
 function run(fn) {
@@ -33,13 +33,13 @@ function is_empty(obj) {
   return Object.keys(obj).length === 0;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/globals.js
+// node_modules/svelte/src/runtime/internal/globals.js
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : (
   // @ts-ignore Node typings have this
   global
 );
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
+// node_modules/svelte/src/runtime/internal/ResizeObserverSingleton.js
 var ResizeObserverSingleton = class _ResizeObserverSingleton {
   /**
    * @private
@@ -85,7 +85,7 @@ var ResizeObserverSingleton = class _ResizeObserverSingleton {
 };
 ResizeObserverSingleton.entries = "WeakMap" in globals ? /* @__PURE__ */ new WeakMap() : void 0;
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/dom.js
+// node_modules/svelte/src/runtime/internal/dom.js
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -203,13 +203,13 @@ function get_custom_elements_slots(element2) {
   return result;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/lifecycle.js
+// node_modules/svelte/src/runtime/internal/lifecycle.js
 var current_component;
 function set_current_component(component) {
   current_component = component;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/scheduler.js
+// node_modules/svelte/src/runtime/internal/scheduler.js
 var dirty_components = [];
 var binding_callbacks = [];
 var render_callbacks = [];
@@ -283,7 +283,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/transitions.js
+// node_modules/svelte/src/runtime/internal/transitions.js
 var outroing = /* @__PURE__ */ new Set();
 var outros;
 function group_outros() {
@@ -323,12 +323,12 @@ function transition_out(block, local, detach2, callback) {
   }
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/each.js
+// node_modules/svelte/src/runtime/internal/each.js
 function ensure_array_like(array_like_or_iterator) {
   return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
 }
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/shared/boolean_attributes.js
+// node_modules/svelte/src/shared/boolean_attributes.js
 var _boolean_attributes = (
   /** @type {const} */
   [
@@ -361,7 +361,7 @@ var _boolean_attributes = (
 );
 var boolean_attributes = /* @__PURE__ */ new Set([..._boolean_attributes]);
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/Component.js
+// node_modules/svelte/src/runtime/internal/Component.js
 function create_component(block) {
   block && block.c();
 }
@@ -706,10 +706,10 @@ var SvelteComponent = class {
   }
 };
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/shared/version.js
+// node_modules/svelte/src/shared/version.js
 var PUBLIC_VERSION = "4";
 
-// node_modules/.bun/svelte@4.2.20/node_modules/svelte/src/runtime/internal/disclose-version/index.js
+// node_modules/svelte/src/runtime/internal/disclose-version/index.js
 if (typeof window !== "undefined")
   (window.__svelte || (window.__svelte = { v: /* @__PURE__ */ new Set() })).v.add(PUBLIC_VERSION);
 
@@ -3733,7 +3733,7 @@ var FishtopiaAutosplitter = class extends SplitsAutosplitter {
   }
 };
 
-// plugins/Autosplitter/assets/restore.svg
+// assets/restore.svg
 var restore_default = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z" fill="white" /></svg>';
 
 // plugins/Autosplitter/src/ui/DLD.ts

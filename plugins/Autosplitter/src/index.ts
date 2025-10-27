@@ -1,6 +1,4 @@
-// @ts-ignore
 import Settings from './settings/Settings.svelte';
-// @ts-ignore
 import styles from './styles.scss';
 import { Autosplitter } from "./splitters/autosplitter";
 import FishtopiaAutosplitter from "./splitters/fishtopia";
