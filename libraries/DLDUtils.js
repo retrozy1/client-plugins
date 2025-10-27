@@ -212,7 +212,6 @@ function moveCharToPos(x, y) {
     rb.setTranslation({ x, y }, true);
 }
 
-// functions below AI generated there's no way I'm doing that myself
 function boundingBoxOverlap(start, end, topLeft, bottomRight) {
     // check if the line intersects with any of the bounding box sides
     return lineIntersects(start, end, topLeft, { x: bottomRight.x, y: topLeft.y }) ||

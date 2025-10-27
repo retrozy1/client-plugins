@@ -6,10 +6,10 @@ export default {
     author: "TheLazySquid",
     version: "0.3.0",
     reloadRequired: 'ingame',
-    downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/plugins/InputRecorder/build/InputRecorder.js",
+    downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/InputRecorder.js",
     webpage: 'https://gimloader.github.io/plugins/inputrecorder',
     libs: [
-        "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/libraries/DLDUtils.js"
+        "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/libraries/DLDUtils.js"
     ],
     gamemodes: ["dontLookDown"]
 }

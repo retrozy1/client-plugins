@@ -1,0 +1,56 @@
+/**
+ * @name IdleForXp
+ * @description Automatically performs actions to let you gain XP while idle
+ * @author TheLazySquid
+ * @version 0.3.2
+ * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/IdleForXp.js
+ * @webpage https://gimloader.github.io/plugins/idleforxp
+ * @reloadRequired ingame
+ * @gamemode 2d
+ */
+
+// plugins/IdleForXp/src/index.ts
+var questions = [];
+var answerDeviceId;
+var currentQuestionId;
+function answerQuestion() {
+  if (!currentQuestionId) return;
+  let question = questions.find((q) => q._id == currentQuestionId);
+  if (!question) return;
+  let packet = {
+    key: "answered",
+    deviceId: answerDeviceId,
+    data: {}
+  };
+  if (question.type == "text") {
+    packet.data.answer = question.answers[0].text;
+  } else {
+    let correctAnswerId = question.answers.find((a) => a.correct)._id;
+    packet.data.answer = correctAnswerId;
+  }
+  api.net.send("MESSAGE_FOR_DEVICE", packet);
+}
+api.net.on("DEVICES_STATES_CHANGES", (event) => {
+  for (let change of event.changes) {
+    let id = change[0];
+    for (let i = 0; i < change[1].length; i++) {
+      let index = change[1][i];
+      let key = event.values[index];
+      let value = change[2][i];
+      if (key == "GLOBAL_questions") {
+        questions = JSON.parse(value);
+        console.log("Got questions", questions);
+        answerDeviceId = id;
+      }
+      let playerId = GL.stores.phaser.mainCharacter.id;
+      if (key == `PLAYER_${playerId}_currentQuestionId`) {
+        currentQuestionId = value;
+      }
+    }
+  }
+});
+api.net.onLoad(() => {
+  GL.notification.open({ message: "IdleForXp is active" });
+  setInterval(answerQuestion, 3e4);
+  api.onStop(() => clearInterval(answerQuestion));
+});
