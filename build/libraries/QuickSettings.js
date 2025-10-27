@@ -2312,10 +2312,10 @@ var Settings_default = Settings;
 // libraries/QuickSettings/src/index.ts
 function QuickSettings(name, els) {
   if (!Array.isArray(els)) throw new Error("Elements isn't an array");
-  let settings = GL.storage.getValue(name, "QS-Settings", {});
-  for (let el of els) {
+  const settings = GL.storage.getValue(name, "QS-Settings", {});
+  for (const el of els) {
     if (el.type === "heading") continue;
-    if (!settings.hasOwnProperty(el.id)) {
+    if (!Object.hasOwn(settings, el.id)) {
       if (el.default) settings[el.id] = el.default;
       else {
         if (el.type === "number") settings[el.id] = el.min ?? 0;
@@ -2326,8 +2326,8 @@ function QuickSettings(name, els) {
     }
   }
   settings.openSettingsMenu = () => {
-    let div = document.createElement("div");
-    let component = new Settings_default({
+    const div = document.createElement("div");
+    const component = new Settings_default({
       target: div,
       props: {
         name,
@@ -2337,18 +2337,18 @@ function QuickSettings(name, els) {
     });
     api.UI.showModal(div, {
       buttons: [{ text: "Close", style: "primary" }],
-      // @ts-ignore
+      // @ts-expect-error
       onClosed: () => component.$destroy()
     });
   };
-  let listeners = {};
+  const listeners = {};
   settings.listen = (key, callback) => {
     if (!listeners[key]) listeners[key] = [];
     listeners[key].push(callback);
     return () => listeners[key].splice(listeners[key].indexOf(callback), 1);
   };
   settings.onChange = (key) => {
-    let value = settings[key];
+    const value = settings[key];
     if (listeners[key]) listeners[key].forEach((cb) => cb(value));
   };
   return settings;

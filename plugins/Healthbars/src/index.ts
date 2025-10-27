@@ -1,6 +1,6 @@
 api.net.onLoad(() => {
     const options = JSON.parse(api.stores.world.mapOptionsJSON);
-	if(!options.showHealthAndShield) return;
+    if(!options.showHealthAndShield) return;
 
     const { scene } = api.stores.phaser;
     const width = 130;
@@ -17,20 +17,26 @@ api.net.onLoad(() => {
         const stateChar = api.net.room.state.characters.get(character.id);
         const hp = stateChar.health;
 
-        let stopUpdate = api.patcher.after(character.nametag, "update", () => {
+        const stopUpdate = api.patcher.after(character.nametag, "update", () => {
             let { x, y, depth } = character.nametag.tag;
             y += 22;
-            
+
             bg.visible = health.visible = shield.visible = !stateChar.isRespawning;
             health.width = hp.health / hp.maxHealth * width;
             shield.width = hp.shield / hp.maxShield * width;
 
-            bg.setDepth(depth); bg.x = x; bg.y = y;
-            health.setDepth(depth); health.x = x; health.y = y;
-            shield.setDepth(depth); shield.x = x; shield.y = y;
+            bg.setDepth(depth);
+            bg.x = x;
+            bg.y = y;
+            health.setDepth(depth);
+            health.x = x;
+            health.y = y;
+            shield.setDepth(depth);
+            shield.x = x;
+            shield.y = y;
         });
 
-        let stopDestroy = api.patcher.after(character, "destroy", destroy);
+        const stopDestroy = api.patcher.after(character, "destroy", destroy);
         api.onStop(destroy);
 
         function destroy() {
@@ -40,13 +46,13 @@ api.net.onLoad(() => {
             stopUpdate();
             stopDestroy();
         }
-    }
+    };
 
     api.patcher.after(scene.characterManager, "addCharacter", (_, __, character) => {
         addHealthbar(character);
     });
 
-    for(let character of scene.characterManager.characters.values()) {
+    for(const character of scene.characterManager.characters.values()) {
         addHealthbar(character);
     }
 });

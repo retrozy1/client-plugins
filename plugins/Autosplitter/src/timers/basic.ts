@@ -1,7 +1,7 @@
-import { Autosplitter } from "../splitters/autosplitter";
-import BasicUI from "../ui/basic";
+import type { Autosplitter } from "../splitters/autosplitter";
+import type BasicUI from "../ui/basic";
 
-export default class BasicTimer {    
+export default class BasicTimer {
     started = false;
     startTime = 0;
     now = 0;
@@ -21,7 +21,7 @@ export default class BasicTimer {
     stop() {
         this.started = false;
 
-        let pb = this.autosplitter.pb;
+        const pb = this.autosplitter.pb;
         if(!pb || this.elapsed < pb) {
             this.autosplitter.data.pb[this.autosplitter.getCategoryId()] = this.elapsed;
             this.autosplitter.save();

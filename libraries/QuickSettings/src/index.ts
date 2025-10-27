@@ -1,15 +1,15 @@
-import Settings from './Settings.svelte';
+import Settings from "./Settings.svelte";
 import type { QSElement, QuickSettingsReturn } from "./types";
 
 export default function QuickSettings(name: string, els: QSElement[]): QuickSettingsReturn {
     if(!Array.isArray(els)) throw new Error("Elements isn't an array");
 
-    let settings: Record<string, any> = GL.storage.getValue(name, "QS-Settings", {});
+    const settings: Record<string, any> = GL.storage.getValue(name, "QS-Settings", {});
 
     // apply defaults
-    for(let el of els) {
+    for(const el of els) {
         if(el.type === "heading") continue;
-        if(!settings.hasOwnProperty(el.id)) {
+        if(!Object.hasOwn(settings, el.id)) {
             if(el.default) settings[el.id] = el.default;
             else {
                 if(el.type === "number") settings[el.id] = el.min ?? 0;
@@ -21,10 +21,10 @@ export default function QuickSettings(name: string, els: QSElement[]): QuickSett
     }
 
     settings.openSettingsMenu = () => {
-        let div = document.createElement("div");
+        const div = document.createElement("div");
 
-        // @ts-ignore
-        let component = new Settings({
+        // @ts-expect-error
+        const component = new Settings({
             target: div,
             props: {
                 name,
@@ -35,23 +35,23 @@ export default function QuickSettings(name: string, els: QSElement[]): QuickSett
 
         api.UI.showModal(div, {
             buttons: [{ text: "Close", style: "primary" }],
-            // @ts-ignore
+            // @ts-expect-error
             onClosed: () => component.$destroy()
-        })
-    }
+        });
+    };
 
-    let listeners: Record<string, ((value: any) => void)[]> = {};
+    const listeners: Record<string, ((value: any) => void)[]> = {};
     settings.listen = (key: string, callback: (value: any) => void) => {
         if(!listeners[key]) listeners[key] = [];
         listeners[key].push(callback);
 
         return () => listeners[key].splice(listeners[key].indexOf(callback), 1);
-    }
+    };
 
     settings.onChange = (key: string) => {
-        let value = settings[key];
+        const value = settings[key];
         if(listeners[key]) listeners[key].forEach(cb => cb(value));
-    }
+    };
 
     return settings as QuickSettingsReturn;
 }

@@ -1,10 +1,10 @@
-import styles from './styles.scss';
+import styles from "./styles.scss";
 import { createUI } from "./ui";
 
 api.lib("DLDUtils").setLaserWarningEnabled(false);
 api.UI.addStyles(styles);
 
-let startTasBtn = document.createElement("button");
+const startTasBtn = document.createElement("button");
 startTasBtn.id = "startTasBtn";
 startTasBtn.innerText = "Start TAS";
 

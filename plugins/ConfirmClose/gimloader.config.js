@@ -7,4 +7,4 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/ConfirmClose.js",
     webpage: "https://gimloader.github.io/plugins/confirmclose",
     version: "1.0.0"
-}
+};

@@ -7,4 +7,4 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/MobxUtils.js",
     version: "0.3.1",
     isLibrary: true
-}
+};

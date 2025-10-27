@@ -7,88 +7,6 @@
  * @webpage https://gimloader.github.io/plugins/autokicker
  */
 
-// plugins/AutoKicker/src/styles.scss
-var styles_default = `#AutoKick-UI {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 9999;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 5px;
-}
-#AutoKick-UI .root {
-  display: flex;
-  flex-direction: column;
-  color: white;
-  padding: 10px;
-}
-#AutoKick-UI .checkboxes {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto;
-  gap: 5px;
-}
-#AutoKick-UI .idleDelaySlider {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-#AutoKick-UI .idleDelaySlider input {
-  flex-grow: 1;
-}
-#AutoKick-UI .idleDelaySlider label {
-  font-size: 12px;
-}
-#AutoKick-UI h2 {
-  width: 100%;
-  text-align: center;
-  margin-bottom: 5px;
-}
-#AutoKick-UI .blacklist {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  max-height: 500px;
-  overflow-y: auto;
-}
-#AutoKick-UI .blacklist .rule {
-  display: flex;
-  align-items: center;
-  border-radius: 8px;
-  border: 1px solid white;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-#AutoKick-UI .blacklist .rule .name {
-  flex-grow: 1;
-}
-#AutoKick-UI .blacklist .rule .exact {
-  padding: 3px;
-  transition: transform 0.2s;
-  background-color: rgba(0, 0, 0, 0.5);
-  text-decoration: underline;
-  border: none;
-}
-#AutoKick-UI .blacklist .rule .exact:hover {
-  transform: scale(1.05);
-}
-#AutoKick-UI .blacklist .rule .delete {
-  font-size: 20px;
-  border: none;
-  background-color: transparent;
-  transition: transform 0.2s;
-}
-#AutoKick-UI .blacklist .rule .delete:hover {
-  transform: scale(1.05);
-}
-#AutoKick-UI .blacklist .add {
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  border: 1px solid white;
-  background-color: rgba(0, 0, 0, 0.5);
-}`;
-
 // plugins/AutoKicker/src/consts.ts
 var characters = [
   "\n",
@@ -182,7 +100,7 @@ var AutoKicker = class {
     api.onStop(() => this.dispose());
   }
   loadSettings() {
-    let settings = api.storage.getValue("Settings", {});
+    const settings = api.storage.getValue("Settings", {});
     this.kickDuplicateNames = settings.kickDuplicateNames ?? false;
     this.kickSkinless = settings.kickSkinless ?? false;
     this.blacklist = settings.blacklist ?? [];
@@ -203,11 +121,11 @@ var AutoKicker = class {
   start() {
     if (api.net.type === "Colyseus") {
       this.myId = api.stores.phaser.mainCharacter.id;
-      let chars = api.net.room.serializer.state.characters;
+      const chars = api.net.room.serializer.state.characters;
       this.unOnAdd = chars.onAdd((e) => {
         if (!e || e.id === this.myId) return;
         if (this.kickIdle) {
-          let timeout = setTimeout(() => {
+          const timeout = setTimeout(() => {
             this.colyseusKick(e.id, "being idle");
           }, this.idleDelay);
           this.idleKickTimeouts.set(e.id, timeout);
@@ -234,8 +152,8 @@ var AutoKicker = class {
     this.scanPlayersBlueboat();
   }
   watchPlayerForMove(player, callback) {
-    let startX = player.x;
-    let startY = player.y;
+    const startX = player.x;
+    const startY = player.y;
     let unsubX, unsubY;
     const onMove = () => {
       if (unsubX) unsubX();
@@ -253,10 +171,10 @@ var AutoKicker = class {
     this.kickIdle = value;
     if (api.net.type !== "Colyseus") return;
     if (value) {
-      for (let [id, char] of api.net.room.serializer.state.characters.entries()) {
+      for (const [id, char] of api.net.room.serializer.state.characters.entries()) {
         if (id === this.myId) continue;
         if (this.idleKickTimeouts.has(id)) continue;
-        let timeout = setTimeout(() => {
+        const timeout = setTimeout(() => {
           this.colyseusKick(id, "being idle");
         }, this.idleDelay);
         this.idleKickTimeouts.set(id, timeout);
@@ -267,7 +185,7 @@ var AutoKicker = class {
         this.watchPlayerForMove(char, onMove);
       }
     } else {
-      for (let [id, timeout] of this.idleKickTimeouts.entries()) {
+      for (const [id, timeout] of this.idleKickTimeouts.entries()) {
         clearTimeout(timeout);
         this.idleKickTimeouts.delete(id);
       }
@@ -279,15 +197,15 @@ var AutoKicker = class {
   }
   scanPlayersBlueboat() {
     if (!this.lastLeaderboard) return;
-    let nameCount = /* @__PURE__ */ new Map();
+    const nameCount = /* @__PURE__ */ new Map();
     if (this.kickDuplicateNames) {
-      for (let item of this.lastLeaderboard) {
-        let name = this.trimName(item.name);
+      for (const item of this.lastLeaderboard) {
+        const name = this.trimName(item.name);
         if (!nameCount.has(name)) nameCount.set(name, 0);
         nameCount.set(name, nameCount.get(name) + 1);
       }
     }
-    for (let item of this.lastLeaderboard) {
+    for (const item of this.lastLeaderboard) {
       if (nameCount.get(this.trimName(item.name)) >= 3) {
         this.blueboatKick(item.id, "duplicate name");
         continue;
@@ -301,18 +219,18 @@ var AutoKicker = class {
     }
   }
   scanPlayersColyseus() {
-    let characters2 = api.net.room.state.characters;
-    let nameCount = /* @__PURE__ */ new Map();
+    const characters2 = api.net.room.state.characters;
+    const nameCount = /* @__PURE__ */ new Map();
     if (this.kickDuplicateNames) {
-      for (let [_, player] of characters2.entries()) {
-        let name = this.trimName(player.name);
+      for (const [_, player] of characters2.entries()) {
+        const name = this.trimName(player.name);
         if (!nameCount.has(name)) nameCount.set(name, 0);
         nameCount.set(name, nameCount.get(name) + 1);
       }
     }
-    for (let [id, player] of characters2.entries()) {
+    for (const [id, player] of characters2.entries()) {
       if (id === this.myId) continue;
-      let name = this.trimName(player.name);
+      const name = this.trimName(player.name);
       if (this.kickDuplicateNames) {
         if (nameCount.get(name) >= 3) {
           this.colyseusKick(id, "duplicate name");
@@ -325,7 +243,7 @@ var AutoKicker = class {
         this.colyseusKick(id, "blank name");
       }
       if (this.kickSkinless) {
-        let skin = JSON.parse(player.appearance.skin).id;
+        const skin = JSON.parse(player.appearance.skin).id;
         if (skin.startsWith("character_default_")) {
           this.colyseusKick(id, "not having a skin");
         }
@@ -337,7 +255,7 @@ var AutoKicker = class {
   }
   checkIfNameBlacklisted(name) {
     name = this.trimName(name);
-    for (let filter of this.blacklist) {
+    for (const filter of this.blacklist) {
       if (filter.exact) {
         if (name === filter.name.toLowerCase()) {
           return true;
@@ -352,21 +270,21 @@ var AutoKicker = class {
     return false;
   }
   checkIfNameBlank(name) {
-    let newName = name.replaceAll(invisRegex, "");
+    const newName = name.replaceAll(invisRegex, "");
     if (newName.length === 0) return true;
     return false;
   }
   colyseusKick(id, reason) {
     if (this.kicked.has(id)) return;
     this.kicked.add(id);
-    let char = api.net.room.state.characters.get(id);
+    const char = api.net.room.state.characters.get(id);
     api.net.send("KICK_PLAYER", { characterId: id });
     api.notification.open({ message: `Kicked ${char.name} for ${reason}` });
   }
   blueboatKick(id, reason) {
     if (this.kicked.has(id)) return;
     this.kicked.add(id);
-    let playername = this.lastLeaderboard.find((e) => e.id === id)?.name;
+    const playername = this.lastLeaderboard.find((e) => e.id === id)?.name;
     api.net.send("KICK_PLAYER", id);
     api.notification.open({ message: `Kicked ${playername} for ${reason}` });
   }
@@ -376,15 +294,97 @@ var AutoKicker = class {
   }
 };
 
+// plugins/AutoKicker/src/styles.scss
+var styles_default = `#AutoKick-UI {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+}
+#AutoKick-UI .root {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  padding: 10px;
+}
+#AutoKick-UI .checkboxes {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 5px;
+}
+#AutoKick-UI .idleDelaySlider {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#AutoKick-UI .idleDelaySlider input {
+  flex-grow: 1;
+}
+#AutoKick-UI .idleDelaySlider label {
+  font-size: 12px;
+}
+#AutoKick-UI h2 {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 5px;
+}
+#AutoKick-UI .blacklist {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+#AutoKick-UI .blacklist .rule {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid white;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+#AutoKick-UI .blacklist .rule .name {
+  flex-grow: 1;
+}
+#AutoKick-UI .blacklist .rule .exact {
+  padding: 3px;
+  transition: transform 0.2s;
+  background-color: rgba(0, 0, 0, 0.5);
+  text-decoration: underline;
+  border: none;
+}
+#AutoKick-UI .blacklist .rule .exact:hover {
+  transform: scale(1.05);
+}
+#AutoKick-UI .blacklist .rule .delete {
+  font-size: 20px;
+  border: none;
+  background-color: transparent;
+  transition: transform 0.2s;
+}
+#AutoKick-UI .blacklist .rule .delete:hover {
+  transform: scale(1.05);
+}
+#AutoKick-UI .blacklist .add {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid white;
+  background-color: rgba(0, 0, 0, 0.5);
+}`;
+
 // plugins/AutoKicker/src/ui.tsx
 function UI({ autoKicker: autoKicker2 }) {
   const React = GL.React;
-  let [kickDuplicated, setKickDuplicated] = React.useState(autoKicker2.kickDuplicateNames);
-  let [kickSkinless, setKickSkinless] = React.useState(autoKicker2.kickSkinless);
-  let [kickBlank, setKickBlank] = React.useState(autoKicker2.kickBlank);
-  let [kickIdle, setKickIdle] = React.useState(autoKicker2.kickIdle);
-  let [kickIdleDelay, setKickIdleDelay] = React.useState(autoKicker2.idleDelay);
-  let [blacklist, setBlacklist] = React.useState(autoKicker2.blacklist);
+  const [kickDuplicated, setKickDuplicated] = React.useState(autoKicker2.kickDuplicateNames);
+  const [kickSkinless, setKickSkinless] = React.useState(autoKicker2.kickSkinless);
+  const [kickBlank, setKickBlank] = React.useState(autoKicker2.kickBlank);
+  const [kickIdle, setKickIdle] = React.useState(autoKicker2.kickIdle);
+  const [kickIdleDelay, setKickIdleDelay] = React.useState(autoKicker2.idleDelay);
+  const [blacklist, setBlacklist] = React.useState(autoKicker2.blacklist);
   return /* @__PURE__ */ GL.React.createElement("div", { className: "root" }, /* @__PURE__ */ GL.React.createElement("div", { className: "checkboxes" }, /* @__PURE__ */ GL.React.createElement("label", null, "Kick duplicates"), /* @__PURE__ */ GL.React.createElement(
     "input",
     {
@@ -445,8 +445,8 @@ function UI({ autoKicker: autoKicker2 }) {
       step: "1000",
       value: kickIdleDelay,
       onChange: (e) => {
-        let val = parseInt(e.target.value);
-        if (isNaN(val)) return;
+        const val = parseInt(e.target.value, 10);
+        if (Number.isNaN(val)) return;
         setKickIdleDelay(val);
         autoKicker2.idleDelay = val;
         autoKicker2.setKickIdle(false);
@@ -455,28 +455,49 @@ function UI({ autoKicker: autoKicker2 }) {
       }
     }
   ), /* @__PURE__ */ GL.React.createElement("label", null, kickIdleDelay, "ms")), /* @__PURE__ */ GL.React.createElement("h2", null, "Blacklist"), /* @__PURE__ */ GL.React.createElement("div", { className: "blacklist" }, blacklist.map((entry) => {
-    return /* @__PURE__ */ GL.React.createElement("button", { className: "rule", key: entry.name }, /* @__PURE__ */ GL.React.createElement("div", { className: "name" }, entry.name), /* @__PURE__ */ GL.React.createElement("button", { className: "exact", onClick: () => {
-      entry.exact = !entry.exact;
-      setBlacklist([...blacklist]);
-      autoKicker2.scanPlayers();
-      autoKicker2.saveSettings();
-    } }, entry.exact ? "Exact" : "Contains"), /* @__PURE__ */ GL.React.createElement("button", { className: "delete", onClick: () => {
-      autoKicker2.blacklist = autoKicker2.blacklist.filter((e) => e.name !== entry.name);
-      setBlacklist([...autoKicker2.blacklist]);
-      autoKicker2.saveSettings();
-    } }, "\u{1F5D1}"));
-  }), /* @__PURE__ */ GL.React.createElement("button", { className: "add", onClick: () => {
-    let name = prompt("Enter the name to blacklist");
-    if (!name) return;
-    name = name.trim();
-    autoKicker2.blacklist.push({
-      name,
-      exact: true
-    });
-    setBlacklist([...autoKicker2.blacklist]);
-    autoKicker2.scanPlayers();
-    autoKicker2.saveSettings();
-  } }, "+")));
+    return /* @__PURE__ */ GL.React.createElement("button", { className: "rule", key: entry.name }, /* @__PURE__ */ GL.React.createElement("div", { className: "name" }, entry.name), /* @__PURE__ */ GL.React.createElement(
+      "button",
+      {
+        className: "exact",
+        onClick: () => {
+          entry.exact = !entry.exact;
+          setBlacklist([...blacklist]);
+          autoKicker2.scanPlayers();
+          autoKicker2.saveSettings();
+        }
+      },
+      entry.exact ? "Exact" : "Contains"
+    ), /* @__PURE__ */ GL.React.createElement(
+      "button",
+      {
+        className: "delete",
+        onClick: () => {
+          autoKicker2.blacklist = autoKicker2.blacklist.filter((e) => e.name !== entry.name);
+          setBlacklist([...autoKicker2.blacklist]);
+          autoKicker2.saveSettings();
+        }
+      },
+      "\u{1F5D1}"
+    ));
+  }), /* @__PURE__ */ GL.React.createElement(
+    "button",
+    {
+      className: "add",
+      onClick: () => {
+        let name = prompt("Enter the name to blacklist");
+        if (!name) return;
+        name = name.trim();
+        autoKicker2.blacklist.push({
+          name,
+          exact: true
+        });
+        setBlacklist([...autoKicker2.blacklist]);
+        autoKicker2.scanPlayers();
+        autoKicker2.saveSettings();
+      }
+    },
+    "+"
+  )));
 }
 
 // plugins/AutoKicker/src/index.ts

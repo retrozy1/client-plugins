@@ -11,4 +11,4 @@ export default {
     libs: [
         "QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js"
     ]
-}
+};

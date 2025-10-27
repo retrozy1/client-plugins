@@ -15,14 +15,14 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
 
     constructor() {
         super("OneWayOut");
-        
-        let gameSession = api.net.room.state.session.gameSession;
+
+        const gameSession = api.net.room.state.session.gameSession;
 
         api.net.on("DEVICES_STATES_CHANGES", (msg: any) => {
-            for(let change of msg.changes) {
+            for(const change of msg.changes) {
                 if(msg.values[change[1][0]] === "apiOBAL_healthPercent") {
-                    let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
-                    if(device.propOption.id === "barriers/scifi_barrier_1" && change[2][0] == 0) {
+                    const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
+                    if(device.propOption.id === "barriers/scifi_barrier_1" && change[2][0] === 0) {
                         this.addAttempt();
                         this.ui.updateAttempts();
                         this.timer.start();
@@ -44,15 +44,15 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
                 this.drops++;
                 this.updateDrops();
                 api.net.off("WORLD_CHANGES", addDrop);
-            }
+            };
 
             setTimeout(() => {
                 api.net.off("WORLD_CHANGES", addDrop);
                 if(!dropped) this.updateDrops();
             }, 100);
 
-            api.net.on("WORLD_CHANGES", addDrop)
-        })
+            api.net.on("WORLD_CHANGES", addDrop);
+        });
 
         // start the timer when the game starts
         gameSession.listen("phase", (phase: string) => {
@@ -62,22 +62,22 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
         });
 
         api.net.on("send:MESSAGE_FOR_DEVICE", (e: any) => {
-            let id = e?.deviceId;
+            const id = e?.deviceId;
             if(!id) return;
-            let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
-            let channel = device?.options?.channel;
+            const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
+            const channel = device?.options?.channel;
             if(!channel) return;
 
             if(channel === "escaped") {
                 setTimeout(() => this.timer.split(), 800);
             }
-        })
+        });
 
         // split when we enter a new stage
         onFrame(() => {
             this.timer.update();
             if(stageCoords[this.stage]) {
-                let body = api.stores.phaser.mainCharacter.body;
+                const body = api.stores.phaser.mainCharacter.body;
                 if(inBox(body, stageCoords[this.stage])) {
                     this.stage++;
                     this.timer.split();
@@ -90,14 +90,16 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
         if(this.knockouts === 0) {
             this.ui.setDropRate("0/0");
         } else {
-            let percent = this.drops/this.knockouts*100;
+            const percent = this.drops / this.knockouts * 100;
             let percentStr = percent.toFixed(2);
             if(percent === 0) percentStr = "0";
-            this.ui.setDropRate(`${this.drops}/${this.knockouts} (${percentStr}%)`)
+            this.ui.setDropRate(`${this.drops}/${this.knockouts} (${percentStr}%)`);
         }
     }
 
-    getCategoryId() { return "OneWayOut" }
+    getCategoryId() {
+        return "OneWayOut";
+    }
 
     reset() {
         this.ui?.remove();

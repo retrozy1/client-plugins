@@ -7,4 +7,4 @@ export default {
     version: "0.2.4",
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/AutoKicker.js",
     webpage: "https://gimloader.github.io/plugins/autokicker"
-}
+};

@@ -1,4 +1,4 @@
-let settings = api.lib("QuickSettings")("PerformantGims", [
+const settings = api.lib("QuickSettings")("PerformantGims", [
     {
         type: "heading",
         text: "Performant Gims Settings"
@@ -23,8 +23,8 @@ function shouldApply(character) {
 
 const wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {
     class NewSkin {
-        skinId = "character_default_cyan"
-        latestSkinId = "character_default_cyan"
+        skinId = "character_default_cyan";
+        latestSkinId = "character_default_cyan";
 
         constructor(props) {
             if(!props.character || !shouldApply(props.character)) {
@@ -35,24 +35,24 @@ const wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {
         }
         updateSkin(A) {
             A.id = A.id.replace("character_", "");
-            let load = this.scene.load.image(`gim-${A.id}`, `https://www.gimkit.com/assets/map/characters/spine/preview/${A.id}.png`);
+            const load = this.scene.load.image(`gim-${A.id}`, `https://www.gimkit.com/assets/map/characters/spine/preview/${A.id}.png`);
             load.on("complete", () => {
                 this.setupSkin({
                     id: A.id
                 });
-            })
+            });
             load.start();
         }
         setupSkin(A) {
-            let x = A.x ?? this.character.spine.x;
-            let y = A.y ?? this.character.spine.y;
+            const x = A.x ?? this.character.spine.x;
+            const y = A.y ?? this.character.spine.y;
 
             if(this.character.spine) this.character.spine.destroy(true);
-            this.character.scale.baseScale = 0.7
+            this.character.scale.baseScale = 0.7;
             this.character.spine = this.scene.add.sprite(x, y, `gim-${A.id}`);
             this.character.spine.setOrigin(0.5, 0.75);
-            this.character.spine.skeleton = {color: {}, physicsTranslate: () => {}};
-            let scale = this.character.scale;
+            this.character.spine.skeleton = { color: {}, physicsTranslate: () => {} };
+            const scale = this.character.scale;
             this.character.spine.setScale(scale.scaleX, scale.scaleY);
 
             this.character.characterTrail.followCharacter();

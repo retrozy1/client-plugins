@@ -6,7 +6,7 @@ export default {
     author: "TheLazySquid",
     version: "0.6.2",
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/CharacterCustomization.js",
-    webpage: 'https://gimloader.github.io/plugins/charactercustomization',
+    webpage: "https://gimloader.github.io/plugins/charactercustomization",
     hasSettings: true,
     gamemodes: ["2d"]
-}
+};

@@ -14,7 +14,7 @@
 var lasers = [];
 api.net.on("DEVICES_STATES_CHANGES", (packet) => {
   for (let i = 0; i < packet.changes.length; i++) {
-    let device = packet.changes[i];
+    const device = packet.changes[i];
     if (lasers.some((l) => l.id === device[0])) {
       packet.changes.splice(i, 1);
       i -= 1;
@@ -28,15 +28,15 @@ function updateLasers(frame) {
   if (lasers.length === 0) {
     lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
   }
-  let states = api.stores.world.devices.states;
-  let devices = api.stores.phaser.scene.worldManager.devices;
-  let active = frame % 66 < 36;
+  const states = api.stores.world.devices.states;
+  const devices = api.stores.phaser.scene.worldManager.devices;
+  const active = frame % 66 < 36;
   if (!states.has(lasers[0].id)) {
     lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
   }
-  for (let laser of lasers) {
+  for (const laser of lasers) {
     if (!states.has(laser.id)) {
-      let propsMap = /* @__PURE__ */ new Map();
+      const propsMap = /* @__PURE__ */ new Map();
       propsMap.set("GLOBAL_active", active);
       states.set(laser.id, { deviceId: laser.id, properties: propsMap });
     } else {
@@ -63,7 +63,7 @@ var Recorder = class {
   constructor(physicsManager) {
     this.physicsManager = physicsManager;
     this.nativeStep = physicsManager.physicsStep;
-    for (let id of physicsManager.bodies.staticBodies) {
+    for (const id of physicsManager.bodies.staticBodies) {
       physicsManager.bodies.activeBodies.enableBody(id);
     }
     physicsManager.bodies.activeBodies.disableBody = () => {
@@ -75,7 +75,7 @@ var Recorder = class {
   }
   toggleRecording() {
     if (this.recording) {
-      let conf = window.confirm("Do you want to save the recording?");
+      const conf = window.confirm("Do you want to save the recording?");
       this.stopRecording(conf);
     } else this.startRecording();
   }
@@ -98,16 +98,16 @@ var Recorder = class {
     this.physicsManager.physicsStep = this.nativeStep;
     stopUpdatingLasers();
     if (!save) return;
-    let json = {
+    const json = {
       startPos: this.startPos,
       startState: this.startState,
       platformerPhysics: this.platformerPhysics,
       frames: this.frames
     };
-    let blob = new Blob([JSON.stringify(json)], { type: "application/json" });
-    let url = URL.createObjectURL(blob);
-    let name = api.stores.phaser.mainCharacter.nametag.name;
-    let a = document.createElement("a");
+    const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const name = api.stores.phaser.mainCharacter.nametag.name;
+    const a = document.createElement("a");
     a.href = url;
     a.download = fileName ?? `recording-${name}.json`;
     a.click();
@@ -125,7 +125,7 @@ var Recorder = class {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     let currentFrame = 0;
     this.physicsManager.physicsStep = (dt) => {
-      let frame = data.frames[currentFrame];
+      const frame = data.frames[currentFrame];
       if (!frame) {
         this.stopPlayback();
         api.notification.open({ message: "Playback finished" });
@@ -183,15 +183,15 @@ api.hotkeys.addConfigurableHotkey({
     recorder.stopPlayback();
     api.notification.open({ message: "Playback canceled" });
   } else {
-    let input = document.createElement("input");
+    const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
     input.onchange = async () => {
       api.hotkeys.releaseAll();
-      let file = input.files?.[0];
+      const file = input.files?.[0];
       if (!file) return;
-      let json = await file.text();
-      let data = JSON.parse(json);
+      const json = await file.text();
+      const data = JSON.parse(json);
       api.notification.open({ message: "Starting Playback" });
       recorder.playback(data);
     };

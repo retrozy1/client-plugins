@@ -10,7 +10,7 @@ export const boatChannels = [
     "attempt travel sandy shores",
     "attempt travel cosmic cove",
     "attempt travel lucky lake"
-]
+];
 
 // DLD
 export const summitStartCoords: Area[] = [
@@ -23,7 +23,7 @@ export const summitStartCoords: Area[] = [
     { x: 40395.91, y: 13854, direction: "right" } // finish
 ];
 
-export const summitCoords: Area[] = [ {
+export const summitCoords: Area[] = [{
     x: 9022.997283935547,
     y: 63837.7685546875,
     direction: "right"
@@ -47,7 +47,7 @@ export const summitCoords: Area[] = [ {
     x: 40126.99890136719,
     y: 28573.9990234375,
     direction: "right"
-}]
+}];
 
 export const resetCoordinates = { x: 9050, y: 6300 };
 
@@ -62,4 +62,4 @@ export const stageCoords: Box[] = [{
 }, {
     p1: { x: 10813, y: 8962 },
     p2: { x: 13312, y: 9888 }
-}]
+}];

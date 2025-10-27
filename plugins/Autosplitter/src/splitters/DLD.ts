@@ -1,7 +1,7 @@
-import type { DLDData } from "../types";
 import { resetCoordinates, summitCoords, summitStartCoords } from "../constants";
 import BasicTimer from "../timers/basic";
 import SplitsTimer from "../timers/splits";
+import type { DLDData } from "../types";
 import { DLDFullGameUI, DLDSummitUI } from "../ui/DLD";
 import { fmtMs, inArea, onFrame, onPhysicsStep } from "../util";
 import { SplitsAutosplitter } from "./autosplitter";
@@ -12,7 +12,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     timer: BasicTimer | SplitsTimer;
 
     category: string = "Current Patch";
-    
+
     couldStartLastFrame = true;
     loadedCorrectSummit = false;
     hasMoved = false;
@@ -23,7 +23,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
 
         this.category = "Current Patch";
         if(api.plugins.isEnabled("BringBackBoosts")) {
-            let bbbSettings = GL.storage.getValue("BringBackBoosts", "QS-Settings", {})
+            const bbbSettings = GL.storage.getValue("BringBackBoosts", "QS-Settings", {});
             if(bbbSettings.useOriginalPhysics) {
                 this.category = "Original Physics";
             } else {
@@ -38,7 +38,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
         this.updateTimerAndUI();
 
         onPhysicsStep(() => {
-            let input = api.stores.phaser.scene.inputManager.getPhysicsInput();
+            const input = api.stores.phaser.scene.inputManager.getPhysicsInput();
 
             if(input.jump || input.angle !== null) this.hasMoved = true;
         });
@@ -52,7 +52,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
             this.hasMoved = false;
         });
 
-        let savestates = api.plugin("Savestates");
+        const savestates = api.plugin("Savestates");
         if(savestates) {
             savestates.onStateLoaded(this.onStateLoadedBound);
         }
@@ -61,11 +61,11 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     updateTimerAndUI() {
         this.ui?.remove();
         if(this.data.mode === "Full Game") {
-            let ui = new DLDFullGameUI(this);
+            const ui = new DLDFullGameUI(this);
             this.ui = ui;
             this.timer = new SplitsTimer(this, ui);
         } else {
-            let ui = new DLDSummitUI(this);
+            const ui = new DLDSummitUI(this);
             this.ui = ui;
             this.timer = new BasicTimer(this, ui);
         }
@@ -80,7 +80,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     setMode(mode: string, ilsummit?: number, ilPreboosts?: boolean) {
         if(this.category === "Current Patch") ilPreboosts = false;
 
-        let modeChanged = this.data.mode !== mode;
+        const modeChanged = this.data.mode !== mode;
 
         // set and save values
         this.data.mode = mode;
@@ -105,9 +105,9 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     ilState = "waiting";
 
     updatePreboosts() {
-        let body = api.stores.phaser.mainCharacter.body;
-        let coords = summitCoords[this.data.ilSummit];
-        
+        const body = api.stores.phaser.mainCharacter.body;
+        const coords = summitCoords[this.data.ilSummit];
+
         if(this.ilState === "waiting") {
             if(inArea(body, coords)) {
                 if(this.couldStartLastFrame) return;
@@ -133,7 +133,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
 
     updateNoPreboosts() {
         if(!this.loadedCorrectSummit) return;
-        let body = api.stores.phaser.mainCharacter.body;
+        const body = api.stores.phaser.mainCharacter.body;
 
         if(this.ilState === "waiting") {
             if(this.hasMoved) {
@@ -155,7 +155,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     summit = 0;
 
     updateFullGame() {
-        let body = api.stores.phaser.mainCharacter.body;
+        const body = api.stores.phaser.mainCharacter.body;
 
         // check if we're at a position where we should reset
         if(this.summit > 0 && body.x < resetCoordinates.x && body.y > resetCoordinates.y) {
@@ -178,7 +178,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
             (this.timer as SplitsTimer).split();
 
             // Check if the run is finished
-            if(this.summit > summitStartCoords.length - 1) { 
+            if(this.summit > summitStartCoords.length - 1) {
                 this.onRunEnd();
             }
         }
@@ -187,7 +187,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
     }
 
     getRecorder() {
-        let inputRecorder = api.plugin("InputRecorder");
+        const inputRecorder = api.plugin("InputRecorder");
         if(!inputRecorder) return;
 
         return inputRecorder.getRecorder();
@@ -199,7 +199,7 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
         this.ui.lockInCategory();
 
         if(!this.data.autoRecord) return;
-        let recorder = this.getRecorder();
+        const recorder = this.getRecorder();
         if(!recorder) return;
 
         // Don't auto-record during a manual recording or playback
@@ -213,23 +213,23 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
         this.timer.stop();
 
         if(!this.data.autoRecord) return;
-        let recorder = this.getRecorder();
+        const recorder = this.getRecorder();
         if(!recorder) return;
 
         // Don't stop unless we're recording
         if(!recorder.recording || recorder.playing || !this.autoRecording) return;
         this.autoRecording = false;
 
-        let isPb = !this.pb || this.timer.elapsed < this.pb;
+        const isPb = !this.pb || this.timer.elapsed < this.pb;
         if(!isPb) return;
-        let username = api.stores.phaser.mainCharacter.nametag.name;
+        const username = api.stores.phaser.mainCharacter.nametag.name;
         let mode = "Full Game";
         if(this.data.mode !== "Full Game") {
             mode = `Summit ${this.data.ilSummit + 1}`;
             if(this.data.ilPreboosts) mode += " (Preboosts)";
         }
 
-        let time = fmtMs(this.timer.elapsed);
+        const time = fmtMs(this.timer.elapsed);
 
         recorder.stopRecording(isPb, `recording-${username}-${this.category}-${mode}-${time}.json`);
 
@@ -267,16 +267,16 @@ export default class DLDAutosplitter extends SplitsAutosplitter {
         this.couldStartLastFrame = true;
         this.loadedCorrectSummit = false;
 
-        let recorder = this.getRecorder();
-        if(recorder && recorder.recording && this.autoRecording) {
+        const recorder = this.getRecorder();
+        if(recorder?.recording && this.autoRecording) {
             recorder.stopRecording(false);
         }
     }
-    
+
     destroy() {
         this.ui.remove();
 
-        let savestates = api.plugin("Savestates");
+        const savestates = api.plugin("Savestates");
         if(savestates) {
             savestates.offStateLoaded(this.onStateLoadedBound);
         }

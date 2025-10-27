@@ -1,24 +1,24 @@
-import type { Theme } from '../types';
-import defaultThemes from '../defaultThemes.json';
-import ThemePreview from './themePreview';
+import defaultThemes from "../defaultThemes.json";
+import type { Theme } from "../types";
 import { getBorderColor } from "../util";
-import ThemeCreator from './themeCreator';
+import ThemeCreator from "./themeCreator";
+import ThemePreview from "./themePreview";
 
 export default function ThemePicker(props: {
-    themeType: "default" | "custom",
-    setThemeType: (type: "default" | "custom") => void,
-    themeIndex: number,
-    setThemeIndex: (index: number) => void,
-    customThemes: Theme[],
-    setCustomThemes: (themes: Theme[]) => void,
-    activeTheme: Theme
+    themeType: "default" | "custom";
+    setThemeType: (type: "default" | "custom") => void;
+    themeIndex: number;
+    setThemeIndex: (index: number) => void;
+    customThemes: Theme[];
+    setCustomThemes: (themes: Theme[]) => void;
+    activeTheme: Theme;
 }) {
     const React = GL.React;
 
-    let [themeType, setThemeType] = React.useState<"default" | "custom">(props.themeType);
-    let [themeIndex, setThemeIndex] = React.useState(props.themeIndex);
-    let [customThemes, setCustomThemes] = React.useState(props.customThemes);
-    let [activeTheme, setActiveTheme] = React.useState(props.activeTheme);
+    const [themeType, setThemeType] = React.useState<"default" | "custom">(props.themeType);
+    const [themeIndex, setThemeIndex] = React.useState(props.themeIndex);
+    const [customThemes, setCustomThemes] = React.useState(props.customThemes);
+    const [activeTheme, setActiveTheme] = React.useState(props.activeTheme);
 
     React.useEffect(() => {
         props.setThemeType(themeType);
@@ -55,57 +55,66 @@ export default function ThemePicker(props: {
                     setCustomThemes([...customThemes, creatingTheme]);
                 }
             }]
-        })
-    }
+        });
+    };
 
     const deleteTheme = (index: number) => {
-        let theme = customThemes[index];
-        let confirm = window.confirm(`Are you sure you want to delete the theme "${theme.name}"?`);
+        const theme = customThemes[index];
+        const confirm = window.confirm(`Are you sure you want to delete the theme "${theme.name}"?`);
         if(!confirm) return;
 
         if(theme === activeTheme) setThemeIndex(0);
         if(customThemes.length === 1) setThemeType("default");
 
-        let newThemes = [...customThemes];
+        const newThemes = [...customThemes];
         newThemes.splice(index, 1);
         setCustomThemes(newThemes);
-    }
+    };
 
-    return (<div className="themePicker">
-        <h1>Custom Themes</h1>
-        <div className="previews">
-            {customThemes.map((theme, i) => (
-                <div className="customTheme">
-                    <div className="delete" onClick={() => deleteTheme(i)}>
-                        🗑
+    return (
+        <div className="themePicker">
+            <h1>Custom Themes</h1>
+            <div className="previews">
+                {customThemes.map((theme, i) => (
+                    <div className="customTheme">
+                        <div className="delete" onClick={() => deleteTheme(i)}>
+                            🗑
+                        </div>
+                        <div
+                            className="customThemePreview"
+                            style={{
+                                border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
+                            }}>
+                            <ThemePreview
+                                theme={theme}
+                                onClick={() => {
+                                    setThemeIndex(i);
+                                    setThemeType("custom");
+                                }} />
+                        </div>
                     </div>
-                    <div className="customThemePreview" style={{
-                        border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none",
-                    }}>
-                        <ThemePreview theme={theme} onClick={() => {
-                            setThemeIndex(i);
-                            setThemeType("custom");
-                        }} />
-                    </div>
-                </div>
-            ))}
+                ))}
 
-            <button className="addCustomTheme" onClick={openThemeCreator}>
-                Create New Theme
-            </button>
+                <button className="addCustomTheme" onClick={openThemeCreator}>
+                    Create New Theme
+                </button>
+            </div>
+            <h1>Default Themes</h1>
+            <div className="previews">
+                {defaultThemes.map((theme, i) => (
+                    <div
+                        style={{
+                            border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
+                        }}>
+                        <ThemePreview
+                            theme={theme}
+                            onClick={() => {
+                                setThemeIndex(i);
+                                setThemeType("default");
+                            }} />
+                    </div>
+                ))}
+            </div>
         </div>
-        <h1>Default Themes</h1>
-        <div className="previews">
-            {defaultThemes.map((theme, i) => (
-                <div style={{
-                    border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none",
-                }}>
-                    <ThemePreview theme={theme} onClick={() => {
-                        setThemeIndex(i);
-                        setThemeType("default");
-                    }} />
-                </div>
-            ))}
-        </div>
-    </div>)
+    );
 }

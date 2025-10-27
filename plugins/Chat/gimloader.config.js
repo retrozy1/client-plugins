@@ -8,4 +8,4 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/Chat.js",
     webpage: "https://gimloader.github.io/plugins/chat",
     gamemodes: ["2d"]
-}
+};

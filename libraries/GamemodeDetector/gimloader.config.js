@@ -7,4 +7,4 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/GamemodeDetector.js",
     version: "0.2.1",
     isLibrary: true
-}
+};

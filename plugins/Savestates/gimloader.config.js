@@ -14,4 +14,4 @@ export default {
         "CommandLine | https://raw.githubusercontent.com/Blackhole927/gimkitmods/main/libraries/CommandLine/CommandLine.js"
     ],
     gamemodes: ["dontLookDown"]
-}
+};

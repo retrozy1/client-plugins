@@ -7,4 +7,4 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/ToggleTerrainType.js",
     webpage: "https://gimloader.github.io/plugins/toggleterraintype",
     version: "0.1.1"
-}
+};

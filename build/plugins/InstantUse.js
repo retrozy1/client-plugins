@@ -16,10 +16,10 @@ api.hotkeys.addConfigurableHotkey({
   },
   preventDefault: false
 }, () => {
-  let devices = api.stores?.phaser?.scene?.worldManager?.devices;
-  let body = api.stores?.phaser?.mainCharacter?.body;
+  const devices = api.stores?.phaser?.scene?.worldManager?.devices;
+  const body = api.stores?.phaser?.mainCharacter?.body;
   if (!devices || !body) return;
-  let device = devices.interactives.findClosestInteractiveDevice(devices.devicesInView, body.x, body.y);
+  const device = devices.interactives.findClosestInteractiveDevice(devices.devicesInView, body.x, body.y);
   if (device) {
     device.interactiveZones?.onInteraction?.();
   }

@@ -63,11 +63,13 @@ api.rewriter.addParseHook("App", (code) => {
   return code;
 });
 var wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (func) => {
-  var n = { default: GL.stores }, a = { default: { normal: 310 } }, I = { PhysicsConstants: {
-    tickRate: 12,
-    debug: false,
-    skipTilesDebug: false
-  } };
+  var n = { default: GL.stores }, a = { default: { normal: 310 } }, I = {
+    PhysicsConstants: {
+      tickRate: 12,
+      debug: false,
+      skipTilesDebug: false
+    }
+  };
   const h = (A, t) => {
     let e = 0, i = 0;
     const s = null == t ? void 0 : t.angle, g = null !== s && (s < 90 || s > 270) ? "right" : null !== s && s > 90 && s < 270 ? "left" : "none", C = n.default.me.movementSpeed / a.default.normal;
@@ -86,10 +88,10 @@ var wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (
       const s2 = 20 / I.PhysicsConstants.tickRate;
       t2 *= A.physics.state.movement.accelerationTicks * s2, i2 && (t2 = Math.min(i2, t2)), e = l > A.physics.state.movement.xVelocity ? Phaser.Math.Clamp(A.physics.state.movement.xVelocity + t2, A.physics.state.movement.xVelocity, l) : Phaser.Math.Clamp(A.physics.state.movement.xVelocity - t2, l, A.physics.state.movement.xVelocity);
     } else e = l;
-    return A.physics.state.grounded && A.physics.state.velocity.y > GL.platformerPhysics.platformerGroundSpeed * C && Math.sign(e) === Math.sign(A.physics.state.velocity.x) && (e = A.physics.state.velocity.x), A.physics.state.movement.xVelocity = e, A.physics.state.gravity = calcGravity(A.id), i += A.physics.state.gravity, A.physics.state.forces.forEach(((A2, t2) => {
+    return A.physics.state.grounded && A.physics.state.velocity.y > GL.platformerPhysics.platformerGroundSpeed * C && Math.sign(e) === Math.sign(A.physics.state.velocity.x) && (e = A.physics.state.velocity.x), A.physics.state.movement.xVelocity = e, A.physics.state.gravity = calcGravity(A.id), i += A.physics.state.gravity, A.physics.state.forces.forEach((A2, _t) => {
       const s2 = A2.ticks[0];
       s2 && (e += s2.x, i += s2.y), A2.ticks.shift();
-    })), {
+    }), {
       x: e,
       y: i
     };

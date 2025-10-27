@@ -1,17 +1,17 @@
+import restore from "$assets/restore.svg";
 import { categories, DLDSplits } from "../constants";
-import DLDAutosplitter from "../splitters/DLD";
+import type DLDAutosplitter from "../splitters/DLD";
 import BasicUI from "./basic";
 import SplitsUI from "./splits";
-import restore from "$assets/restore.svg";
 
 function addDLDUI(element: HTMLElement, autosplitter: DLDAutosplitter) {
-    let topBar = element.querySelector(".bar")!;
+    const topBar = element.querySelector(".bar")!;
 
     // make the category selector
-    let categorySelect = document.createElement("select");
+    const categorySelect = document.createElement("select");
     topBar.firstChild!.before(categorySelect);
-    for(let category of categories) {
-        let option = document.createElement("option");
+    for(const category of categories) {
+        const option = document.createElement("option");
         option.value = category;
         option.innerText = category;
         if(category === autosplitter.category) option.selected = true;
@@ -19,13 +19,13 @@ function addDLDUI(element: HTMLElement, autosplitter: DLDAutosplitter) {
     }
 
     // make the run type selector
-    let runTypeBar = document.createElement("div");
+    const runTypeBar = document.createElement("div");
     runTypeBar.classList.add("bar");
 
-    let runTypeSelect = document.createElement("select");
-    runTypeSelect.innerHTML = `<option value="Full Game">Full Game</option>`
+    const runTypeSelect = document.createElement("select");
+    runTypeSelect.innerHTML = `<option value="Full Game">Full Game</option>`;
     for(let i = 0; i < DLDSplits.length; i++) {
-        let option = document.createElement("option");
+        const option = document.createElement("option");
         option.value = String(i);
         option.innerText = DLDSplits[i];
         if(autosplitter.data.mode === "Summit" && autosplitter.data.ilSummit === i) option.selected = true;
@@ -33,10 +33,10 @@ function addDLDUI(element: HTMLElement, autosplitter: DLDAutosplitter) {
     }
     runTypeBar.appendChild(runTypeSelect);
 
-    let preboostSelect = document.createElement("select");
+    const preboostSelect = document.createElement("select");
     preboostSelect.innerHTML = `
     <option value="false">No Preboosts</option>
-    <option value="true">Preboosts</option>`
+    <option value="true">Preboosts</option>`;
     preboostSelect.value = String(autosplitter.data.ilPreboosts);
 
     if(autosplitter.category === "Current Patch") preboostSelect.disabled = true;
@@ -64,25 +64,25 @@ function addDLDUI(element: HTMLElement, autosplitter: DLDAutosplitter) {
             autosplitter.setMode("Full Game");
         } else {
             runTypeBar.appendChild(preboostSelect);
-            autosplitter.setMode("Summit", parseInt(runTypeSelect.value), preboostSelect.value === "true");
+            autosplitter.setMode("Summit", parseInt(runTypeSelect.value, 10), preboostSelect.value === "true");
         }
     });
 
     preboostSelect.addEventListener("change", () => {
-        autosplitter.setMode("Summit", parseInt(runTypeSelect.value), preboostSelect.value === "true");
+        autosplitter.setMode("Summit", parseInt(runTypeSelect.value, 10), preboostSelect.value === "true");
     });
 
     topBar.after(runTypeBar);
 }
 
 function lockInCategory(element: HTMLElement, autosplitter: DLDAutosplitter) {
-    let selects = element.querySelectorAll("select");
-    for(let select of selects) {
-        select.disabled = true; 
+    const selects = element.querySelectorAll("select");
+    for(const select of selects) {
+        select.disabled = true;
         select.title = "Cannot be altered mid-run";
     }
 
-    let resetButton = document.createElement("button");
+    const resetButton = document.createElement("button");
     resetButton.classList.add("restart");
     resetButton.innerHTML = restore;
 

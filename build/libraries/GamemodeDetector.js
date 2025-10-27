@@ -25,10 +25,10 @@ var gamemodeMusic = {
   "Farmchain": "/assets/map/modes/farm/music.mp3"
 };
 function currentGamemode() {
-  let optionsJson = api.stores?.world?.mapOptionsJSON;
+  const optionsJson = api.stores?.world?.mapOptionsJSON;
   if (!optionsJson) return null;
-  let music = JSON.parse(optionsJson).musicUrl;
-  for (let gamemode in gamemodeMusic) {
+  const music = JSON.parse(optionsJson).musicUrl;
+  for (const gamemode in gamemodeMusic) {
     if (music === gamemodeMusic[gamemode]) return gamemode;
   }
   return null;

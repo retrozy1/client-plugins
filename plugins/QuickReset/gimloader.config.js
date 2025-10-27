@@ -8,4 +8,4 @@ export default {
     webpage: "https://gimloader.github.io/plugins/quickreset",
     version: "0.3.0",
     gamemodes: ["2d"]
-}
+};

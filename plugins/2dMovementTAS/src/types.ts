@@ -12,7 +12,7 @@ export interface EasyAccessWritable<T> {
 }
 
 export interface IPreviousFrame {
-    position: { x: number, y: number };
+    position: { x: number; y: number };
     state: string;
     energy: number;
     speed: number;

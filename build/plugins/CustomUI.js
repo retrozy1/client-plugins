@@ -174,28 +174,6 @@ var styles_default = `.cui-settings {
   opacity: var(--question-opacity);
 }`;
 
-// plugins/CustomUI/src/ui/themePreview.tsx
-function ThemePreview(props) {
-  const React = GL.React;
-  let { theme } = props;
-  return /* @__PURE__ */ GL.React.createElement("div", { style: {
-    backgroundColor: theme.question.background,
-    color: theme.question.text
-  }, className: "themePreview", onClick: props.onClick }, props.text ? props.text : theme.name, /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", { style: {
-    backgroundColor: theme.palette[0].background,
-    color: theme.palette[0].text
-  } }), /* @__PURE__ */ GL.React.createElement("div", { style: {
-    backgroundColor: theme.palette[1].background,
-    color: theme.palette[1].text
-  } }), /* @__PURE__ */ GL.React.createElement("div", { style: {
-    backgroundColor: theme.palette[2].background,
-    color: theme.palette[2].text
-  } }), /* @__PURE__ */ GL.React.createElement("div", { style: {
-    backgroundColor: theme.palette[3].background,
-    color: theme.palette[3].text
-  } })));
-}
-
 // plugins/CustomUI/src/defaultThemes.json
 var defaultThemes_default = [
   {
@@ -452,8 +430,8 @@ var defaultThemes_default = [
 
 // plugins/CustomUI/src/util.ts
 function getBorderColor(theme) {
-  let rgb = parseHex(theme.question.background);
-  let brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1e3;
+  const rgb = parseHex(theme.question.background);
+  const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1e3;
   return brightness > 128 ? "#000000" : "#ff5c61";
 }
 function parseHex(hex) {
@@ -467,7 +445,7 @@ function parseHex(hex) {
 // plugins/CustomUI/src/ui/themeCreator.tsx
 function ThemeCreator({ onChange }) {
   const React = GL.React;
-  let [theme, setTheme] = React.useState({
+  const [theme, setTheme] = React.useState({
     name: "New theme",
     question: {
       background: "#303f9f",
@@ -506,61 +484,212 @@ function ThemeCreator({ onChange }) {
         setTheme({ ...theme });
       }
     }
-  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Question Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.question.background, onChange: (e) => {
-    theme.question.background = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Question Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.question.text, onChange: (e) => {
-    theme.question.text = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 1 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[0].background, onChange: (e) => {
-    theme.palette[0].background = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 1 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[0].text, onChange: (e) => {
-    theme.palette[0].text = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 2 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[1].background, onChange: (e) => {
-    theme.palette[1].background = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 2 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[1].text, onChange: (e) => {
-    theme.palette[1].text = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 3 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[2].background, onChange: (e) => {
-    theme.palette[2].background = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 3 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[2].text, onChange: (e) => {
-    theme.palette[2].text = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 4 Background"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[3].background, onChange: (e) => {
-    theme.palette[3].background = e.target.value;
-    setTheme({ ...theme });
-  } })), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 4 Text"), /* @__PURE__ */ GL.React.createElement("input", { type: "color", value: theme.palette[3].text, onChange: (e) => {
-    theme.palette[3].text = e.target.value;
-    setTheme({ ...theme });
-  } }))), /* @__PURE__ */ GL.React.createElement("div", { className: "fullPreview" }, /* @__PURE__ */ GL.React.createElement("div", { className: "question", style: {
-    background: theme.question.background,
-    color: theme.question.text
-  } }, "Question text"), /* @__PURE__ */ GL.React.createElement("div", { className: "answers" }, /* @__PURE__ */ GL.React.createElement("div", { style: {
-    background: theme.palette[0].background,
-    color: theme.palette[0].text
-  } }, "Option 1"), /* @__PURE__ */ GL.React.createElement("div", { style: {
-    background: theme.palette[1].background,
-    color: theme.palette[1].text
-  } }, "Option 2"), /* @__PURE__ */ GL.React.createElement("div", { style: {
-    background: theme.palette[2].background,
-    color: theme.palette[2].text
-  } }, "Option 3"), /* @__PURE__ */ GL.React.createElement("div", { style: {
-    background: theme.palette[3].background,
-    color: theme.palette[3].text
-  } }, "Option 4"))));
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Question Background"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.question.background,
+      onChange: (e) => {
+        theme.question.background = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Question Text"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.question.text,
+      onChange: (e) => {
+        theme.question.text = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 1 Background"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[0].background,
+      onChange: (e) => {
+        theme.palette[0].background = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 1 Text"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[0].text,
+      onChange: (e) => {
+        theme.palette[0].text = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 2 Background"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[1].background,
+      onChange: (e) => {
+        theme.palette[1].background = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 2 Text"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[1].text,
+      onChange: (e) => {
+        theme.palette[1].text = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 3 Background"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[2].background,
+      onChange: (e) => {
+        theme.palette[2].background = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 3 Text"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[2].text,
+      onChange: (e) => {
+        theme.palette[2].text = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 4 Background"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[3].background,
+      onChange: (e) => {
+        theme.palette[3].background = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement("div", null, "Option 4 Text"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "color",
+      value: theme.palette[3].text,
+      onChange: (e) => {
+        theme.palette[3].text = e.target.value;
+        setTheme({ ...theme });
+      }
+    }
+  ))), /* @__PURE__ */ GL.React.createElement("div", { className: "fullPreview" }, /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      className: "question",
+      style: {
+        background: theme.question.background,
+        color: theme.question.text
+      }
+    },
+    "Question text"
+  ), /* @__PURE__ */ GL.React.createElement("div", { className: "answers" }, /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      style: {
+        background: theme.palette[0].background,
+        color: theme.palette[0].text
+      }
+    },
+    "Option 1"
+  ), /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      style: {
+        background: theme.palette[1].background,
+        color: theme.palette[1].text
+      }
+    },
+    "Option 2"
+  ), /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      style: {
+        background: theme.palette[2].background,
+        color: theme.palette[2].text
+      }
+    },
+    "Option 3"
+  ), /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      style: {
+        background: theme.palette[3].background,
+        color: theme.palette[3].text
+      }
+    },
+    "Option 4"
+  ))));
+}
+
+// plugins/CustomUI/src/ui/themePreview.tsx
+function ThemePreview(props) {
+  const { theme } = props;
+  return /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      style: {
+        backgroundColor: theme.question.background,
+        color: theme.question.text
+      },
+      className: "themePreview",
+      onClick: props.onClick
+    },
+    props.text ? props.text : theme.name,
+    /* @__PURE__ */ GL.React.createElement("div", null, /* @__PURE__ */ GL.React.createElement(
+      "div",
+      {
+        style: {
+          backgroundColor: theme.palette[0].background,
+          color: theme.palette[0].text
+        }
+      }
+    ), /* @__PURE__ */ GL.React.createElement(
+      "div",
+      {
+        style: {
+          backgroundColor: theme.palette[1].background,
+          color: theme.palette[1].text
+        }
+      }
+    ), /* @__PURE__ */ GL.React.createElement(
+      "div",
+      {
+        style: {
+          backgroundColor: theme.palette[2].background,
+          color: theme.palette[2].text
+        }
+      }
+    ), /* @__PURE__ */ GL.React.createElement(
+      "div",
+      {
+        style: {
+          backgroundColor: theme.palette[3].background,
+          color: theme.palette[3].text
+        }
+      }
+    ))
+  );
 }
 
 // plugins/CustomUI/src/ui/themePicker.tsx
 function ThemePicker(props) {
   const React = GL.React;
-  let [themeType, setThemeType] = React.useState(props.themeType);
-  let [themeIndex, setThemeIndex] = React.useState(props.themeIndex);
-  let [customThemes, setCustomThemes] = React.useState(props.customThemes);
-  let [activeTheme, setActiveTheme] = React.useState(props.activeTheme);
+  const [themeType, setThemeType] = React.useState(props.themeType);
+  const [themeIndex, setThemeIndex] = React.useState(props.themeIndex);
+  const [customThemes, setCustomThemes] = React.useState(props.customThemes);
+  const [activeTheme, setActiveTheme] = React.useState(props.activeTheme);
   React.useEffect(() => {
     props.setThemeType(themeType);
   }, [themeType]);
@@ -596,38 +725,63 @@ function ThemePicker(props) {
     });
   };
   const deleteTheme = (index) => {
-    let theme = customThemes[index];
-    let confirm = window.confirm(`Are you sure you want to delete the theme "${theme.name}"?`);
+    const theme = customThemes[index];
+    const confirm = window.confirm(`Are you sure you want to delete the theme "${theme.name}"?`);
     if (!confirm) return;
     if (theme === activeTheme) setThemeIndex(0);
     if (customThemes.length === 1) setThemeType("default");
-    let newThemes = [...customThemes];
+    const newThemes = [...customThemes];
     newThemes.splice(index, 1);
     setCustomThemes(newThemes);
   };
-  return /* @__PURE__ */ GL.React.createElement("div", { className: "themePicker" }, /* @__PURE__ */ GL.React.createElement("h1", null, "Custom Themes"), /* @__PURE__ */ GL.React.createElement("div", { className: "previews" }, customThemes.map((theme, i) => /* @__PURE__ */ GL.React.createElement("div", { className: "customTheme" }, /* @__PURE__ */ GL.React.createElement("div", { className: "delete", onClick: () => deleteTheme(i) }, "\u{1F5D1}"), /* @__PURE__ */ GL.React.createElement("div", { className: "customThemePreview", style: {
-    border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
-  } }, /* @__PURE__ */ GL.React.createElement(ThemePreview, { theme, onClick: () => {
-    setThemeIndex(i);
-    setThemeType("custom");
-  } })))), /* @__PURE__ */ GL.React.createElement("button", { className: "addCustomTheme", onClick: openThemeCreator }, "Create New Theme")), /* @__PURE__ */ GL.React.createElement("h1", null, "Default Themes"), /* @__PURE__ */ GL.React.createElement("div", { className: "previews" }, defaultThemes_default.map((theme, i) => /* @__PURE__ */ GL.React.createElement("div", { style: {
-    border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
-  } }, /* @__PURE__ */ GL.React.createElement(ThemePreview, { theme, onClick: () => {
-    setThemeIndex(i);
-    setThemeType("default");
-  } })))));
+  return /* @__PURE__ */ GL.React.createElement("div", { className: "themePicker" }, /* @__PURE__ */ GL.React.createElement("h1", null, "Custom Themes"), /* @__PURE__ */ GL.React.createElement("div", { className: "previews" }, customThemes.map((theme, i) => /* @__PURE__ */ GL.React.createElement("div", { className: "customTheme" }, /* @__PURE__ */ GL.React.createElement("div", { className: "delete", onClick: () => deleteTheme(i) }, "\u{1F5D1}"), /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      className: "customThemePreview",
+      style: {
+        border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
+      }
+    },
+    /* @__PURE__ */ GL.React.createElement(
+      ThemePreview,
+      {
+        theme,
+        onClick: () => {
+          setThemeIndex(i);
+          setThemeType("custom");
+        }
+      }
+    )
+  ))), /* @__PURE__ */ GL.React.createElement("button", { className: "addCustomTheme", onClick: openThemeCreator }, "Create New Theme")), /* @__PURE__ */ GL.React.createElement("h1", null, "Default Themes"), /* @__PURE__ */ GL.React.createElement("div", { className: "previews" }, defaultThemes_default.map((theme, i) => /* @__PURE__ */ GL.React.createElement(
+    "div",
+    {
+      style: {
+        border: theme === activeTheme ? `4px solid ${getBorderColor(theme)}` : "none"
+      }
+    },
+    /* @__PURE__ */ GL.React.createElement(
+      ThemePreview,
+      {
+        theme,
+        onClick: () => {
+          setThemeIndex(i);
+          setThemeType("default");
+        }
+      }
+    )
+  ))));
 }
 
 // plugins/CustomUI/src/ui/ui.tsx
 function UI({ uiChanger: uiChanger2, onConfirm }) {
   const React = GL.React;
-  let [hideTopBar, setHideTopBar] = React.useState(uiChanger2.hideTopBar);
-  let [useCustomTheme, setUseCustomTheme] = React.useState(uiChanger2.useCustomTheme);
-  let [customThemes, setCustomThemes] = React.useState(uiChanger2.customThemes);
-  let [themeType, setThemeType] = React.useState(uiChanger2.themeType);
-  let [themeIndex, setThemeIndex] = React.useState(uiChanger2.themeIndex);
-  let [questionOpacity, setQuestionOpacity] = React.useState(uiChanger2.questionOpacity);
-  let [activeTheme, setActiveTheme] = React.useState(() => {
+  const [hideTopBar, setHideTopBar] = React.useState(uiChanger2.hideTopBar);
+  const [useCustomTheme, setUseCustomTheme] = React.useState(uiChanger2.useCustomTheme);
+  const [customThemes, setCustomThemes] = React.useState(uiChanger2.customThemes);
+  const [themeType, setThemeType] = React.useState(uiChanger2.themeType);
+  const [themeIndex, setThemeIndex] = React.useState(uiChanger2.themeIndex);
+  const [questionOpacity, setQuestionOpacity] = React.useState(uiChanger2.questionOpacity);
+  const [activeTheme, setActiveTheme] = React.useState(() => {
     if (themeType === "default") return defaultThemes_default[themeIndex];
     else return customThemes[themeIndex];
   });
@@ -636,52 +790,65 @@ function UI({ uiChanger: uiChanger2, onConfirm }) {
     else setActiveTheme(customThemes[themeIndex]);
   }, [themeType, themeIndex]);
   onConfirm(() => {
-    uiChanger2.updateSettings(
-      hideTopBar,
-      useCustomTheme,
-      customThemes,
-      themeType,
-      themeIndex,
-      questionOpacity
-    );
+    uiChanger2.updateSettings(hideTopBar, useCustomTheme, customThemes, themeType, themeIndex, questionOpacity);
   });
   const openThemePicker = () => {
-    api.UI.showModal(/* @__PURE__ */ GL.React.createElement(
-      ThemePicker,
+    api.UI.showModal(
+      /* @__PURE__ */ GL.React.createElement(
+        ThemePicker,
+        {
+          themeType,
+          setThemeType,
+          themeIndex,
+          setThemeIndex,
+          customThemes,
+          setCustomThemes,
+          activeTheme
+        }
+      ),
       {
-        themeType,
-        setThemeType,
-        themeIndex,
-        setThemeIndex,
-        customThemes,
-        setCustomThemes,
-        activeTheme
+        id: "ThemePicker",
+        title: "Theme Picker",
+        closeOnBackgroundClick: true,
+        buttons: [{
+          text: "Close",
+          style: "close"
+        }],
+        style: "width: max(50%, 400px)"
       }
-    ), {
-      id: "ThemePicker",
-      title: "Theme Picker",
-      closeOnBackgroundClick: true,
-      buttons: [{
-        text: "Close",
-        style: "close"
-      }],
-      style: "width: max(50%, 400px)"
-    });
+    );
   };
-  return /* @__PURE__ */ GL.React.createElement("div", { className: "cui-settings" }, /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Auto Hide Top Bar"), /* @__PURE__ */ GL.React.createElement("input", { type: "checkbox", checked: hideTopBar, onChange: (e) => {
-    setHideTopBar(e.target.checked);
-  } })), /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Question Panel Opacity"), /* @__PURE__ */ GL.React.createElement("input", { type: "range", min: "0", max: "1", step: "0.01", value: questionOpacity, onChange: (e) => {
-    setQuestionOpacity(parseFloat(e.target.value));
-  } })), /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Use Custom Theme"), /* @__PURE__ */ GL.React.createElement("input", { type: "checkbox", checked: useCustomTheme, onChange: (e) => {
-    setUseCustomTheme(e.target.checked);
-  } })), /* @__PURE__ */ GL.React.createElement(
-    ThemePreview,
+  return /* @__PURE__ */ GL.React.createElement("div", { className: "cui-settings" }, /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Auto Hide Top Bar"), /* @__PURE__ */ GL.React.createElement(
+    "input",
     {
-      theme: activeTheme,
-      onClick: openThemePicker,
-      text: `Current theme: ${activeTheme.name} \u270E`
+      type: "checkbox",
+      checked: hideTopBar,
+      onChange: (e) => {
+        setHideTopBar(e.target.checked);
+      }
     }
-  ));
+  )), /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Question Panel Opacity"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "range",
+      min: "0",
+      max: "1",
+      step: "0.01",
+      value: questionOpacity,
+      onChange: (e) => {
+        setQuestionOpacity(parseFloat(e.target.value));
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement("div", { className: "row" }, /* @__PURE__ */ GL.React.createElement("div", null, "Use Custom Theme"), /* @__PURE__ */ GL.React.createElement(
+    "input",
+    {
+      type: "checkbox",
+      checked: useCustomTheme,
+      onChange: (e) => {
+        setUseCustomTheme(e.target.checked);
+      }
+    }
+  )), /* @__PURE__ */ GL.React.createElement(ThemePreview, { theme: activeTheme, onClick: openThemePicker, text: `Current theme: ${activeTheme.name} \u270E` }));
 }
 
 // plugins/CustomUI/src/uiChanger.ts
@@ -700,7 +867,7 @@ var UIChanger = class {
   boundOnMouseMove = this.onMouseMove.bind(this);
   onMouseMove(e) {
     if (!this.hideTopBar) return;
-    let nearTop = e.clientY < 100;
+    const nearTop = e.clientY < 100;
     document.documentElement.classList.toggle("slideOutTop", !nearTop);
   }
   updateSettings(hideTopBar, useCustomTheme, customThemes, themeType, themeIndex, questionOpacity) {
@@ -723,7 +890,7 @@ var UIChanger = class {
       document.documentElement.classList.remove("slideOutTop");
     }
     document.documentElement.classList.toggle("useCustomTheme", this.useCustomTheme);
-    let theme = this.getActiveTheme();
+    const theme = this.getActiveTheme();
     document.documentElement.style.setProperty("--question-bg", theme.question.background);
     document.documentElement.style.setProperty("--question-text", theme.question.text);
     document.documentElement.style.setProperty("--answer-bg-1", theme.palette[0].background);
@@ -750,7 +917,7 @@ var uiChanger = new UIChanger();
 api.UI.addStyles(styles_default);
 api.openSettingsMenu(() => {
   let confirmFunc;
-  let onConfirm = (callback) => {
+  const onConfirm = (callback) => {
     confirmFunc = callback;
   };
   api.UI.showModal(GL.React.createElement(UI, { uiChanger, onConfirm }), {

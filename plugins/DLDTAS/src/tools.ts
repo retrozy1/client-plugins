@@ -1,8 +1,8 @@
 import type { ISharedValues } from "../types";
 import { Keycodes } from "../types";
-import { defaultState, generatePhysicsInput } from "./util";
+import { getMoveSpeed } from "./index";
 import { initLasers, updateLasers } from "./updateLasers";
-import { getMoveSpeed } from './index';
+import { defaultState, generatePhysicsInput } from "./util";
 
 export default class TASTools {
     physicsManager: any;
@@ -25,7 +25,7 @@ export default class TASTools {
         this.physicsManager.physicsStep = (dt: number) => {
             // only rerender, rather than running the physics loop
             api.stores.phaser.mainCharacter.physics.postUpdate(dt);
-        }
+        };
         api.onStop(() => this.physicsManager.physicsStep = this.nativeStep);
 
         this.physics = api.stores.phaser.mainCharacter.physics;
@@ -50,7 +50,7 @@ export default class TASTools {
     }
 
     startPlaying() {
-        let { frames } = this.values;
+        const { frames } = this.values;
         this.slowdownDelayedFrames = 0;
 
         this.physicsManager.physicsStep = (dt: number) => {
@@ -63,14 +63,14 @@ export default class TASTools {
             updateLasers(this.values.currentFrame);
 
             // set the inputs
-            let frame = frames[this.values.currentFrame]
+            const frame = frames[this.values.currentFrame];
             if(frame) {
-                let translation = this.rb.translation()
-                frames[this.values.currentFrame].translation = { x: translation.x, y: translation.y }
+                const translation = this.rb.translation();
+                frames[this.values.currentFrame].translation = { x: translation.x, y: translation.y };
                 frames[this.values.currentFrame].state = JSON.stringify(this.physics.state);
 
-                let input = generatePhysicsInput(frame, frames[this.values.currentFrame - 1])
-                this.inputManager.getPhysicsInput = () => input
+                const input = generatePhysicsInput(frame, frames[this.values.currentFrame - 1]);
+                this.inputManager.getPhysicsInput = () => input;
             }
 
             this.setMoveSpeed();
@@ -81,14 +81,14 @@ export default class TASTools {
             // advance the frame
             this.values.currentFrame++;
             this.updateTable();
-        }
+        };
     }
 
     stopPlaying() {
         this.physicsManager.physicsStep = (dt: number) => {
             // only rerender, rather than running the physics loop
             api.stores.phaser.mainCharacter.physics.postUpdate(dt);
-        }
+        };
     }
 
     startControlling() {
@@ -101,17 +101,17 @@ export default class TASTools {
             if(this.slowdownDelayedFrames < this.slowdownAmount) return;
             this.slowdownDelayedFrames = 0;
 
-            let keys: Set<number> = this.inputManager.keyboard.heldKeys;
+            const keys: Set<number> = this.inputManager.keyboard.heldKeys;
 
             // log the inputs and translation/state
-            let left = keys.has(Keycodes.LeftArrow) || keys.has(Keycodes.A);
-            let right = keys.has(Keycodes.RightArrow) || keys.has(Keycodes.D);
-            let up = keys.has(Keycodes.UpArrow) || keys.has(Keycodes.W) || keys.has(Keycodes.Space);
+            const left = keys.has(Keycodes.LeftArrow) || keys.has(Keycodes.A);
+            const right = keys.has(Keycodes.RightArrow) || keys.has(Keycodes.D);
+            const up = keys.has(Keycodes.UpArrow) || keys.has(Keycodes.W) || keys.has(Keycodes.Space);
 
-            let translation = this.rb.translation()
-            let state = JSON.stringify(this.physics.state);
+            const translation = this.rb.translation();
+            const state = JSON.stringify(this.physics.state);
 
-            this.values.frames[this.values.currentFrame] = { left, right, up, translation, state }
+            this.values.frames[this.values.currentFrame] = { left, right, up, translation, state };
 
             this.setMoveSpeed();
             this.nativeStep(dt);
@@ -119,36 +119,36 @@ export default class TASTools {
             // update the current frame
             this.values.currentFrame++;
             this.updateTable();
-        }
+        };
     }
 
     stopControlling() {
         this.physicsManager.physicsStep = (dt: number) => {
             // only rerender, rather than running the physics loop
             api.stores.phaser.mainCharacter.physics.postUpdate(dt);
-        }
+        };
     }
 
     advanceFrame() {
-        let frame = this.values.frames[this.values.currentFrame]
-        if(!frame) return
+        const frame = this.values.frames[this.values.currentFrame];
+        if(!frame) return;
 
         this.setMoveSpeed();
 
         // log the current translation and state
-        let translation = this.rb.translation()
-        frame.translation = { x: translation.x, y: translation.y }
+        const translation = this.rb.translation();
+        frame.translation = { x: translation.x, y: translation.y };
         frame.state = JSON.stringify(this.physics.state);
 
         // generate the input
-        let lastFrame = this.values.frames[this.values.currentFrame - 1]
-        let input = generatePhysicsInput(frame, lastFrame)
+        const lastFrame = this.values.frames[this.values.currentFrame - 1];
+        const input = generatePhysicsInput(frame, lastFrame);
 
-        this.inputManager.getPhysicsInput = () => input
+        this.inputManager.getPhysicsInput = () => input;
 
         // step the game
         this.nativeStep(0);
-        
+
         this.values.currentFrame++;
 
         updateLasers(this.values.currentFrame);
@@ -161,14 +161,14 @@ export default class TASTools {
 
     // this function should only ever be used when going back in time
     setFrame(number: number) {
-        let frame = this.values.frames[number]
-        if(!frame || !frame.translation || !frame.state) return
+        const frame = this.values.frames[number];
+        if(!frame || !frame.translation || !frame.state) return;
 
         this.values.currentFrame = number;
 
         updateLasers(this.values.currentFrame);
-        this.rb.setTranslation(frame.translation, true)
-        this.physics.state = JSON.parse(frame.state)
+        this.rb.setTranslation(frame.translation, true);
+        this.physics.state = JSON.parse(frame.state);
     }
 
     setMoveSpeed() {

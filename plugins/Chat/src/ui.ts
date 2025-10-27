@@ -1,6 +1,6 @@
-// @ts-ignore
-import styles from './styles.css';
-import { maxLength } from './consts';
+// @ts-expect-error
+import { maxLength } from "./consts";
+import styles from "./styles.css";
 
 api.UI.addStyles(styles);
 
@@ -33,7 +33,7 @@ api.rewriter.addParseHook("App", (code) => {
     const start = code.lastIndexOf("});const", index);
     const end = code.indexOf("=", start);
     const name = code.substring(start + 9, end);
-    code += `${formatCallback}?.(${name});`
+    code += `${formatCallback}?.(${name});`;
 
     return code;
 });
@@ -49,35 +49,35 @@ export default class UI {
     static enabled = false;
 
     static init(send: (message: string) => Promise<void>) {
-        this.send = send;
+        UI.send = send;
 
-        this.element = document.createElement("div");
-        this.element.id = "gl-chat";
+        UI.element = document.createElement("div");
+        UI.element.id = "gl-chat";
 
-        let spacer = document.createElement("div");
+        const spacer = document.createElement("div");
         spacer.id = "chat-spacer";
-        this.element.appendChild(spacer);
+        UI.element.appendChild(spacer);
 
-        this.messageWrapper = document.createElement("div");
-        this.messageWrapper.id = "chat-messages-wrap";
-        this.element.appendChild(this.messageWrapper);
+        UI.messageWrapper = document.createElement("div");
+        UI.messageWrapper.id = "chat-messages-wrap";
+        UI.element.appendChild(UI.messageWrapper);
 
-        this.messageContainer = document.createElement("div");
-        this.messageContainer.id = "chat-messages";
-        this.messageWrapper.appendChild(this.messageContainer);
-        
-        this.input = this.createInput();
-        this.element.appendChild(this.input);
-        document.body.appendChild(this.element);
-        api.onStop(() => this.element.remove());
+        UI.messageContainer = document.createElement("div");
+        UI.messageContainer.id = "chat-messages";
+        UI.messageWrapper.appendChild(UI.messageContainer);
 
-        const blurInput = () => this.input?.blur();
+        UI.input = UI.createInput();
+        UI.element.appendChild(UI.input);
+        document.body.appendChild(UI.element);
+        api.onStop(() => UI.element.remove());
+
+        const blurInput = () => UI.input?.blur();
         document.addEventListener("click", blurInput);
         api.onStop(() => document.removeEventListener("click", blurInput));
     }
 
     static createInput() {
-        let input = document.createElement("input");
+        const input = document.createElement("input");
         input.maxLength = maxLength;
         input.disabled = true;
         input.placeholder = "...";
@@ -94,15 +94,15 @@ export default class UI {
             }
 
             if(e.key === "Enter") {
-                let message = input.value;
+                const message = input.value;
                 if(message.length === 0) return;
 
                 input.value = "";
                 input.placeholder = "Sending...";
                 input.disabled = true;
 
-                await this.send(message);
-                if(!this.enabled) return;
+                await UI.send(message);
+                if(!UI.enabled) return;
 
                 input.disabled = false;
                 input.placeholder = "...";
@@ -116,7 +116,7 @@ export default class UI {
     }
 
     static addMessage(message: string, forceScroll = false) {
-        let element = document.createElement("div");
+        const element = document.createElement("div");
         if(format) {
             // The formatter includes a full html sanitizer so there is no need to sanitize the messages
             element.innerHTML = format({ inputText: message });
@@ -124,27 +124,27 @@ export default class UI {
             element.innerText = message;
         }
 
-        let wrap = this.messageWrapper;
-        let shouldScroll = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < 1;
+        const wrap = UI.messageWrapper;
+        const shouldScroll = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < 1;
 
-        this.history.push(element);
-        this.messageContainer.appendChild(element);
-        if(this.history.length > this.maxLength) {
-            this.history.shift()?.remove();
+        UI.history.push(element);
+        UI.messageContainer.appendChild(element);
+        if(UI.history.length > UI.maxLength) {
+            UI.history.shift()?.remove();
         }
 
         if(shouldScroll || forceScroll) wrap.scrollTop = wrap.scrollHeight;
     }
 
     static setEnabled(enabled: boolean) {
-        this.enabled = enabled;
+        UI.enabled = enabled;
 
         if(enabled) {
-            this.input.disabled = false;
-            this.input.placeholder = "...";
+            UI.input.disabled = false;
+            UI.input.placeholder = "...";
         } else {
-            this.input.disabled = true;
-            this.input.placeholder = "Chat not available in lobby";
+            UI.input.disabled = true;
+            UI.input.placeholder = "Chat not available in lobby";
         }
     }
 }

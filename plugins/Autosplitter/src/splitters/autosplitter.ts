@@ -45,18 +45,18 @@ export abstract class SplitsAutosplitter extends Autosplitter {
     declare data: SplitsData;
 
     get pb() {
-        let pb = this.data.pb[this.getCategoryId()];
-        if(pb) return pb[pb.length - 1];
+        const pb = this.data.pb[this.getCategoryId()];
+        return pb?.[pb.length - 1];
     }
 
     get pbSplits(): number[] {
-        let categoryId = this.getCategoryId();
+        const categoryId = this.getCategoryId();
         if(!this.data.pb[categoryId]) this.data.pb[categoryId] = [];
         return this.data.pb[this.getCategoryId()];
     }
 
     get bestSplits(): number[] {
-        let categoryId = this.getCategoryId();
+        const categoryId = this.getCategoryId();
         if(!this.data.bestSplits[categoryId]) this.data.bestSplits[categoryId] = [];
         return this.data.bestSplits[this.getCategoryId()];
     }

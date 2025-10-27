@@ -12,10 +12,10 @@ var observerIntercepts = [];
 var wrapObserver = api.rewriter.createShared("ObserverWrapper", (func) => {
   return function() {
     if (GL.libs.isEnabled("MobxUtils")) {
-      let str = arguments[0].toString();
-      for (let intercept of observerIntercepts) {
+      const str = arguments[0].toString();
+      for (const intercept of observerIntercepts) {
         if (intercept.match(str)) {
-          let newVal = intercept.callback(arguments[0]);
+          const newVal = intercept.callback(arguments[0]);
           if (newVal) arguments[0] = newVal;
         }
       }

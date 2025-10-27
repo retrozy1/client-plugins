@@ -10,36 +10,25 @@
  * @gamemode dontLookDown
  */
 
+// shared/consts.ts
+var summitCoords = [
+  { x: 38.2555427551269, y: 638.38995361328 },
+  { x: 90.2299728393554, y: 638.37768554687 },
+  { x: 285.440002441406, y: 532.7800292968 },
+  { x: 217.550003051757, y: 500.77999877929 },
+  { x: 400.33999633789, y: 413.73999023437 },
+  { x: 356.540008544921, y: 351.6600036621 },
+  { x: 401.269989013671, y: 285.73999023437 }
+];
+
 // plugins/Savestates/src/index.ts
 var DLDUtils = api.lib("DLDUtils");
-var summitCoords = [{
-  "x": 38.25554275512695,
-  "y": 638.3899536132812
-}, {
-  "x": 90.22997283935547,
-  "y": 638.377685546875
-}, {
-  "x": 285.44000244140625,
-  "y": 532.780029296875
-}, {
-  "x": 217.5500030517578,
-  "y": 500.7799987792969
-}, {
-  "x": 400.3399963378906,
-  "y": 413.739990234375
-}, {
-  "x": 356.5400085449219,
-  "y": 351.6600036621094
-}, {
-  "x": 401.2699890136719,
-  "y": 285.739990234375
-}];
 var defaultState = '{"gravity":0.001,"velocity":{"x":0,"y":0},"movement":{"direction":"none","xVelocity":0,"accelerationTicks":0},"jump":{"isJumping":false,"jumpsLeft":2,"jumpCounter":0,"jumpTicks":118,"xVelocityAtJumpStart":0},"forces":[],"grounded":true,"groundedTicks":0,"lastGroundedAngle":0}';
 var stateLoadCallbacks = [];
 var tp = (summit) => {
   if (!gameLoaded) return;
-  let physics = api.stores.phaser.mainCharacter.physics;
-  let rb = physics.getBody().rigidBody;
+  const physics = api.stores.phaser.mainCharacter.physics;
+  const rb = physics.getBody().rigidBody;
   DLDUtils.cancelRespawn();
   rb.setTranslation(summitCoords[summit], true);
   physics.state = JSON.parse(defaultState);
@@ -50,8 +39,8 @@ var lastState = api.storage.getValue("lastState", null);
 var gameLoaded = false;
 var saveState = () => {
   if (!gameLoaded) return;
-  let physics = api.stores.phaser.mainCharacter.physics;
-  let rb = physics.getBody().rigidBody;
+  const physics = api.stores.phaser.mainCharacter.physics;
+  const rb = physics.getBody().rigidBody;
   lastPos = rb.translation();
   lastState = JSON.stringify(physics.state);
   api.storage.setValue("lastPos", lastPos);
@@ -60,8 +49,8 @@ var saveState = () => {
 };
 var loadState = () => {
   if (!gameLoaded) return;
-  let physics = api.stores.phaser.mainCharacter.physics;
-  let rb = physics.getBody().rigidBody;
+  const physics = api.stores.phaser.mainCharacter.physics;
+  const rb = physics.getBody().rigidBody;
   if (!lastPos || !lastState) return;
   api.lib("DLDUtils").cancelRespawn();
   rb.setTranslation(lastPos, true);
@@ -71,12 +60,12 @@ var loadState = () => {
 };
 api.net.onLoad(() => {
   gameLoaded = true;
-  let commandLine = api.lib("CommandLine");
+  const commandLine = api.lib("CommandLine");
   if (commandLine) {
     commandLine.addCommand("summit", [
       { "number": ["0", "1", "2", "3", "4", "5", "6"] }
     ], (summit) => {
-      tp(parseInt(summit));
+      tp(parseInt(summit, 10));
     });
     commandLine.addCommand("save", [], saveState);
     commandLine.addCommand("load", [], loadState);

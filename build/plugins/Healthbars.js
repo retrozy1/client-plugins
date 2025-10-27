@@ -24,7 +24,7 @@ api.net.onLoad(() => {
     shield.setStrokeStyle(2, 16777215);
     const stateChar = api.net.room.state.characters.get(character.id);
     const hp = stateChar.health;
-    let stopUpdate = api.patcher.after(character.nametag, "update", () => {
+    const stopUpdate = api.patcher.after(character.nametag, "update", () => {
       let { x, y, depth } = character.nametag.tag;
       y += 22;
       bg.visible = health.visible = shield.visible = !stateChar.isRespawning;
@@ -40,7 +40,7 @@ api.net.onLoad(() => {
       shield.x = x;
       shield.y = y;
     });
-    let stopDestroy = api.patcher.after(character, "destroy", destroy);
+    const stopDestroy = api.patcher.after(character, "destroy", destroy);
     api.onStop(destroy);
     function destroy() {
       bg.destroy();
@@ -53,7 +53,7 @@ api.net.onLoad(() => {
   api.patcher.after(scene.characterManager, "addCharacter", (_, __, character) => {
     addHealthbar(character);
   });
-  for (let character of scene.characterManager.characters.values()) {
+  for (const character of scene.characterManager.characters.values()) {
     addHealthbar(character);
   }
 });

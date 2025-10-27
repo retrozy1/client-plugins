@@ -1,6 +1,6 @@
 function changeHooks(res) {
-    for(let hook of res.hooks) {
-        let key = hook.key.toLowerCase();
+    for(const hook of res.hooks) {
+        const key = hook.key.toLowerCase();
 
         if(key.includes("duration")) {
             // uncap duration
@@ -17,19 +17,19 @@ function changeHooks(res) {
 const wrapRequester = api.rewriter.createShared("WrapRequester", (requester) => {
     return function() {
         if(
-            GL.plugins.isEnabled("UncappedSettings") &&
-            arguments[0].url === "/api/experience/map/hooks" &&
-            arguments[0].success
+            GL.plugins.isEnabled("UncappedSettings")
+            && arguments[0].url === "/api/experience/map/hooks"
+            && arguments[0].success
         ) {
-            let success = arguments[0].success;
+            const success = arguments[0].success;
             arguments[0].success = function(res) {
                 changeHooks(res);
                 return success.apply(this, arguments);
-            }
+            };
         }
 
         return requester.apply(this, arguments);
-    }
+    };
 });
 
 api.rewriter.addParseHook(true, (code) => {

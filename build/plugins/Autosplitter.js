@@ -806,7 +806,7 @@ var DLDDefaults = {
   timerPosition: "top right"
 };
 function getDLDData() {
-  let data = api.storage.getValue("DLDData", {});
+  const data = api.storage.getValue("DLDData", {});
   return Object.assign(DLDDefaults, data);
 }
 var splitsDefaults = {
@@ -821,17 +821,17 @@ var splitsDefaults = {
   timerPosition: "top right"
 };
 function getFishtopiaData() {
-  let data = api.storage.getValue("FishtopiaData", {});
+  const data = api.storage.getValue("FishtopiaData", {});
   return Object.assign(splitsDefaults, data);
 }
 function getOneWayOutData() {
-  let data = api.storage.getValue("OneWayOutData", {});
+  const data = api.storage.getValue("OneWayOutData", {});
   return Object.assign(splitsDefaults, data);
 }
 function downloadFile(data, filename) {
-  let blob = new Blob([data], { type: "application/json" });
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement("a");
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   a.click();
@@ -839,17 +839,17 @@ function downloadFile(data, filename) {
 }
 function readFile() {
   return new Promise((res, rej) => {
-    let input = document.createElement("input");
+    const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
     input.addEventListener("change", () => {
-      let file = input.files?.[0];
+      const file = input.files?.[0];
       if (!file) return rej("No file selected");
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = () => {
-        let data = reader.result;
+        const data = reader.result;
         if (typeof data !== "string") return rej("Failed to read file");
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         res(parsed);
       };
       reader.readAsText(file);
@@ -860,15 +860,15 @@ function readFile() {
 function fmtMs(ms) {
   ms = Math.round(ms);
   let seconds = Math.floor(ms / 1e3);
-  let minutes = Math.floor(seconds / 60);
+  const minutes = Math.floor(seconds / 60);
   ms %= 1e3;
   seconds %= 60;
   if (minutes > 0) return `${minutes}:${String(seconds).padStart(2, "0")}.${String(ms).padStart(3, "0")}`;
   return `${seconds}.${String(ms).padStart(3, "0")}`;
 }
 function parseTime(time) {
-  let parts = time.split(":").map(parseFloat);
-  if (parts.some(isNaN)) return 6e5;
+  const parts = time.split(":").map(parseFloat);
+  if (parts.some(Number.isNaN)) return 6e5;
   if (parts.length === 1) return parts[0] * 1e3;
   if (parts.length === 2) return parts[0] * 6e4 + parts[1] * 1e3;
   return parts[0] * 36e5 + parts[1] * 6e4 + parts[2] * 1e3;
@@ -883,13 +883,13 @@ function inBox(coords, box) {
   return coords.x > box.p1.x && coords.x < box.p2.x && coords.y > box.p1.y && coords.y < box.p2.y;
 }
 function onPhysicsStep(callback) {
-  let worldManager = api.stores.phaser.scene.worldManager;
+  const worldManager = api.stores.phaser.scene.worldManager;
   api.patcher.after(worldManager.physics, "physicsStep", () => {
     callback();
   });
 }
 function onFrame(callback) {
-  let worldManager = api.stores.phaser.scene.worldManager;
+  const worldManager = api.stores.phaser.scene.worldManager;
   api.patcher.after(worldManager, "update", () => {
     callback();
   });
@@ -3355,6 +3355,720 @@ var Settings = class extends SvelteComponent {
 };
 var Settings_default = Settings;
 
+// plugins/Autosplitter/src/timers/basic.ts
+var BasicTimer = class {
+  constructor(autosplitter2, ui) {
+    this.autosplitter = autosplitter2;
+    this.ui = ui;
+  }
+  started = false;
+  startTime = 0;
+  now = 0;
+  get elapsed() {
+    return this.now - this.startTime;
+  }
+  start() {
+    this.startTime = performance.now();
+    this.started = true;
+    this.ui.start();
+  }
+  stop() {
+    this.started = false;
+    const pb = this.autosplitter.pb;
+    if (!pb || this.elapsed < pb) {
+      this.autosplitter.data.pb[this.autosplitter.getCategoryId()] = this.elapsed;
+      this.autosplitter.save();
+    }
+  }
+  update() {
+    if (!this.started) return;
+    this.now = performance.now();
+    this.ui.update(this.elapsed);
+  }
+};
+
+// plugins/Autosplitter/src/timers/splits.ts
+var SplitsTimer = class extends BasicTimer {
+  constructor(autosplitter2, ui) {
+    super(autosplitter2, ui);
+    this.autosplitter = autosplitter2;
+    this.ui = ui;
+  }
+  currentSplit = 0;
+  splitStart = 0;
+  splits = [];
+  get splitElapsed() {
+    return this.now - this.splitStart;
+  }
+  start() {
+    super.start();
+    this.splitStart = this.startTime;
+    this.ui.setActiveSplit(0);
+  }
+  stop() {
+    this.started = false;
+    const pb = this.autosplitter.pb;
+    if (!pb || this.splits[this.splits.length - 1] < pb) {
+      this.autosplitter.data.pb[this.autosplitter.getCategoryId()] = this.splits;
+      this.autosplitter.save();
+    }
+  }
+  split() {
+    this.ui.finishSplit(this.elapsed, this.currentSplit, this.splitElapsed);
+    const bestSplit = this.autosplitter.bestSplits[this.currentSplit];
+    if (!bestSplit || this.splitElapsed < bestSplit) {
+      this.autosplitter.bestSplits[this.currentSplit] = this.splitElapsed;
+      this.autosplitter.save();
+    }
+    this.splits.push(this.elapsed);
+    this.currentSplit++;
+    this.splitStart = this.now;
+    this.ui.setActiveSplit(this.currentSplit);
+  }
+  update() {
+    if (!this.started) return;
+    super.update();
+    const elapsed = this.now - this.startTime;
+    this.ui.updateSplit(elapsed, this.currentSplit, this.splitElapsed);
+  }
+};
+
+// assets/restore.svg
+var restore_default = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z" fill="white" /></svg>';
+
+// plugins/Autosplitter/src/ui/basic.ts
+var BasicUI = class {
+  constructor(autosplitter2) {
+    this.autosplitter = autosplitter2;
+    this.element = document.createElement("div");
+    this.element.id = "timer";
+    this.element.className = autosplitter2.data.timerPosition;
+    const topBar = document.createElement("div");
+    topBar.classList.add("bar");
+    this.attemptsEl = document.createElement("div");
+    this.attemptsEl.classList.add("attempts");
+    this.attemptsEl.innerText = autosplitter2.attempts.toString();
+    topBar.appendChild(this.attemptsEl);
+    this.element.appendChild(topBar);
+    this.total = document.createElement("div");
+    this.total.classList.add("total");
+    this.total.innerText = "0.00";
+    this.element.appendChild(this.total);
+    document.body.appendChild(this.element);
+  }
+  element;
+  total;
+  attemptsEl;
+  start() {
+    this.setTotalAhead(true);
+  }
+  update(totalMs) {
+    this.total.innerText = fmtMs(totalMs);
+    if (this.autosplitter.pb) {
+      const amountBehind = totalMs - this.autosplitter.pb;
+      if (amountBehind > 0) this.setTotalAhead(false);
+    }
+  }
+  setTotalAhead(ahead) {
+    this.total.classList.toggle("ahead", ahead);
+    this.total.classList.toggle("behind", !ahead);
+  }
+  updateAttempts() {
+    this.attemptsEl.innerText = this.autosplitter.attempts.toString();
+  }
+  remove() {
+    this.element?.remove();
+  }
+};
+
+// plugins/Autosplitter/src/ui/splits.ts
+var SplitsUI = class extends BasicUI {
+  constructor(autosplitter2, splitNames) {
+    super(autosplitter2);
+    this.autosplitter = autosplitter2;
+    this.splitNames = splitNames;
+    const table = document.createElement("table");
+    if (this.autosplitter.data.showSplits) this.element.appendChild(table);
+    for (const name of this.splitNames) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+            <td style="min-width: 120px;">${name}</td>
+            <td style="min-width: 60px; ${this.autosplitter.data.showSplitTimes ? "" : "display: none"}"></td>
+            <td style="min-width: 80px; ${this.autosplitter.data.showSplitComparisons ? "" : "display: none"}"></td>
+            <td style="min-width: 60px; ${this.autosplitter.data.showSplitTimeAtEnd ? "" : "display: none"}"></td>`;
+      this.splitRows.push(row);
+      this.splitDatas.push(Array.from(row.children));
+      table.appendChild(row);
+    }
+    if (this.autosplitter.data.showPbSplits) {
+      for (let i = 0; i < this.autosplitter.pbSplits.length; i++) {
+        const split = this.autosplitter.pbSplits[i];
+        if (!split) continue;
+        this.splitDatas[i][3].innerText = fmtMs(split);
+      }
+    }
+    this.element.appendChild(this.total);
+  }
+  splitTimes = [];
+  previousActiveRow = null;
+  splitRows = [];
+  splitDatas = [];
+  activeSplit = null;
+  setActiveSplit(index) {
+    if (index >= this.splitRows.length) {
+      if (this.previousActiveRow) this.previousActiveRow.classList.remove("active");
+      this.activeSplit = null;
+      return;
+    }
+    if (this.previousActiveRow) this.previousActiveRow.classList.remove("active");
+    this.splitRows[index].classList.add("active");
+    this.previousActiveRow = this.splitRows[index];
+    this.activeSplit = index;
+  }
+  updateSplit(totalMs, splitIndex, splitMs) {
+    this.splitDatas[splitIndex][1].innerText = fmtMs(splitMs);
+    const pb = this.autosplitter.pbSplits?.[splitIndex];
+    if (!pb) return;
+    const amountBehind = totalMs - pb;
+    if (amountBehind <= 0) {
+      this.setTotalAhead(true);
+      return;
+    }
+    if (this.autosplitter.data.showSplitComparisons) {
+      this.splitDatas[splitIndex][2].innerText = `+${fmtMs(amountBehind)}`;
+      this.splitDatas[splitIndex][2].classList.add("behind");
+    }
+    this.setTotalAhead(false);
+  }
+  finishSplit(totalMs, splitIndex, splitMs) {
+    const els = this.splitDatas[splitIndex];
+    els[3].innerText = fmtMs(totalMs);
+    const pb = this.autosplitter.pbSplits[splitIndex];
+    const bestSplit = this.autosplitter.bestSplits[splitIndex];
+    if (!pb || !bestSplit) return;
+    const ahead = pb === void 0 || totalMs <= pb;
+    const best = bestSplit !== void 0 && splitMs < bestSplit;
+    if (ahead) els[2].innerText = `-${fmtMs(-totalMs + pb)}`;
+    else els[2].innerText = `+${fmtMs(totalMs - pb)}`;
+    if (best) els[2].classList.add("best");
+    else if (ahead) els[2].classList.add("ahead");
+    else els[2].classList.add("behind");
+  }
+};
+
+// plugins/Autosplitter/src/ui/DLD.ts
+function addDLDUI(element2, autosplitter2) {
+  const topBar = element2.querySelector(".bar");
+  const categorySelect = document.createElement("select");
+  topBar.firstChild.before(categorySelect);
+  for (const category of categories) {
+    const option = document.createElement("option");
+    option.value = category;
+    option.innerText = category;
+    if (category === autosplitter2.category) option.selected = true;
+    categorySelect.appendChild(option);
+  }
+  const runTypeBar = document.createElement("div");
+  runTypeBar.classList.add("bar");
+  const runTypeSelect = document.createElement("select");
+  runTypeSelect.innerHTML = `<option value="Full Game">Full Game</option>`;
+  for (let i = 0; i < DLDSplits.length; i++) {
+    const option = document.createElement("option");
+    option.value = String(i);
+    option.innerText = DLDSplits[i];
+    if (autosplitter2.data.mode === "Summit" && autosplitter2.data.ilSummit === i) option.selected = true;
+    runTypeSelect.appendChild(option);
+  }
+  runTypeBar.appendChild(runTypeSelect);
+  const preboostSelect = document.createElement("select");
+  preboostSelect.innerHTML = `
+    <option value="false">No Preboosts</option>
+    <option value="true">Preboosts</option>`;
+  preboostSelect.value = String(autosplitter2.data.ilPreboosts);
+  if (autosplitter2.category === "Current Patch") preboostSelect.disabled = true;
+  categorySelect.addEventListener("change", () => {
+    autosplitter2.setCategory(categorySelect.value);
+    if (categorySelect.value === "Current Patch") {
+      preboostSelect.value = "false";
+      preboostSelect.disabled = true;
+    } else {
+      preboostSelect.disabled = false;
+    }
+  });
+  if (runTypeSelect.value !== "Full Game") {
+    runTypeBar.appendChild(preboostSelect);
+  }
+  runTypeSelect.addEventListener("change", () => {
+    if (runTypeSelect.value === "Full Game") {
+      preboostSelect.remove();
+      autosplitter2.setMode("Full Game");
+    } else {
+      runTypeBar.appendChild(preboostSelect);
+      autosplitter2.setMode("Summit", parseInt(runTypeSelect.value, 10), preboostSelect.value === "true");
+    }
+  });
+  preboostSelect.addEventListener("change", () => {
+    autosplitter2.setMode("Summit", parseInt(runTypeSelect.value, 10), preboostSelect.value === "true");
+  });
+  topBar.after(runTypeBar);
+}
+function lockInCategory(element2, autosplitter2) {
+  const selects = element2.querySelectorAll("select");
+  for (const select of selects) {
+    select.disabled = true;
+    select.title = "Cannot be altered mid-run";
+  }
+  const resetButton = document.createElement("button");
+  resetButton.classList.add("restart");
+  resetButton.innerHTML = restore_default;
+  resetButton.addEventListener("click", () => {
+    autosplitter2.reset();
+  });
+  element2.firstChild?.firstChild?.before(resetButton);
+}
+var DLDFullGameUI = class extends SplitsUI {
+  constructor(autosplitter2) {
+    super(autosplitter2, DLDSplits);
+    this.autosplitter = autosplitter2;
+    addDLDUI(this.element, autosplitter2);
+  }
+  lockInCategory() {
+    lockInCategory(this.element, this.autosplitter);
+  }
+};
+var DLDSummitUI = class extends BasicUI {
+  constructor(autosplitter2) {
+    super(autosplitter2);
+    this.autosplitter = autosplitter2;
+    addDLDUI(this.element, autosplitter2);
+  }
+  lockInCategory() {
+    lockInCategory(this.element, this.autosplitter);
+  }
+};
+
+// plugins/Autosplitter/src/splitters/autosplitter.ts
+var Autosplitter = class {
+  constructor(id) {
+    this.id = id;
+    this.loadData();
+    api.onStop(() => this.destroy());
+  }
+  data;
+  loadData() {
+    this.data = getGamemodeData(this.id);
+  }
+  save() {
+    api.storage.setValue(`${this.id}Data`, this.data);
+  }
+  get attempts() {
+    return this.data.attempts[this.getCategoryId()] ?? 0;
+  }
+  addAttempt() {
+    this.data.attempts[this.getCategoryId()] = this.attempts + 1;
+    this.save();
+  }
+};
+var SplitsAutosplitter = class extends Autosplitter {
+  get pb() {
+    const pb = this.data.pb[this.getCategoryId()];
+    return pb?.[pb.length - 1];
+  }
+  get pbSplits() {
+    const categoryId = this.getCategoryId();
+    if (!this.data.pb[categoryId]) this.data.pb[categoryId] = [];
+    return this.data.pb[this.getCategoryId()];
+  }
+  get bestSplits() {
+    const categoryId = this.getCategoryId();
+    if (!this.data.bestSplits[categoryId]) this.data.bestSplits[categoryId] = [];
+    return this.data.bestSplits[this.getCategoryId()];
+  }
+};
+
+// plugins/Autosplitter/src/splitters/DLD.ts
+var DLDAutosplitter = class extends SplitsAutosplitter {
+  ui;
+  timer;
+  category = "Current Patch";
+  couldStartLastFrame = true;
+  loadedCorrectSummit = false;
+  hasMoved = false;
+  autoRecording = false;
+  constructor() {
+    super("DLD");
+    this.category = "Current Patch";
+    if (api.plugins.isEnabled("BringBackBoosts")) {
+      const bbbSettings = GL.storage.getValue("BringBackBoosts", "QS-Settings", {});
+      if (bbbSettings.useOriginalPhysics) {
+        this.category = "Original Physics";
+      } else {
+        this.category = "Creative Platforming Patch";
+      }
+    }
+    if (this.category === "Current Patch") {
+      this.data.ilPreboosts = false;
+    }
+    this.updateTimerAndUI();
+    onPhysicsStep(() => {
+      const input = api.stores.phaser.scene.inputManager.getPhysicsInput();
+      if (input.jump || input.angle !== null) this.hasMoved = true;
+    });
+    onFrame(() => {
+      if (this.data.mode === "Full Game") this.updateFullGame();
+      else if (this.data.ilPreboosts) this.updatePreboosts();
+      else this.updateNoPreboosts();
+      this.hasMoved = false;
+    });
+    const savestates = api.plugin("Savestates");
+    if (savestates) {
+      savestates.onStateLoaded(this.onStateLoadedBound);
+    }
+  }
+  updateTimerAndUI() {
+    this.ui?.remove();
+    if (this.data.mode === "Full Game") {
+      const ui = new DLDFullGameUI(this);
+      this.ui = ui;
+      this.timer = new SplitsTimer(this, ui);
+    } else {
+      const ui = new DLDSummitUI(this);
+      this.ui = ui;
+      this.timer = new BasicTimer(this, ui);
+    }
+  }
+  getCategoryId() {
+    if (this.data.mode === "Full Game") return this.category;
+    if (this.data.ilPreboosts) return `${this.category}-${this.data.ilSummit}-preboosts`;
+    return `${this.category}-${this.data.ilSummit}`;
+  }
+  setMode(mode, ilsummit, ilPreboosts) {
+    if (this.category === "Current Patch") ilPreboosts = false;
+    const modeChanged = this.data.mode !== mode;
+    this.data.mode = mode;
+    if (ilsummit !== void 0) this.data.ilSummit = ilsummit;
+    if (ilPreboosts !== void 0) this.data.ilPreboosts = ilPreboosts;
+    this.save();
+    this.couldStartLastFrame = true;
+    if (modeChanged) {
+      this.updateTimerAndUI();
+    } else {
+      this.ui.updateAttempts();
+    }
+  }
+  setCategory(name) {
+    this.category = name;
+    this.ui.updateAttempts();
+  }
+  ilState = "waiting";
+  updatePreboosts() {
+    const body = api.stores.phaser.mainCharacter.body;
+    const coords = summitCoords[this.data.ilSummit];
+    if (this.ilState === "waiting") {
+      if (inArea(body, coords)) {
+        if (this.couldStartLastFrame) return;
+        this.ilState = "started";
+        this.timer.start();
+        this.onRunStart();
+        this.timer.update();
+      } else {
+        this.couldStartLastFrame = false;
+      }
+    } else if (this.ilState === "started") {
+      if (inArea(body, summitStartCoords[this.data.ilSummit + 1])) {
+        this.ilState = "completed";
+        this.couldStartLastFrame = true;
+        this.onRunEnd();
+      } else {
+        this.timer.update();
+      }
+    }
+  }
+  updateNoPreboosts() {
+    if (!this.loadedCorrectSummit) return;
+    const body = api.stores.phaser.mainCharacter.body;
+    if (this.ilState === "waiting") {
+      if (this.hasMoved) {
+        this.ilState = "started";
+        this.timer.start();
+        this.onRunStart();
+        this.timer.update();
+      }
+    } else if (this.ilState === "started") {
+      if (inArea(body, summitStartCoords[this.data.ilSummit + 1])) {
+        this.ilState = "completed";
+        this.onRunEnd();
+      } else {
+        this.timer.update();
+      }
+    }
+  }
+  summit = 0;
+  updateFullGame() {
+    const body = api.stores.phaser.mainCharacter.body;
+    if (this.summit > 0 && body.x < resetCoordinates.x && body.y > resetCoordinates.y) {
+      this.reset();
+      return;
+    }
+    if (this.summit > summitStartCoords.length - 1) return;
+    if (this.summit === 0) {
+      if (body.x > summitStartCoords[0].x && body.y < summitStartCoords[0].y + 10) {
+        if (this.couldStartLastFrame) return;
+        this.summit = 1;
+        this.timer.start();
+        this.onRunStart();
+      } else {
+        this.couldStartLastFrame = false;
+      }
+    } else if (inArea(body, summitStartCoords[this.summit])) {
+      this.summit++;
+      this.timer.split();
+      if (this.summit > summitStartCoords.length - 1) {
+        this.onRunEnd();
+      }
+    }
+    this.timer.update();
+  }
+  getRecorder() {
+    const inputRecorder = api.plugin("InputRecorder");
+    if (!inputRecorder) return;
+    return inputRecorder.getRecorder();
+  }
+  onRunStart() {
+    this.addAttempt();
+    this.ui.updateAttempts();
+    this.ui.lockInCategory();
+    if (!this.data.autoRecord) return;
+    const recorder = this.getRecorder();
+    if (!recorder) return;
+    if (recorder.recording || recorder.playing) return;
+    recorder.startRecording();
+    this.autoRecording = true;
+  }
+  onRunEnd() {
+    this.timer.stop();
+    if (!this.data.autoRecord) return;
+    const recorder = this.getRecorder();
+    if (!recorder) return;
+    if (!recorder.recording || recorder.playing || !this.autoRecording) return;
+    this.autoRecording = false;
+    const isPb = !this.pb || this.timer.elapsed < this.pb;
+    if (!isPb) return;
+    const username = api.stores.phaser.mainCharacter.nametag.name;
+    let mode = "Full Game";
+    if (this.data.mode !== "Full Game") {
+      mode = `Summit ${this.data.ilSummit + 1}`;
+      if (this.data.ilPreboosts) mode += " (Preboosts)";
+    }
+    const time = fmtMs(this.timer.elapsed);
+    recorder.stopRecording(isPb, `recording-${username}-${this.category}-${mode}-${time}.json`);
+    api.notification.open({ message: `Auto-saved PB of ${time}`, placement: "topLeft" });
+  }
+  onStateLoaded(summit) {
+    if (summit === "custom") return;
+    if (this.data.autostartILs) {
+      if (summit === 1 && this.data.mode === "Full Game") return;
+      this.setMode("Summit", summit - 1);
+      this.reset();
+      if (!this.data.ilPreboosts) this.loadedCorrectSummit = true;
+      return;
+    }
+    if (this.data.mode === "Full Game") return;
+    if (this.data.ilPreboosts) return;
+    if (this.ilState !== "waiting") {
+      this.reset();
+    }
+    this.loadedCorrectSummit = summit === this.data.ilSummit + 1;
+  }
+  onStateLoadedBound = this.onStateLoaded.bind(this);
+  reset() {
+    this.updateTimerAndUI();
+    this.summit = 0;
+    this.ilState = "waiting";
+    this.couldStartLastFrame = true;
+    this.loadedCorrectSummit = false;
+    const recorder = this.getRecorder();
+    if (recorder?.recording && this.autoRecording) {
+      recorder.stopRecording(false);
+    }
+  }
+  destroy() {
+    this.ui.remove();
+    const savestates = api.plugin("Savestates");
+    if (savestates) {
+      savestates.offStateLoaded(this.onStateLoadedBound);
+    }
+  }
+};
+
+// plugins/Autosplitter/src/splitters/fishtopia.ts
+var FishtopiaAutosplitter = class extends SplitsAutosplitter {
+  ui = new SplitsUI(this, fishtopiaSplits);
+  timer = new SplitsTimer(this, this.ui);
+  usedChannels = /* @__PURE__ */ new Set();
+  constructor() {
+    super("Fishtopia");
+    const gameSession = api.net.room.state.session.gameSession;
+    api.net.room.state.session.listen("loadingPhase", (val) => {
+      if (val) return;
+      if (gameSession.phase === "game") {
+        this.addAttempt();
+        this.ui.updateAttempts();
+        this.timer.start();
+      }
+    });
+    gameSession.listen("phase", (phase) => {
+      if (phase === "results") {
+        this.reset();
+      }
+    });
+    api.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
+      const id2 = e.deviceId;
+      if (!id2) return;
+      const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id2);
+      const channel = device?.options?.channel;
+      if (!channel) return;
+      if (!boatChannels.includes(channel)) return;
+      if (this.usedChannels.has(channel)) return;
+      this.usedChannels.add(channel);
+      api.net.once("PHYSICS_STATE", (e2) => {
+        if (e2.teleport) {
+          this.timer.split();
+        }
+      });
+    });
+    const id = api.stores.phaser.mainCharacter.id;
+    api.net.room.state.characters.get(id).inventory.slots.onChange((_, key) => {
+      if (key === "gim-fish") {
+        this.timer.split();
+        this.timer.stop();
+      }
+    });
+    onFrame(() => {
+      this.timer.update();
+    });
+  }
+  getCategoryId() {
+    return "fishtopia";
+  }
+  reset() {
+    this.ui?.remove();
+    this.ui = new SplitsUI(this, fishtopiaSplits);
+    this.timer = new SplitsTimer(this, this.ui);
+    this.usedChannels.clear();
+  }
+  destroy() {
+    this.ui.remove();
+  }
+};
+
+// plugins/Autosplitter/src/ui/oneWayOut.ts
+var OneWayOutUI = class extends SplitsUI {
+  constructor(autosplitter2) {
+    super(autosplitter2, oneWayOutSplits);
+    this.autosplitter = autosplitter2;
+    this.dropRateDiv = document.createElement("div");
+    this.dropRateDiv.innerText = "0/0";
+    const bar = this.element.querySelector(".bar");
+    bar?.insertBefore(this.dropRateDiv, bar?.firstChild);
+  }
+  dropRateDiv;
+  setDropRate(rate) {
+    this.dropRateDiv.innerText = rate;
+  }
+};
+
+// plugins/Autosplitter/src/splitters/OneWayOut.ts
+var OneWayOutAutosplitter = class extends SplitsAutosplitter {
+  ui = new OneWayOutUI(this);
+  timer = new SplitsTimer(this, this.ui);
+  stage = 0;
+  drops = 0;
+  knockouts = 0;
+  constructor() {
+    super("OneWayOut");
+    const gameSession = api.net.room.state.session.gameSession;
+    api.net.on("DEVICES_STATES_CHANGES", (msg) => {
+      for (const change of msg.changes) {
+        if (msg.values[change[1][0]] === "apiOBAL_healthPercent") {
+          const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
+          if (device.propOption.id === "barriers/scifi_barrier_1" && change[2][0] === 0) {
+            this.addAttempt();
+            this.ui.updateAttempts();
+            this.timer.start();
+          }
+        }
+      }
+    });
+    api.net.on("KNOCKOUT", (e) => {
+      if (e.name !== "Evil Plant") return;
+      this.knockouts++;
+      let dropped = false;
+      const addDrop = (e2) => {
+        if (e2.devices.addedDevices.devices.length === 0) return;
+        dropped = true;
+        this.drops++;
+        this.updateDrops();
+        api.net.off("WORLD_CHANGES", addDrop);
+      };
+      setTimeout(() => {
+        api.net.off("WORLD_CHANGES", addDrop);
+        if (!dropped) this.updateDrops();
+      }, 100);
+      api.net.on("WORLD_CHANGES", addDrop);
+    });
+    gameSession.listen("phase", (phase) => {
+      if (phase === "results") {
+        this.reset();
+      }
+    });
+    api.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
+      const id = e?.deviceId;
+      if (!id) return;
+      const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
+      const channel = device?.options?.channel;
+      if (!channel) return;
+      if (channel === "escaped") {
+        setTimeout(() => this.timer.split(), 800);
+      }
+    });
+    onFrame(() => {
+      this.timer.update();
+      if (stageCoords[this.stage]) {
+        const body = api.stores.phaser.mainCharacter.body;
+        if (inBox(body, stageCoords[this.stage])) {
+          this.stage++;
+          this.timer.split();
+        }
+      }
+    });
+  }
+  updateDrops() {
+    if (this.knockouts === 0) {
+      this.ui.setDropRate("0/0");
+    } else {
+      const percent = this.drops / this.knockouts * 100;
+      let percentStr = percent.toFixed(2);
+      if (percent === 0) percentStr = "0";
+      this.ui.setDropRate(`${this.drops}/${this.knockouts} (${percentStr}%)`);
+    }
+  }
+  getCategoryId() {
+    return "OneWayOut";
+  }
+  reset() {
+    this.ui?.remove();
+    this.ui = new OneWayOutUI(this);
+    this.timer = new SplitsTimer(this, this.ui);
+    this.stage = 0;
+    this.drops = 0;
+    this.knockouts = 0;
+  }
+  destroy() {
+    this.ui.remove();
+  }
+};
+
 // plugins/Autosplitter/src/styles.scss
 var styles_default = `#timer {
   position: absolute;
@@ -3435,726 +4149,12 @@ var styles_default = `#timer {
   color: gold;
 }`;
 
-// plugins/Autosplitter/src/splitters/autosplitter.ts
-var Autosplitter = class {
-  constructor(id) {
-    this.id = id;
-    this.loadData();
-    api.onStop(() => this.destroy());
-  }
-  data;
-  loadData() {
-    this.data = getGamemodeData(this.id);
-  }
-  save() {
-    api.storage.setValue(`${this.id}Data`, this.data);
-  }
-  get attempts() {
-    return this.data.attempts[this.getCategoryId()] ?? 0;
-  }
-  addAttempt() {
-    this.data.attempts[this.getCategoryId()] = this.attempts + 1;
-    this.save();
-  }
-};
-var SplitsAutosplitter = class extends Autosplitter {
-  get pb() {
-    let pb = this.data.pb[this.getCategoryId()];
-    if (pb) return pb[pb.length - 1];
-  }
-  get pbSplits() {
-    let categoryId = this.getCategoryId();
-    if (!this.data.pb[categoryId]) this.data.pb[categoryId] = [];
-    return this.data.pb[this.getCategoryId()];
-  }
-  get bestSplits() {
-    let categoryId = this.getCategoryId();
-    if (!this.data.bestSplits[categoryId]) this.data.bestSplits[categoryId] = [];
-    return this.data.bestSplits[this.getCategoryId()];
-  }
-};
-
-// plugins/Autosplitter/src/ui/basic.ts
-var BasicUI = class {
-  constructor(autosplitter2) {
-    this.autosplitter = autosplitter2;
-    this.element = document.createElement("div");
-    this.element.id = "timer";
-    this.element.className = autosplitter2.data.timerPosition;
-    let topBar = document.createElement("div");
-    topBar.classList.add("bar");
-    this.attemptsEl = document.createElement("div");
-    this.attemptsEl.classList.add("attempts");
-    this.attemptsEl.innerText = autosplitter2.attempts.toString();
-    topBar.appendChild(this.attemptsEl);
-    this.element.appendChild(topBar);
-    this.total = document.createElement("div");
-    this.total.classList.add("total");
-    this.total.innerText = "0.00";
-    this.element.appendChild(this.total);
-    document.body.appendChild(this.element);
-  }
-  element;
-  total;
-  attemptsEl;
-  start() {
-    this.setTotalAhead(true);
-  }
-  update(totalMs) {
-    this.total.innerText = fmtMs(totalMs);
-    if (this.autosplitter.pb) {
-      let amountBehind = totalMs - this.autosplitter.pb;
-      if (amountBehind > 0) this.setTotalAhead(false);
-    }
-  }
-  setTotalAhead(ahead) {
-    this.total.classList.toggle("ahead", ahead);
-    this.total.classList.toggle("behind", !ahead);
-  }
-  updateAttempts() {
-    this.attemptsEl.innerText = this.autosplitter.attempts.toString();
-  }
-  remove() {
-    this.element?.remove();
-  }
-};
-
-// plugins/Autosplitter/src/ui/splits.ts
-var SplitsUI = class extends BasicUI {
-  constructor(autosplitter2, splitNames) {
-    super(autosplitter2);
-    this.autosplitter = autosplitter2;
-    this.splitNames = splitNames;
-    let table = document.createElement("table");
-    if (this.autosplitter.data.showSplits) this.element.appendChild(table);
-    for (let name of this.splitNames) {
-      let row = document.createElement("tr");
-      row.innerHTML = `
-            <td style="min-width: 120px;">${name}</td>
-            <td style="min-width: 60px; ${this.autosplitter.data.showSplitTimes ? "" : "display: none"}"></td>
-            <td style="min-width: 80px; ${this.autosplitter.data.showSplitComparisons ? "" : "display: none"}"></td>
-            <td style="min-width: 60px; ${this.autosplitter.data.showSplitTimeAtEnd ? "" : "display: none"}"></td>`;
-      this.splitRows.push(row);
-      this.splitDatas.push(Array.from(row.children));
-      table.appendChild(row);
-    }
-    if (this.autosplitter.data.showPbSplits) {
-      for (let i = 0; i < this.autosplitter.pbSplits.length; i++) {
-        let split = this.autosplitter.pbSplits[i];
-        if (!split) continue;
-        this.splitDatas[i][3].innerText = fmtMs(split);
-      }
-    }
-    this.element.appendChild(this.total);
-  }
-  splitTimes = [];
-  previousActiveRow = null;
-  splitRows = [];
-  splitDatas = [];
-  activeSplit = null;
-  setActiveSplit(index) {
-    if (index >= this.splitRows.length) {
-      if (this.previousActiveRow) this.previousActiveRow.classList.remove("active");
-      this.activeSplit = null;
-      return;
-    }
-    if (this.previousActiveRow) this.previousActiveRow.classList.remove("active");
-    this.splitRows[index].classList.add("active");
-    this.previousActiveRow = this.splitRows[index];
-    this.activeSplit = index;
-  }
-  updateSplit(totalMs, splitIndex, splitMs) {
-    this.splitDatas[splitIndex][1].innerText = fmtMs(splitMs);
-    let pb = this.autosplitter.pbSplits?.[splitIndex];
-    if (!pb) return;
-    let amountBehind = totalMs - pb;
-    if (amountBehind <= 0) {
-      this.setTotalAhead(true);
-      return;
-    }
-    if (this.autosplitter.data.showSplitComparisons) {
-      this.splitDatas[splitIndex][2].innerText = `+${fmtMs(amountBehind)}`;
-      this.splitDatas[splitIndex][2].classList.add("behind");
-    }
-    this.setTotalAhead(false);
-  }
-  finishSplit(totalMs, splitIndex, splitMs) {
-    let els = this.splitDatas[splitIndex];
-    els[3].innerText = fmtMs(totalMs);
-    let pb = this.autosplitter.pbSplits[splitIndex];
-    let bestSplit = this.autosplitter.bestSplits[splitIndex];
-    if (!pb || !bestSplit) return;
-    let ahead = pb === void 0 || totalMs <= pb;
-    let best = bestSplit !== void 0 && splitMs < bestSplit;
-    if (ahead) els[2].innerText = `-${fmtMs(-totalMs + pb)}`;
-    else els[2].innerText = `+${fmtMs(totalMs - pb)}`;
-    if (best) els[2].classList.add("best");
-    else if (ahead) els[2].classList.add("ahead");
-    else els[2].classList.add("behind");
-  }
-};
-
-// plugins/Autosplitter/src/timers/basic.ts
-var BasicTimer = class {
-  constructor(autosplitter2, ui) {
-    this.autosplitter = autosplitter2;
-    this.ui = ui;
-  }
-  started = false;
-  startTime = 0;
-  now = 0;
-  get elapsed() {
-    return this.now - this.startTime;
-  }
-  start() {
-    this.startTime = performance.now();
-    this.started = true;
-    this.ui.start();
-  }
-  stop() {
-    this.started = false;
-    let pb = this.autosplitter.pb;
-    if (!pb || this.elapsed < pb) {
-      this.autosplitter.data.pb[this.autosplitter.getCategoryId()] = this.elapsed;
-      this.autosplitter.save();
-    }
-  }
-  update() {
-    if (!this.started) return;
-    this.now = performance.now();
-    this.ui.update(this.elapsed);
-  }
-};
-
-// plugins/Autosplitter/src/timers/splits.ts
-var SplitsTimer = class extends BasicTimer {
-  constructor(autosplitter2, ui) {
-    super(autosplitter2, ui);
-    this.autosplitter = autosplitter2;
-    this.ui = ui;
-  }
-  currentSplit = 0;
-  splitStart = 0;
-  splits = [];
-  get splitElapsed() {
-    return this.now - this.splitStart;
-  }
-  start() {
-    super.start();
-    this.splitStart = this.startTime;
-    this.ui.setActiveSplit(0);
-  }
-  stop() {
-    this.started = false;
-    let pb = this.autosplitter.pb;
-    if (!pb || this.splits[this.splits.length - 1] < pb) {
-      this.autosplitter.data.pb[this.autosplitter.getCategoryId()] = this.splits;
-      this.autosplitter.save();
-    }
-  }
-  split() {
-    this.ui.finishSplit(this.elapsed, this.currentSplit, this.splitElapsed);
-    let bestSplit = this.autosplitter.bestSplits[this.currentSplit];
-    if (!bestSplit || this.splitElapsed < bestSplit) {
-      this.autosplitter.bestSplits[this.currentSplit] = this.splitElapsed;
-      this.autosplitter.save();
-    }
-    this.splits.push(this.elapsed);
-    this.currentSplit++;
-    this.splitStart = this.now;
-    this.ui.setActiveSplit(this.currentSplit);
-  }
-  update() {
-    if (!this.started) return;
-    super.update();
-    let elapsed = this.now - this.startTime;
-    this.ui.updateSplit(elapsed, this.currentSplit, this.splitElapsed);
-  }
-};
-
-// plugins/Autosplitter/src/splitters/fishtopia.ts
-var FishtopiaAutosplitter = class extends SplitsAutosplitter {
-  ui = new SplitsUI(this, fishtopiaSplits);
-  timer = new SplitsTimer(this, this.ui);
-  usedChannels = /* @__PURE__ */ new Set();
-  constructor() {
-    super("Fishtopia");
-    let gameSession = api.net.room.state.session.gameSession;
-    api.net.room.state.session.listen("loadingPhase", (val) => {
-      if (val) return;
-      if (gameSession.phase === "game") {
-        this.addAttempt();
-        this.ui.updateAttempts();
-        this.timer.start();
-      }
-    });
-    gameSession.listen("phase", (phase) => {
-      if (phase === "results") {
-        this.reset();
-      }
-    });
-    api.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
-      let id2 = e.deviceId;
-      if (!id2) return;
-      let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id2);
-      let channel = device?.options?.channel;
-      if (!channel) return;
-      if (!boatChannels.includes(channel)) return;
-      if (this.usedChannels.has(channel)) return;
-      this.usedChannels.add(channel);
-      api.net.once("PHYSICS_STATE", (e2) => {
-        if (e2.teleport) {
-          this.timer.split();
-        }
-      });
-    });
-    let id = api.stores.phaser.mainCharacter.id;
-    api.net.room.state.characters.get(id).inventory.slots.onChange((_, key) => {
-      if (key === "gim-fish") {
-        this.timer.split();
-        this.timer.stop();
-      }
-    });
-    onFrame(() => {
-      this.timer.update();
-    });
-  }
-  getCategoryId() {
-    return "fishtopia";
-  }
-  reset() {
-    this.ui?.remove();
-    this.ui = new SplitsUI(this, fishtopiaSplits);
-    this.timer = new SplitsTimer(this, this.ui);
-    this.usedChannels.clear();
-  }
-  destroy() {
-    this.ui.remove();
-  }
-};
-
-// assets/restore.svg
-var restore_default = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z" fill="white" /></svg>';
-
-// plugins/Autosplitter/src/ui/DLD.ts
-function addDLDUI(element2, autosplitter2) {
-  let topBar = element2.querySelector(".bar");
-  let categorySelect = document.createElement("select");
-  topBar.firstChild.before(categorySelect);
-  for (let category of categories) {
-    let option = document.createElement("option");
-    option.value = category;
-    option.innerText = category;
-    if (category === autosplitter2.category) option.selected = true;
-    categorySelect.appendChild(option);
-  }
-  let runTypeBar = document.createElement("div");
-  runTypeBar.classList.add("bar");
-  let runTypeSelect = document.createElement("select");
-  runTypeSelect.innerHTML = `<option value="Full Game">Full Game</option>`;
-  for (let i = 0; i < DLDSplits.length; i++) {
-    let option = document.createElement("option");
-    option.value = String(i);
-    option.innerText = DLDSplits[i];
-    if (autosplitter2.data.mode === "Summit" && autosplitter2.data.ilSummit === i) option.selected = true;
-    runTypeSelect.appendChild(option);
-  }
-  runTypeBar.appendChild(runTypeSelect);
-  let preboostSelect = document.createElement("select");
-  preboostSelect.innerHTML = `
-    <option value="false">No Preboosts</option>
-    <option value="true">Preboosts</option>`;
-  preboostSelect.value = String(autosplitter2.data.ilPreboosts);
-  if (autosplitter2.category === "Current Patch") preboostSelect.disabled = true;
-  categorySelect.addEventListener("change", () => {
-    autosplitter2.setCategory(categorySelect.value);
-    if (categorySelect.value === "Current Patch") {
-      preboostSelect.value = "false";
-      preboostSelect.disabled = true;
-    } else {
-      preboostSelect.disabled = false;
-    }
-  });
-  if (runTypeSelect.value !== "Full Game") {
-    runTypeBar.appendChild(preboostSelect);
-  }
-  runTypeSelect.addEventListener("change", () => {
-    if (runTypeSelect.value === "Full Game") {
-      preboostSelect.remove();
-      autosplitter2.setMode("Full Game");
-    } else {
-      runTypeBar.appendChild(preboostSelect);
-      autosplitter2.setMode("Summit", parseInt(runTypeSelect.value), preboostSelect.value === "true");
-    }
-  });
-  preboostSelect.addEventListener("change", () => {
-    autosplitter2.setMode("Summit", parseInt(runTypeSelect.value), preboostSelect.value === "true");
-  });
-  topBar.after(runTypeBar);
-}
-function lockInCategory(element2, autosplitter2) {
-  let selects = element2.querySelectorAll("select");
-  for (let select of selects) {
-    select.disabled = true;
-    select.title = "Cannot be altered mid-run";
-  }
-  let resetButton = document.createElement("button");
-  resetButton.classList.add("restart");
-  resetButton.innerHTML = restore_default;
-  resetButton.addEventListener("click", () => {
-    autosplitter2.reset();
-  });
-  element2.firstChild?.firstChild?.before(resetButton);
-}
-var DLDFullGameUI = class extends SplitsUI {
-  constructor(autosplitter2) {
-    super(autosplitter2, DLDSplits);
-    this.autosplitter = autosplitter2;
-    addDLDUI(this.element, autosplitter2);
-  }
-  lockInCategory() {
-    lockInCategory(this.element, this.autosplitter);
-  }
-};
-var DLDSummitUI = class extends BasicUI {
-  constructor(autosplitter2) {
-    super(autosplitter2);
-    this.autosplitter = autosplitter2;
-    addDLDUI(this.element, autosplitter2);
-  }
-  lockInCategory() {
-    lockInCategory(this.element, this.autosplitter);
-  }
-};
-
-// plugins/Autosplitter/src/splitters/DLD.ts
-var DLDAutosplitter2 = class extends SplitsAutosplitter {
-  ui;
-  timer;
-  category = "Current Patch";
-  couldStartLastFrame = true;
-  loadedCorrectSummit = false;
-  hasMoved = false;
-  autoRecording = false;
-  constructor() {
-    super("DLD");
-    this.category = "Current Patch";
-    if (api.plugins.isEnabled("BringBackBoosts")) {
-      let bbbSettings = GL.storage.getValue("BringBackBoosts", "QS-Settings", {});
-      if (bbbSettings.useOriginalPhysics) {
-        this.category = "Original Physics";
-      } else {
-        this.category = "Creative Platforming Patch";
-      }
-    }
-    if (this.category === "Current Patch") {
-      this.data.ilPreboosts = false;
-    }
-    this.updateTimerAndUI();
-    onPhysicsStep(() => {
-      let input = api.stores.phaser.scene.inputManager.getPhysicsInput();
-      if (input.jump || input.angle !== null) this.hasMoved = true;
-    });
-    onFrame(() => {
-      if (this.data.mode === "Full Game") this.updateFullGame();
-      else if (this.data.ilPreboosts) this.updatePreboosts();
-      else this.updateNoPreboosts();
-      this.hasMoved = false;
-    });
-    let savestates = api.plugin("Savestates");
-    if (savestates) {
-      savestates.onStateLoaded(this.onStateLoadedBound);
-    }
-  }
-  updateTimerAndUI() {
-    this.ui?.remove();
-    if (this.data.mode === "Full Game") {
-      let ui = new DLDFullGameUI(this);
-      this.ui = ui;
-      this.timer = new SplitsTimer(this, ui);
-    } else {
-      let ui = new DLDSummitUI(this);
-      this.ui = ui;
-      this.timer = new BasicTimer(this, ui);
-    }
-  }
-  getCategoryId() {
-    if (this.data.mode === "Full Game") return this.category;
-    if (this.data.ilPreboosts) return `${this.category}-${this.data.ilSummit}-preboosts`;
-    return `${this.category}-${this.data.ilSummit}`;
-  }
-  setMode(mode, ilsummit, ilPreboosts) {
-    if (this.category === "Current Patch") ilPreboosts = false;
-    let modeChanged = this.data.mode !== mode;
-    this.data.mode = mode;
-    if (ilsummit !== void 0) this.data.ilSummit = ilsummit;
-    if (ilPreboosts !== void 0) this.data.ilPreboosts = ilPreboosts;
-    this.save();
-    this.couldStartLastFrame = true;
-    if (modeChanged) {
-      this.updateTimerAndUI();
-    } else {
-      this.ui.updateAttempts();
-    }
-  }
-  setCategory(name) {
-    this.category = name;
-    this.ui.updateAttempts();
-  }
-  ilState = "waiting";
-  updatePreboosts() {
-    let body = api.stores.phaser.mainCharacter.body;
-    let coords = summitCoords[this.data.ilSummit];
-    if (this.ilState === "waiting") {
-      if (inArea(body, coords)) {
-        if (this.couldStartLastFrame) return;
-        this.ilState = "started";
-        this.timer.start();
-        this.onRunStart();
-        this.timer.update();
-      } else {
-        this.couldStartLastFrame = false;
-      }
-    } else if (this.ilState === "started") {
-      if (inArea(body, summitStartCoords[this.data.ilSummit + 1])) {
-        this.ilState = "completed";
-        this.couldStartLastFrame = true;
-        this.onRunEnd();
-      } else {
-        this.timer.update();
-      }
-    }
-  }
-  updateNoPreboosts() {
-    if (!this.loadedCorrectSummit) return;
-    let body = api.stores.phaser.mainCharacter.body;
-    if (this.ilState === "waiting") {
-      if (this.hasMoved) {
-        this.ilState = "started";
-        this.timer.start();
-        this.onRunStart();
-        this.timer.update();
-      }
-    } else if (this.ilState === "started") {
-      if (inArea(body, summitStartCoords[this.data.ilSummit + 1])) {
-        this.ilState = "completed";
-        this.onRunEnd();
-      } else {
-        this.timer.update();
-      }
-    }
-  }
-  summit = 0;
-  updateFullGame() {
-    let body = api.stores.phaser.mainCharacter.body;
-    if (this.summit > 0 && body.x < resetCoordinates.x && body.y > resetCoordinates.y) {
-      this.reset();
-      return;
-    }
-    if (this.summit > summitStartCoords.length - 1) return;
-    if (this.summit === 0) {
-      if (body.x > summitStartCoords[0].x && body.y < summitStartCoords[0].y + 10) {
-        if (this.couldStartLastFrame) return;
-        this.summit = 1;
-        this.timer.start();
-        this.onRunStart();
-      } else {
-        this.couldStartLastFrame = false;
-      }
-    } else if (inArea(body, summitStartCoords[this.summit])) {
-      this.summit++;
-      this.timer.split();
-      if (this.summit > summitStartCoords.length - 1) {
-        this.onRunEnd();
-      }
-    }
-    this.timer.update();
-  }
-  getRecorder() {
-    let inputRecorder = api.plugin("InputRecorder");
-    if (!inputRecorder) return;
-    return inputRecorder.getRecorder();
-  }
-  onRunStart() {
-    this.addAttempt();
-    this.ui.updateAttempts();
-    this.ui.lockInCategory();
-    if (!this.data.autoRecord) return;
-    let recorder = this.getRecorder();
-    if (!recorder) return;
-    if (recorder.recording || recorder.playing) return;
-    recorder.startRecording();
-    this.autoRecording = true;
-  }
-  onRunEnd() {
-    this.timer.stop();
-    if (!this.data.autoRecord) return;
-    let recorder = this.getRecorder();
-    if (!recorder) return;
-    if (!recorder.recording || recorder.playing || !this.autoRecording) return;
-    this.autoRecording = false;
-    let isPb = !this.pb || this.timer.elapsed < this.pb;
-    if (!isPb) return;
-    let username = api.stores.phaser.mainCharacter.nametag.name;
-    let mode = "Full Game";
-    if (this.data.mode !== "Full Game") {
-      mode = `Summit ${this.data.ilSummit + 1}`;
-      if (this.data.ilPreboosts) mode += " (Preboosts)";
-    }
-    let time = fmtMs(this.timer.elapsed);
-    recorder.stopRecording(isPb, `recording-${username}-${this.category}-${mode}-${time}.json`);
-    api.notification.open({ message: `Auto-saved PB of ${time}`, placement: "topLeft" });
-  }
-  onStateLoaded(summit) {
-    if (summit === "custom") return;
-    if (this.data.autostartILs) {
-      if (summit === 1 && this.data.mode === "Full Game") return;
-      this.setMode("Summit", summit - 1);
-      this.reset();
-      if (!this.data.ilPreboosts) this.loadedCorrectSummit = true;
-      return;
-    }
-    if (this.data.mode === "Full Game") return;
-    if (this.data.ilPreboosts) return;
-    if (this.ilState !== "waiting") {
-      this.reset();
-    }
-    this.loadedCorrectSummit = summit === this.data.ilSummit + 1;
-  }
-  onStateLoadedBound = this.onStateLoaded.bind(this);
-  reset() {
-    this.updateTimerAndUI();
-    this.summit = 0;
-    this.ilState = "waiting";
-    this.couldStartLastFrame = true;
-    this.loadedCorrectSummit = false;
-    let recorder = this.getRecorder();
-    if (recorder && recorder.recording && this.autoRecording) {
-      recorder.stopRecording(false);
-    }
-  }
-  destroy() {
-    this.ui.remove();
-    let savestates = api.plugin("Savestates");
-    if (savestates) {
-      savestates.offStateLoaded(this.onStateLoadedBound);
-    }
-  }
-};
-
-// plugins/Autosplitter/src/ui/oneWayOut.ts
-var OneWayOutUI = class extends SplitsUI {
-  constructor(autosplitter2) {
-    super(autosplitter2, oneWayOutSplits);
-    this.autosplitter = autosplitter2;
-    this.dropRateDiv = document.createElement("div");
-    this.dropRateDiv.innerText = "0/0";
-    let bar = this.element.querySelector(".bar");
-    bar?.insertBefore(this.dropRateDiv, bar?.firstChild);
-  }
-  dropRateDiv;
-  setDropRate(rate) {
-    this.dropRateDiv.innerText = rate;
-  }
-};
-
-// plugins/Autosplitter/src/splitters/OneWayOut.ts
-var OneWayOutAutosplitter = class extends SplitsAutosplitter {
-  ui = new OneWayOutUI(this);
-  timer = new SplitsTimer(this, this.ui);
-  stage = 0;
-  drops = 0;
-  knockouts = 0;
-  constructor() {
-    super("OneWayOut");
-    let gameSession = api.net.room.state.session.gameSession;
-    api.net.on("DEVICES_STATES_CHANGES", (msg) => {
-      for (let change of msg.changes) {
-        if (msg.values[change[1][0]] === "apiOBAL_healthPercent") {
-          let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
-          if (device.propOption.id === "barriers/scifi_barrier_1" && change[2][0] == 0) {
-            this.addAttempt();
-            this.ui.updateAttempts();
-            this.timer.start();
-          }
-        }
-      }
-    });
-    api.net.on("KNOCKOUT", (e) => {
-      if (e.name !== "Evil Plant") return;
-      this.knockouts++;
-      let dropped = false;
-      const addDrop = (e2) => {
-        if (e2.devices.addedDevices.devices.length === 0) return;
-        dropped = true;
-        this.drops++;
-        this.updateDrops();
-        api.net.off("WORLD_CHANGES", addDrop);
-      };
-      setTimeout(() => {
-        api.net.off("WORLD_CHANGES", addDrop);
-        if (!dropped) this.updateDrops();
-      }, 100);
-      api.net.on("WORLD_CHANGES", addDrop);
-    });
-    gameSession.listen("phase", (phase) => {
-      if (phase === "results") {
-        this.reset();
-      }
-    });
-    api.net.on("send:MESSAGE_FOR_DEVICE", (e) => {
-      let id = e?.deviceId;
-      if (!id) return;
-      let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
-      let channel = device?.options?.channel;
-      if (!channel) return;
-      if (channel === "escaped") {
-        setTimeout(() => this.timer.split(), 800);
-      }
-    });
-    onFrame(() => {
-      this.timer.update();
-      if (stageCoords[this.stage]) {
-        let body = api.stores.phaser.mainCharacter.body;
-        if (inBox(body, stageCoords[this.stage])) {
-          this.stage++;
-          this.timer.split();
-        }
-      }
-    });
-  }
-  updateDrops() {
-    if (this.knockouts === 0) {
-      this.ui.setDropRate("0/0");
-    } else {
-      let percent = this.drops / this.knockouts * 100;
-      let percentStr = percent.toFixed(2);
-      if (percent === 0) percentStr = "0";
-      this.ui.setDropRate(`${this.drops}/${this.knockouts} (${percentStr}%)`);
-    }
-  }
-  getCategoryId() {
-    return "OneWayOut";
-  }
-  reset() {
-    this.ui?.remove();
-    this.ui = new OneWayOutUI(this);
-    this.timer = new SplitsTimer(this, this.ui);
-    this.stage = 0;
-    this.drops = 0;
-    this.knockouts = 0;
-  }
-  destroy() {
-    this.ui.remove();
-  }
-};
-
 // plugins/Autosplitter/src/index.ts
 api.UI.addStyles(styles_default);
 var autosplitter;
 api.net.onLoad((_, gamemode) => {
   if (gamemode === "dontlookdown") {
-    autosplitter = new DLDAutosplitter2();
+    autosplitter = new DLDAutosplitter();
   } else if (gamemode === "fishtopia") {
     autosplitter = new FishtopiaAutosplitter();
   } else if (gamemode === "onwWayout") {
@@ -4162,8 +4162,8 @@ api.net.onLoad((_, gamemode) => {
   }
 });
 api.openSettingsMenu(() => {
-  let div = document.createElement("div");
-  let settings = new Settings_default({
+  const div = document.createElement("div");
+  const settings = new Settings_default({
     target: div
   });
   api.UI.showModal(div, {

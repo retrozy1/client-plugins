@@ -11,17 +11,17 @@ const wrapObserver = api.rewriter.createShared("ObserverWrapper", (func: Functio
     return function(this: any) {
         if(GL.libs.isEnabled("MobxUtils")) {
             // this is our only good way of telling apart functions
-            let str = arguments[0].toString();
-            for(let intercept of observerIntercepts) {
+            const str = arguments[0].toString();
+            for(const intercept of observerIntercepts) {
                 if(intercept.match(str)) {
-                    let newVal = intercept.callback(arguments[0]);
+                    const newVal = intercept.callback(arguments[0]);
                     if(newVal) arguments[0] = newVal;
                 }
             }
         }
 
         return func.apply(this, arguments);
-    }
+    };
 });
 
 api.rewriter.addParseHook("mobxreact", (code) => {

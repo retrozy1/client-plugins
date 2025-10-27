@@ -1,8 +1,8 @@
-let canvas = document.createElement("canvas");
+const canvas = document.createElement("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.id = "tasOverlay";
-let ctx = canvas.getContext("2d")!;
+const ctx = canvas.getContext("2d")!;
 
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
@@ -11,17 +11,17 @@ window.addEventListener("resize", () => {
 
 api.onStop(() => canvas.remove());
 
-let propHitboxes: any[] = [];
+const propHitboxes: any[] = [];
 
 export function initOverlay() {
     document.body.appendChild(canvas);
 
-    let scene = GL.stores.phaser.scene;
-    let props = scene.worldManager.devices.allDevices.filter((d: any) => d.deviceOption?.id === "prop")
+    const scene = GL.stores.phaser.scene;
+    const props = scene.worldManager.devices.allDevices.filter((d: any) => d.deviceOption?.id === "prop");
 
     // create prop hitboxes
-    for(let prop of props) {
-        for(let collider of prop.colliders.list) {
+    for(const prop of props) {
+        for(const collider of prop.colliders.list) {
             let { x, y, h, w, angle, r1, r2 } = collider.options;
 
             x += prop.x;
@@ -29,18 +29,18 @@ export function initOverlay() {
 
             if(r1 && r2) {
                 if(r1 < 0 || r2 < 0) continue;
-                let ellipse = scene.add.ellipse(x, y, r1 * 2, r2 * 2, 0xff0000)
+                const ellipse = scene.add.ellipse(x, y, r1 * 2, r2 * 2, 0xff0000)
                     .setDepth(99999999999)
-                    .setStrokeStyle(3, 0xff0000)
+                    .setStrokeStyle(3, 0xff0000);
                 ellipse.angle = angle;
                 ellipse.isFilled = false;
                 ellipse.isStroked = true;
 
                 propHitboxes.push(ellipse);
             } else if(w && h) {
-                let rect = scene.add.rectangle(x, y, w, h, 0xff0000)
+                const rect = scene.add.rectangle(x, y, w, h, 0xff0000)
                     .setDepth(99999999999)
-                    .setStrokeStyle(3, 0xff0000)                    
+                    .setStrokeStyle(3, 0xff0000);
                 rect.angle = angle;
                 rect.isFilled = false;
                 rect.isStroked = true;
@@ -51,7 +51,7 @@ export function initOverlay() {
     }
 
     api.onStop(() => {
-        for(let prop of propHitboxes) {
+        for(const prop of propHitboxes) {
             prop.destroy();
         }
     });
@@ -62,7 +62,7 @@ export function initOverlay() {
 let renderHitbox = true;
 
 export function hideHitbox() {
-    for(let prop of propHitboxes) {
+    for(const prop of propHitboxes) {
         prop.visible = false;
     }
 
@@ -70,7 +70,7 @@ export function hideHitbox() {
 }
 
 export function showHitbox() {
-    for(let prop of propHitboxes) {
+    for(const prop of propHitboxes) {
         prop.visible = true;
     }
 
@@ -80,12 +80,12 @@ export function showHitbox() {
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    let physics = GL.stores.phaser.mainCharacter.physics;
-    let collider = physics.getBody().collider;
+    const physics = GL.stores.phaser.mainCharacter.physics;
+    const collider = physics.getBody().collider;
     let { halfHeight, radius } = collider.shape as any;
-    let { x: cX, y: cY } = GL.stores.phaser.scene.cameras.cameras[0].midPoint;
-    let { x, y }  = physics.getBody().rigidBody.translation();
-    let { x: vX, y: vY } = physics.getBody().rigidBody.linvel();
+    const { x: cX, y: cY } = GL.stores.phaser.scene.cameras.cameras[0].midPoint;
+    let { x, y } = physics.getBody().rigidBody.translation();
+    const { x: vX, y: vY } = physics.getBody().rigidBody.linvel();
 
     // display the current coordinates and velocity of the player
     ctx.fillStyle = "white";

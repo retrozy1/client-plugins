@@ -19,7 +19,7 @@ api.net.onLoad(() => {
     }));
 
     api.net.on("PHYSICS_STATE", (_, editFn) => {
-        if (allowNext) {
+        if(allowNext) {
             allowNext = false;
             return;
         }

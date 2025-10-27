@@ -1,14 +1,14 @@
-// @ts-ignore
-import atlas from '../assets/gim_atlas.txt';
-// @ts-ignore
-import json from '../assets/gim_json.txt';
+// @ts-expect-error
+import atlas from "../assets/gim_atlas.txt";
+// @ts-expect-error
+import json from "../assets/gim_json.txt";
 
 export default class CosmeticChanger {
-    skinType: string = api.storage.getValue("skinType",  "default");
-    trailType: string = api.storage.getValue("trailType",  "default");
-    skinId: string = api.storage.getValue("skinId",  "");
-    trailId: string = api.storage.getValue("trailId",  "");
-    selectedStyles: Record<string, string> = api.storage.getValue("selectedStyles",  {});
+    skinType: string = api.storage.getValue("skinType", "default");
+    trailType: string = api.storage.getValue("trailType", "default");
+    skinId: string = api.storage.getValue("skinId", "");
+    trailId: string = api.storage.getValue("trailId", "");
+    selectedStyles: Record<string, string> = api.storage.getValue("selectedStyles", {});
 
     normalSkin: any;
     allowNextSkin: boolean = false;
@@ -47,19 +47,19 @@ export default class CosmeticChanger {
     loadCustomSkin() {
         if(!this.customSkinFile) return;
 
-        let textureUrl = URL.createObjectURL(this.customSkinFile);
+        const textureUrl = URL.createObjectURL(this.customSkinFile);
         this.skinUrl = textureUrl;
 
-        let atlasLines = atlas.split("\n");
+        const atlasLines = atlas.split("\n");
         atlasLines[0] = textureUrl.split("/").pop()!;
-        let atlasBlob = new Blob([atlasLines.join("\n")], {type: "text/plain"});
-        let atlasUrl = URL.createObjectURL(atlasBlob);
+        const atlasBlob = new Blob([atlasLines.join("\n")], { type: "text/plain" });
+        const atlasUrl = URL.createObjectURL(atlasBlob);
 
-        let jsonBlob = new Blob([json], {type: "application/json"});
-        let jsonUrl = URL.createObjectURL(jsonBlob);
+        const jsonBlob = new Blob([json], { type: "application/json" });
+        const jsonUrl = URL.createObjectURL(jsonBlob);
 
-        let fileTypes = (window as any).Phaser.Loader.FileTypes;
-        let imgFile = fileTypes.ImageFile;
+        const fileTypes = (window as any).Phaser.Loader.FileTypes;
+        const imgFile = fileTypes.ImageFile;
 
         class newImgFile extends imgFile {
             constructor(loader: any, key: string, url: string, config: any) {
@@ -74,9 +74,9 @@ export default class CosmeticChanger {
 
         fileTypes.ImageFile = newImgFile;
 
-        let load = api.stores.phaser.scene.load as any;
-        let jsonRes = load.spineJson("customSkin-data", jsonUrl);
-        let atlasRes = load.spineAtlas("customSkin-atlas", atlasUrl);
+        const load = api.stores.phaser.scene.load as any;
+        const jsonRes = load.spineJson("customSkin-data", jsonUrl);
+        const atlasRes = load.spineAtlas("customSkin-atlas", atlasUrl);
 
         let running = 2;
 
@@ -88,12 +88,12 @@ export default class CosmeticChanger {
             URL.revokeObjectURL(atlasUrl);
             URL.revokeObjectURL(jsonUrl);
 
-            let skin = api.stores.phaser.mainCharacter?.skin;
+            const skin = api.stores.phaser.mainCharacter?.skin;
             if(skin && this.skinType === "custom") {
                 this.allowNextSkin = true;
                 skin.updateSkin({ id: "customSkin" });
             }
-        }
+        };
 
         jsonRes.on("complete", onComplete);
         atlasRes.on("complete", onComplete);
@@ -103,15 +103,15 @@ export default class CosmeticChanger {
     }
 
     async initCustomSkinFile() {
-        let file = api.storage.getValue("customSkinFile");
-        let fileName = api.storage.getValue("customSkinFileName");
+        const file = api.storage.getValue("customSkinFile");
+        const fileName = api.storage.getValue("customSkinFileName");
         if(!file || !fileName) return;
 
         // stolen from some stackoverflow post
-        let byteString = atob(file.substring(file.indexOf(",") + 1));
-        let ab = new ArrayBuffer(byteString.length);
-        let ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
+        const byteString = atob(file.substring(file.indexOf(",") + 1));
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for(let i = 0; i < byteString.length; i++) {
             ia[i] = byteString.charCodeAt(i);
         }
 
@@ -167,33 +167,33 @@ export default class CosmeticChanger {
             api.storage.deleteValue("customSkinFile");
             api.storage.deleteValue("customSkinFileName");
         } else {
-            let reader = new FileReader();
+            const reader = new FileReader();
             reader.onload = () => {
                 api.storage.setValue("customSkinFile", reader.result as string);
                 api.storage.setValue("customSkinFileName", customSkinFile.name);
-            }
+            };
             reader.readAsDataURL(customSkinFile);
         }
-        
+
         // update the skin
-        let skin = api.stores?.phaser?.mainCharacter?.skin;
+        const skin = api.stores?.phaser?.mainCharacter?.skin;
         if(skin) {
-            let cache = api.stores.phaser.scene.cache.custom["esotericsoftware.spine.atlas.cache"];
+            const cache = api.stores.phaser.scene.cache.custom["esotericsoftware.spine.atlas.cache"];
             // update the custom skin texture
-            let entries = cache.entries.entries;
-            let texture = entries["customSkin-atlas"]?.pages?.[0]?.texture;
+            const entries = cache.entries.entries;
+            const texture = entries["customSkin-atlas"]?.pages?.[0]?.texture;
 
             if(texture && this.customSkinFile) {
-                let textureUrl = URL.createObjectURL(this.customSkinFile);
+                const textureUrl = URL.createObjectURL(this.customSkinFile);
                 this.skinUrl = textureUrl;
 
                 texture._image.src = textureUrl;
                 texture._image.addEventListener("load", () => {
                     texture.update();
                     URL.revokeObjectURL(textureUrl);
-                }, {once: true})
+                }, { once: true });
             }
-            
+
             this.allowNextSkin = true;
             if(skinType === "id") {
                 skin.updateSkin({ id: "default_gray" });
@@ -224,7 +224,7 @@ export default class CosmeticChanger {
         api.storage.setValue("trailType", trailType);
         api.storage.setValue("trailId", trailId);
 
-        let characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
+        const characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
         if(characterTrail) {
             this.allowNextTrail = true;
 
@@ -239,13 +239,13 @@ export default class CosmeticChanger {
     reset() {
         this.stopped = true;
 
-        let characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
+        const characterTrail = api.stores?.phaser?.mainCharacter?.characterTrail;
         if(characterTrail) {
             characterTrail.updateAppearance(this.normalTrail);
             characterTrail.currentAppearanceId = this.normalTrail;
         }
 
-        let skin = api.stores?.phaser?.mainCharacter?.skin;
+        const skin = api.stores?.phaser?.mainCharacter?.skin;
         if(skin) {
             skin.updateSkin(this.normalSkin);
         }

@@ -14,18 +14,18 @@ var maxLength = 1e3;
 
 // plugins/Chat/src/encoding.ts
 function bytesToFloat(bytes) {
-  let buffer = new ArrayBuffer(8);
-  let view = new Uint8Array(buffer);
+  const buffer = new ArrayBuffer(8);
+  const view = new Uint8Array(buffer);
   for (let i = 0; i < 7; i++) {
     view[i] = bytes[i];
   }
   return new Float64Array(buffer)[0];
 }
 function floatToBytes(float) {
-  let buffer = new ArrayBuffer(8);
-  let floatView = new Float64Array(buffer);
+  const buffer = new ArrayBuffer(8);
+  const floatView = new Float64Array(buffer);
   floatView[0] = float;
-  let byteView = new Uint8Array(buffer);
+  const byteView = new Uint8Array(buffer);
   return Array.from(byteView);
 }
 function encodeMessage(message) {
@@ -33,13 +33,13 @@ function encodeMessage(message) {
   codes = codes.filter((c) => c < 256);
   if (codes.length === 0) return;
   codes = codes.slice(0, maxLength);
-  let charsLow = codes.length & 255;
-  let charsHigh = (codes.length & 65280) >> 8;
-  let header = [...identifier, 0 /* Transmit */, charsHigh, charsLow];
-  let messages = [bytesToFloat(header)];
+  const charsLow = codes.length & 255;
+  const charsHigh = (codes.length & 65280) >> 8;
+  const header = [...identifier, 0 /* Transmit */, charsHigh, charsLow];
+  const messages = [bytesToFloat(header)];
   while (codes.length % 7 !== 0) codes.push(0);
   for (let i = 0; i < codes.length; i += 7) {
-    let msg = [];
+    const msg = [];
     for (let j = 0; j < 7; j++) {
       msg[j] = codes[i + j];
     }
@@ -83,7 +83,8 @@ var styles_default = `#gl-chat {
 #gl-chat input {
     width: 100%;
     border: none;
-}`;
+}
+`;
 
 // plugins/Chat/src/ui.ts
 api.UI.addStyles(styles_default);
@@ -114,7 +115,7 @@ api.rewriter.addParseHook("App", (code) => {
   code += `${formatCallback}?.(${name});`;
   return code;
 });
-var UI = class {
+var UI = class _UI {
   static send;
   static element;
   static messageWrapper;
@@ -124,28 +125,28 @@ var UI = class {
   static history = [];
   static enabled = false;
   static init(send2) {
-    this.send = send2;
-    this.element = document.createElement("div");
-    this.element.id = "gl-chat";
-    let spacer = document.createElement("div");
+    _UI.send = send2;
+    _UI.element = document.createElement("div");
+    _UI.element.id = "gl-chat";
+    const spacer = document.createElement("div");
     spacer.id = "chat-spacer";
-    this.element.appendChild(spacer);
-    this.messageWrapper = document.createElement("div");
-    this.messageWrapper.id = "chat-messages-wrap";
-    this.element.appendChild(this.messageWrapper);
-    this.messageContainer = document.createElement("div");
-    this.messageContainer.id = "chat-messages";
-    this.messageWrapper.appendChild(this.messageContainer);
-    this.input = this.createInput();
-    this.element.appendChild(this.input);
-    document.body.appendChild(this.element);
-    api.onStop(() => this.element.remove());
-    const blurInput = () => this.input?.blur();
+    _UI.element.appendChild(spacer);
+    _UI.messageWrapper = document.createElement("div");
+    _UI.messageWrapper.id = "chat-messages-wrap";
+    _UI.element.appendChild(_UI.messageWrapper);
+    _UI.messageContainer = document.createElement("div");
+    _UI.messageContainer.id = "chat-messages";
+    _UI.messageWrapper.appendChild(_UI.messageContainer);
+    _UI.input = _UI.createInput();
+    _UI.element.appendChild(_UI.input);
+    document.body.appendChild(_UI.element);
+    api.onStop(() => _UI.element.remove());
+    const blurInput = () => _UI.input?.blur();
     document.addEventListener("click", blurInput);
     api.onStop(() => document.removeEventListener("click", blurInput));
   }
   static createInput() {
-    let input = document.createElement("input");
+    const input = document.createElement("input");
     input.maxLength = maxLength;
     input.disabled = true;
     input.placeholder = "...";
@@ -158,13 +159,13 @@ var UI = class {
         return;
       }
       if (e.key === "Enter") {
-        let message = input.value;
+        const message = input.value;
         if (message.length === 0) return;
         input.value = "";
         input.placeholder = "Sending...";
         input.disabled = true;
-        await this.send(message);
-        if (!this.enabled) return;
+        await _UI.send(message);
+        if (!_UI.enabled) return;
         input.disabled = false;
         input.placeholder = "...";
         input.focus();
@@ -174,36 +175,36 @@ var UI = class {
     return input;
   }
   static addMessage(message, forceScroll = false) {
-    let element = document.createElement("div");
+    const element = document.createElement("div");
     if (format) {
       element.innerHTML = format({ inputText: message });
     } else {
       element.innerText = message;
     }
-    let wrap = this.messageWrapper;
-    let shouldScroll = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < 1;
-    this.history.push(element);
-    this.messageContainer.appendChild(element);
-    if (this.history.length > this.maxLength) {
-      this.history.shift()?.remove();
+    const wrap = _UI.messageWrapper;
+    const shouldScroll = wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight < 1;
+    _UI.history.push(element);
+    _UI.messageContainer.appendChild(element);
+    if (_UI.history.length > _UI.maxLength) {
+      _UI.history.shift()?.remove();
     }
     if (shouldScroll || forceScroll) wrap.scrollTop = wrap.scrollHeight;
   }
   static setEnabled(enabled) {
-    this.enabled = enabled;
+    _UI.enabled = enabled;
     if (enabled) {
-      this.input.disabled = false;
-      this.input.placeholder = "...";
+      _UI.input.disabled = false;
+      _UI.input.placeholder = "...";
     } else {
-      this.input.disabled = true;
-      this.input.placeholder = "Chat not available in lobby";
+      _UI.input.disabled = true;
+      _UI.input.placeholder = "Chat not available in lobby";
     }
   }
 };
 
 // plugins/Chat/src/index.ts
 api.net.onLoad(() => {
-  let myId = api.stores.network.authId;
+  const myId = api.stores.network.authId;
   let sending = false;
   let ignoreNextAngle = false;
   let realAngle = 0;
@@ -220,17 +221,17 @@ api.net.onLoad(() => {
     UI.addMessage(`> ${message.message}`);
     editFn(null);
   });
-  let me = api.net.room.state.characters.get(myId);
+  const me = api.net.room.state.characters.get(myId);
   let angleChangeRes;
   api.onStop(me.projectiles.listen("aimAngle", (angle) => {
     if (angle === 0) return;
     angleChangeRes?.();
   }));
   UI.init(async (text) => {
-    let messages = encodeMessage(text);
+    const messages = encodeMessage(text);
     if (!messages) return;
     sending = true;
-    for (let message of messages) {
+    for (const message of messages) {
       ignoreNextAngle = true;
       send(message);
       await new Promise((res) => angleChangeRes = res);
@@ -239,20 +240,20 @@ api.net.onLoad(() => {
     send(realAngle);
     UI.addMessage(`${me.name}: ${text}`, true);
   });
-  let messageStates = /* @__PURE__ */ new Map();
+  const messageStates = /* @__PURE__ */ new Map();
   api.onStop(api.net.room.state.characters.onAdd((char) => {
     if (char.id === myId) return;
     api.onStop(char.projectiles.listen("aimAngle", (angle) => {
       if (angle === 0) return;
-      let bytes = floatToBytes(angle);
-      let newPlayer = !messageStates.has(char);
+      const bytes = floatToBytes(angle);
+      const newPlayer = !messageStates.has(char);
       if (newPlayer) messageStates.set(char, { message: "", charsRemaining: 0 });
-      let state = messageStates.get(char);
+      const state = messageStates.get(char);
       if (bytes[0] === identifier[0] && bytes[1] === identifier[1] && bytes[2] === identifier[2] && bytes[3] === identifier[3]) {
-        let op = bytes[4];
+        const op = bytes[4];
         if (op === 0 /* Transmit */) {
-          let high = bytes[5];
-          let low = bytes[6];
+          const high = bytes[5];
+          const low = bytes[6];
           state.charsRemaining = Math.min(maxLength, (high << 8) + low);
           state.message = "";
         } else if (op === 1 /* Join */ && newPlayer) {
@@ -296,7 +297,7 @@ api.net.onLoad(() => {
   api.onStop(() => sendOp(2 /* Leave */));
 });
 function sendOp(op) {
-  let message = [...identifier, op, 0, 0];
+  const message = [...identifier, op, 0, 0];
   send(bytesToFloat(message));
 }
 function send(message) {

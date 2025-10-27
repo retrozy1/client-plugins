@@ -1,6 +1,6 @@
-import type { EasyAccessWritable, IFrame } from './types';
-// @ts-ignore
-import AnglePicker from './ui/AnglePicker.svelte';
+import type { EasyAccessWritable, IFrame } from "./types";
+// @ts-expect-error
+import AnglePicker from "./ui/AnglePicker.svelte";
 
 export const blankFrame: IFrame = {
     angle: 0,
@@ -16,9 +16,9 @@ export function between(number: number, bound1: number, bound2: number) {
 
 export function showAnglePicker(initial: number) {
     return new Promise<number>((res) => {
-        let div = document.createElement('div');
-        // @ts-ignore
-        let anglePicker = new AnglePicker({
+        const div = document.createElement("div");
+        // @ts-expect-error
+        const anglePicker = new AnglePicker({
             target: div,
             props: {
                 angle: initial
@@ -29,36 +29,46 @@ export function showAnglePicker(initial: number) {
             title: "Pick an angle",
             closeOnBackgroundClick: false,
             onClosed() {
-                // @ts-ignore
+                // @ts-expect-error
                 anglePicker.$destroy();
             },
-            buttons: [{ text: "Cancel", style: "close", onClick() {
-                res(initial);
-            }}, { text: "Ok", style: "primary", onClick() {
-                res(anglePicker.getAngle());
-            }}]
-        })
+            buttons: [{
+                text: "Cancel",
+                style: "close",
+                onClick() {
+                    res(initial);
+                }
+            }, {
+                text: "Ok",
+                style: "primary",
+                onClick() {
+                    res(anglePicker.getAngle());
+                }
+            }]
+        });
     });
 }
 
 export function easyAccessWritable<T = any>(initial: T) {
-    let returnObj: EasyAccessWritable<T> = {
-        value: initial, subscribe, set
+    const returnObj: EasyAccessWritable<T> = {
+        value: initial,
+        subscribe,
+        set
     };
 
-    let subscribers = new Set<(val: T) => void>();
-    
+    const subscribers = new Set<(val: T) => void>();
+
     function subscribe(callback: (val: T) => void) {
         subscribers.add(callback);
         callback(returnObj.value);
         return () => {
             subscribers.delete(callback);
-        }
+        };
     }
 
     function set(val: T) {
         returnObj.value = val;
-        for (let subscriber of subscribers) {
+        for(const subscriber of subscribers) {
             subscriber(val);
         }
     }
@@ -88,7 +98,7 @@ export const defaultState = {
     grounded: false,
     groundedTicks: 0,
     lastGroundedAngle: 0
-}
+};
 
 // just saves a bit of memory
 export function getFrameState(state: any) {
@@ -96,10 +106,10 @@ export function getFrameState(state: any) {
 }
 
 export function makeFrameState() {
-    let state = api.stores.phaser.mainCharacter.physics.state;
-    let returnObj: any = {};
-    
-    for(let key in state) {
+    const state = api.stores.phaser.mainCharacter.physics.state;
+    const returnObj: any = {};
+
+    for(const key in state) {
         if(JSON.stringify(defaultState[key]) !== JSON.stringify(state[key])) {
             returnObj[key] = state[key];
         }
@@ -109,9 +119,9 @@ export function makeFrameState() {
 }
 
 export function updateDeviceState(device: any, key: string, value: any) {
-    let deviceId = device.id;
-    
-    let states = api.stores.world.devices.states;
+    const deviceId = device.id;
+
+    const states = api.stores.world.devices.states;
     if(!states.has(deviceId)) {
         states.set(deviceId, { deviceId, properties: new Map() });
     }
@@ -121,10 +131,10 @@ export function updateDeviceState(device: any, key: string, value: any) {
 }
 
 export function downloadFile(contents: string, name: string) {
-    let blob = new Blob([contents], { type: 'text/plain' });
-    let url = URL.createObjectURL(blob);
+    const blob = new Blob([contents], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
 
-    let a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = name;
     a.click();
@@ -133,18 +143,18 @@ export function downloadFile(contents: string, name: string) {
 
 export function uploadFile() {
     return new Promise<string>((res, rej) => {
-        let input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".json";
         input.onchange = () => {
             if(!input.files || !input.files[0]) return rej();
-            let file = input.files[0];
-            let reader = new FileReader();
+            const file = input.files[0];
+            const reader = new FileReader();
             reader.onload = () => {
                 res(reader.result as string);
-            }
+            };
             reader.readAsText(file);
-        }
+        };
         input.click();
     });
 }

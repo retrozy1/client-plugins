@@ -1,4 +1,4 @@
-import type { IFrameInfo, IRecording } from "../types"
+import type { IFrameInfo, IRecording } from "../types";
 import { stopUpdatingLasers, updateLasers } from "./updateLasers";
 
 export default class Recorder {
@@ -9,7 +9,7 @@ export default class Recorder {
     inputManager: any;
     getPhysicsInput: Function;
 
-    startPos: { x: number, y: number } = { x: 0, y: 0 };
+    startPos: { x: number; y: number } = { x: 0, y: 0 };
     startState: string = "";
     platformerPhysics: string = "";
     frames: IFrameInfo[] = [];
@@ -23,10 +23,10 @@ export default class Recorder {
         this.nativeStep = physicsManager.physicsStep;
 
         // load all bodies in at once for deterministic physics
-        for(let id of physicsManager.bodies.staticBodies) {
-            physicsManager.bodies.activeBodies.enableBody(id)
+        for(const id of physicsManager.bodies.staticBodies) {
+            physicsManager.bodies.activeBodies.enableBody(id);
         }
-        
+
         // ignore attempts to disable bodies
         physicsManager.bodies.activeBodies.disableBody = () => {};
 
@@ -39,10 +39,9 @@ export default class Recorder {
 
     toggleRecording() {
         if(this.recording) {
-            let conf = window.confirm("Do you want to save the recording?");
+            const conf = window.confirm("Do you want to save the recording?");
             this.stopRecording(conf);
-        }
-        else this.startRecording();
+        } else this.startRecording();
     }
 
     startRecording() {
@@ -53,7 +52,7 @@ export default class Recorder {
         this.platformerPhysics = JSON.stringify(GL.platformerPhysics);
         this.frames = [];
 
-        api.notification.open({ message: "Started Recording" })
+        api.notification.open({ message: "Started Recording" });
 
         this.inputManager.getPhysicsInput = this.getPhysicsInput;
         this.physicsManager.physicsStep = (dt: number) => {
@@ -61,30 +60,30 @@ export default class Recorder {
 
             this.nativeStep(dt);
             updateLasers(this.frames.length);
-        }
+        };
     }
 
     stopRecording(save: boolean, fileName?: string) {
         this.recording = false;
         this.physicsManager.physicsStep = this.nativeStep;
         stopUpdatingLasers();
-        
+
         if(!save) return;
-        
+
         // download the file
-        let json: IRecording = {
+        const json: IRecording = {
             startPos: this.startPos,
             startState: this.startState,
             platformerPhysics: this.platformerPhysics,
             frames: this.frames
         };
 
-        let blob = new Blob([JSON.stringify(json)], { type: "application/json" });
-        let url = URL.createObjectURL(blob);
+        const blob = new Blob([JSON.stringify(json)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
 
-        let name = api.stores.phaser.mainCharacter.nametag.name;
+        const name = api.stores.phaser.mainCharacter.nametag.name;
 
-        let a = document.createElement("a");
+        const a = document.createElement("a");
         a.href = url;
         a.download = fileName ?? `recording-${name}.json`;
         a.click();
@@ -102,14 +101,14 @@ export default class Recorder {
 
         this.physicsManager.physicsStep = (dt: number) => {
             api.stores.phaser.mainCharacter.physics.postUpdate(dt);
-        }
+        };
 
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         let currentFrame = 0;
 
         this.physicsManager.physicsStep = (dt: number) => {
-            let frame = data.frames[currentFrame];
+            const frame = data.frames[currentFrame];
             if(!frame) {
                 this.stopPlayback();
                 api.notification.open({ message: "Playback finished" });
@@ -122,7 +121,7 @@ export default class Recorder {
 
             currentFrame++;
             updateLasers(currentFrame);
-        }
+        };
     }
 
     stopPlayback() {

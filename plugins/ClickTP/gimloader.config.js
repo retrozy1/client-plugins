@@ -11,4 +11,4 @@ export default {
         "Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/Desync.js"
     ],
     gamemodes: ["2d"]
-}
+};

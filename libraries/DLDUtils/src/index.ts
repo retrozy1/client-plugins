@@ -1,4 +1,5 @@
-import type { Vector, Capsule } from "@dimforge/rapier2d-compat";
+import { summitCoords } from "$shared/consts";
+import type { Capsule, Vector } from "@dimforge/rapier2d-compat";
 
 const respawnHeight = 621.093;
 const floorHeight = 638.37;
@@ -6,11 +7,11 @@ let lastCheckpointReached = 0;
 let canRespawn = false;
 
 api.net.onLoad(() => {
-    let savestates = api.plugin("Savestates");
+    const savestates = api.plugin("Savestates");
     if(savestates) {
         savestates.onStateLoaded((summit: string | number) => {
             if(typeof summit !== "number") return;
-            
+
             lastCheckpointReached = summit;
             if(summit <= 1) canRespawn = false;
         });
@@ -27,16 +28,6 @@ api.net.onLoad(() => {
 export function cancelRespawn() {
     canRespawn = false;
 }
-
-const checkpointCoords: Vector[] = [
-    { x: 38.25554275512695, y: 638.3899536132812 },
-    { x: 90.22997283935547, y: 638.377685546875 },
-    { x: 285.44000244140625, y: 532.780029296875 }, 
-    { x: 217.5500030517578, y: 500.7799987792969 },
-    { x: 400.3399963378906, y: 413.739990234375},
-    { x: 356.5400085449219, y: 351.6600036621094},
-    { x: 401.2699890136719, y: 285.739990234375 }
-];
 
 let doLaserRespawn = true;
 
@@ -55,10 +46,10 @@ const enable = () => {
     const shape = body.collider.shape as Capsule;
 
     let hurtFrames = 0;
-    let maxHurtFrames = 1;
-    
+    const maxHurtFrames = 1;
+
     // override the physics update to manually check for laser collisions
-    let physics = api.stores.phaser.scene.worldManager.physics;
+    const physics = api.stores.phaser.scene.worldManager.physics;
     api.patcher.before(physics, "physicsStep", () => {
         // Ignore running out of energy
         if(api.stores.me.movementSpeed === 0) api.stores.me.movementSpeed = 310;
@@ -76,7 +67,7 @@ const enable = () => {
         if(lasers.length === 0) return;
 
         // all the lasers always have the same state
-        let lasersOn = states.get(lasers[0].id)?.properties.get("GLOBAL_active");
+        const lasersOn = states.get(lasers[0].id)?.properties.get("GLOBAL_active");
 
         // some leniency between lasers turning on and doing damage
         if(!wasOnLastFrame && lasersOn) {
@@ -86,46 +77,46 @@ const enable = () => {
         wasOnLastFrame = lasersOn;
 
         if(!lasersOn || startImmunityActive) return;
-        let translation = body.rigidBody.translation();
-    
+        const translation = body.rigidBody.translation();
+
         // calculate the bounding box of the player
         const topLeft = {
             x: (translation.x - shape.radius) * 100,
             y: (translation.y - shape.halfHeight - shape.radius) * 100
-        }
+        };
         const bottomRight = {
             x: (translation.x + shape.radius) * 100,
             y: (translation.y + shape.halfHeight + shape.radius) * 100
-        }
-    
+        };
+
         let hitLaser = false;
-    
+
         // check collision with lasers
-        for(let laser of lasers) {
+        for(const laser of lasers) {
             // make sure the laser is active
             if(laser.dots.length <= 1) continue;
 
-            let start = {
+            const start = {
                 x: laser.dots[0].options.x + laser.x,
                 y: laser.dots[0].options.y + laser.y
-            }
-            let end = {
+            };
+            const end = {
                 x: laser.dots.at(-1).options.x + laser.x,
                 y: laser.dots.at(-1).options.y + laser.y
-            }
-    
+            };
+
             // check whether the player bounding box overlaps the laser line
             if(boundingBoxOverlap(start, end, topLeft, bottomRight)) {
                 hitLaser = true;
                 break;
             }
         }
-    
+
         if(hitLaser) {
             hurtFrames++;
             if(hurtFrames >= maxHurtFrames) {
                 hurtFrames = 0;
-                body.rigidBody.setTranslation(checkpointCoords[lastCheckpointReached], true);
+                body.rigidBody.setTranslation(summitCoords[lastCheckpointReached], true);
                 api.stores.me.isRespawning = true;
                 setTimeout(() => api.stores.me.isRespawning = false, 1000);
             }
@@ -134,17 +125,17 @@ const enable = () => {
         }
 
         // check if we've reached a checkpoint
-        for(let i = lastCheckpointReached + 1; i < checkpointCoords.length; i++) {
-            let checkpoint = checkpointCoords[i];
+        for(let i = lastCheckpointReached + 1; i < summitCoords.length; i++) {
+            const checkpoint = summitCoords[i];
 
             const summitStart: Vector = {
                 x: checkpoint.x * 100,
                 y: checkpoint.y * 100 + 100
-            }
+            };
             const summitEnd: Vector = {
                 x: checkpoint.x * 100 + 100,
                 y: checkpoint.y * 100
-            }
+            };
 
             if(boundingBoxOverlap(summitStart, summitEnd, topLeft, bottomRight)) {
                 console.log("Reached Checkpoint", i);
@@ -161,24 +152,24 @@ const enable = () => {
         if(canRespawn && translation.y > floorHeight) {
             canRespawn = false;
             setTimeout(() => {
-                body.rigidBody.setTranslation(checkpointCoords[lastCheckpointReached], true);
+                body.rigidBody.setTranslation(summitCoords[lastCheckpointReached], true);
                 api.stores.me.isRespawning = true;
                 setTimeout(() => api.stores.me.isRespawning = false, 1000);
             }, 300);
         }
-    })
+    });
 
     // move the player to the initial position
     body.rigidBody.setTranslation({ x: 33.87, y: 638.38 }, true);
 
     // make the physics deterministic
-    for(let id of physics.bodies.staticBodies) {
-        physics.bodies.activeBodies.enableBody(id)
+    for(const id of physics.bodies.staticBodies) {
+        physics.bodies.activeBodies.enableBody(id);
     }
-    
+
     // ignore attempts to disable bodies
     physics.bodies.activeBodies.disableBody = () => {};
-}
+};
 
 api.net.onLoad(() => {
     enable();
@@ -187,21 +178,21 @@ api.net.onLoad(() => {
 
 function boundingBoxOverlap(start: Vector, end: Vector, topLeft: Vector, bottomRight: Vector) {
     // check if the line intersects with any of the bounding box sides
-    return lineIntersects(start, end, topLeft, { x: bottomRight.x, y: topLeft.y }) ||
-        lineIntersects(start, end, topLeft, { x: topLeft.x, y: bottomRight.y }) ||
-        lineIntersects(start, end, { x: bottomRight.x, y: topLeft.y }, bottomRight) ||
-        lineIntersects(start, end, { x: topLeft.x, y: bottomRight.y }, bottomRight);
+    return lineIntersects(start, end, topLeft, { x: bottomRight.x, y: topLeft.y })
+        || lineIntersects(start, end, topLeft, { x: topLeft.x, y: bottomRight.y })
+        || lineIntersects(start, end, { x: bottomRight.x, y: topLeft.y }, bottomRight)
+        || lineIntersects(start, end, { x: topLeft.x, y: bottomRight.y }, bottomRight);
 }
 
 function lineIntersects(start1: Vector, end1: Vector, start2: Vector, end2: Vector) {
-    let denominator = ((end1.x - start1.x) * (end2.y - start2.y)) - ((end1.y - start1.y) * (end2.x - start2.x));
-    let numerator1 = ((start1.y - start2.y) * (end2.x - start2.x)) - ((start1.x - start2.x) * (end2.y - start2.y));
-    let numerator2 = ((start1.y - start2.y) * (end1.x - start1.x)) - ((start1.x - start2.x) * (end1.y - start1.y));
+    const denominator = ((end1.x - start1.x) * (end2.y - start2.y)) - ((end1.y - start1.y) * (end2.x - start2.x));
+    const numerator1 = ((start1.y - start2.y) * (end2.x - start2.x)) - ((start1.x - start2.x) * (end2.y - start2.y));
+    const numerator2 = ((start1.y - start2.y) * (end1.x - start1.x)) - ((start1.x - start2.x) * (end1.y - start1.y));
 
-    if(denominator == 0) return numerator1 == 0 && numerator2 == 0;
+    if(denominator === 0) return numerator1 === 0 && numerator2 === 0;
 
-    let r = numerator1 / denominator;
-    let s = numerator2 / denominator;
+    const r = numerator1 / denominator;
+    const s = numerator2 / denominator;
 
     return (r >= 0 && r <= 1) && (s >= 0 && s <= 1);
 }

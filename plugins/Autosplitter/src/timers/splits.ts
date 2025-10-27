@@ -1,6 +1,6 @@
+import type { SplitsAutosplitter } from "../splitters/autosplitter";
+import type SplitsUI from "../ui/splits";
 import BasicTimer from "./basic";
-import SplitsUI from "../ui/splits";
-import { SplitsAutosplitter } from "../splitters/autosplitter";
 
 export default class SplitsTimer extends BasicTimer {
     currentSplit = 0;
@@ -25,7 +25,7 @@ export default class SplitsTimer extends BasicTimer {
         this.started = false;
 
         // save the splits if it's a pb
-        let pb = this.autosplitter.pb;
+        const pb = this.autosplitter.pb;
         if(!pb || this.splits[this.splits.length - 1] < pb) {
             this.autosplitter.data.pb[this.autosplitter.getCategoryId()] = this.splits;
             this.autosplitter.save();
@@ -36,7 +36,7 @@ export default class SplitsTimer extends BasicTimer {
         this.ui.finishSplit(this.elapsed, this.currentSplit, this.splitElapsed);
 
         // save the split if it was a pb
-        let bestSplit = this.autosplitter.bestSplits[this.currentSplit];
+        const bestSplit = this.autosplitter.bestSplits[this.currentSplit];
         if(!bestSplit || this.splitElapsed < bestSplit) {
             this.autosplitter.bestSplits[this.currentSplit] = this.splitElapsed;
             this.autosplitter.save();
@@ -52,8 +52,8 @@ export default class SplitsTimer extends BasicTimer {
     update() {
         if(!this.started) return;
         super.update();
-        
-        let elapsed = this.now - this.startTime;
+
+        const elapsed = this.now - this.startTime;
         this.ui.updateSplit(elapsed, this.currentSplit, this.splitElapsed);
     }
 }

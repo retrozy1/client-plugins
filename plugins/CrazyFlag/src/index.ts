@@ -1,4 +1,4 @@
-let settings = api.lib("QuickSettings")("CrazyFlag", [
+const settings = api.lib("QuickSettings")("CrazyFlag", [
     { type: "heading", text: "Crazy Flag Settings" },
     {
         type: "number",
@@ -17,7 +17,7 @@ let settings = api.lib("QuickSettings")("CrazyFlag", [
 ]);
 api.openSettingsMenu(settings.openSettingsMenu);
 
-let flagConsts;
+let flagConsts: any;
 
 function applySettings() {
     if(!flagConsts) return;
@@ -29,7 +29,7 @@ settings.listen("swingSpeed", applySettings);
 settings.listen("swingAmount", applySettings);
 
 const constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
-    let defaults = Object.assign({}, consts);
+    const defaults = Object.assign({}, consts);
     flagConsts = consts;
     applySettings();
 
@@ -39,13 +39,13 @@ const constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
 });
 
 api.rewriter.addParseHook("FlagDevice", (code) => {
-    let index = code.indexOf("FlagOriginX:");
+    const index = code.indexOf("FlagOriginX:");
     if(index === -1) return;
 
     const end = code.lastIndexOf("=", index);
     const start = code.lastIndexOf(",", end);
     const name = code.slice(start + 1, end);
-    code += `${constsCallback}?.(${name});`
+    code += `${constsCallback}?.(${name});`;
 
     return code;
 });

@@ -8,4 +8,4 @@ export default {
     webpage: "https://gimloader.github.io/plugins/uncappedsettings",
     reloadRequired: true,
     version: "0.2.2"
-}
+};

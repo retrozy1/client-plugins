@@ -9,4 +9,4 @@ export default {
     reloadRequired: "ingame",
     version: "0.3.2",
     gamemodes: ["2d"]
-}
+};

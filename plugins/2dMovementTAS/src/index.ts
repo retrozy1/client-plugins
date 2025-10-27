@@ -1,9 +1,9 @@
-// @ts-ignore
-import UI from './ui/Start.svelte';
+// @ts-expect-error
+import UI from "./ui/Start.svelte";
 
 api.net.onLoad(() => {
-    // @ts-ignore vscode's going wacky
-    let ui = new UI({
+    // @ts-expect-error vscode's going wacky
+    const ui = new UI({
         target: document.body
     });
 

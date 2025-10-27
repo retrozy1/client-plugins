@@ -12,4 +12,4 @@ export default {
         "QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js"
     ],
     gamemodes: ["2d"]
-}
+};

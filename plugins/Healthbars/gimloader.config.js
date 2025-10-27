@@ -8,4 +8,4 @@ export default {
     webpage: "https://gimloader.github.io/plugins/healthbars",
     version: "0.1.2",
     gamemodes: ["2d"]
-}
+};

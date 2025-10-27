@@ -50,7 +50,7 @@ var scrollMomentum = 0;
 var changedZoom = false;
 var stopDefaultArrows = false;
 var stopKeys = ["ArrowLeft", "ArrowUp", "ArrowDown", "ArrowRight"];
-for (let key of stopKeys) {
+for (const key of stopKeys) {
   api.hotkeys.addHotkey({
     key,
     preventDefault: false
@@ -63,9 +63,9 @@ for (let key of stopKeys) {
 }
 var updateFreecam = null;
 var updateScroll = (dt) => {
-  let camera2 = api.stores?.phaser?.scene?.cameras?.cameras?.[0];
+  const camera2 = api.stores?.phaser?.scene?.cameras?.cameras?.[0];
   if (!camera2) return;
-  scrollMomentum *= Math.pow(0.97, dt);
+  scrollMomentum *= 0.97 ** dt;
   camera2.zoom += scrollMomentum * dt;
   if (scrollMomentum > 0) changedZoom = true;
   if (settings.capZoomOut) {
@@ -76,7 +76,7 @@ var updateScroll = (dt) => {
   }
 };
 api.net.onLoad(() => {
-  let worldManager = api.stores.phaser.scene.worldManager;
+  const worldManager = api.stores.phaser.scene.worldManager;
   api.patcher.after(worldManager, "update", (_, args) => {
     updateFreecam?.(args[0]);
     updateScroll(args[0]);
@@ -85,7 +85,7 @@ api.net.onLoad(() => {
 var scene;
 var camera;
 var getCanvasZoom = () => {
-  let transform = api.stores.phaser.scene.game.canvas.style.transform;
+  const transform = api.stores.phaser.scene.game.canvas.style.transform;
   if (!transform) return 1;
   return parseFloat(transform.split("(")[1].replace(")", ""));
 };
@@ -100,7 +100,7 @@ window.addEventListener("pointerup", setPointerUp);
 var lastX;
 var lastY;
 function onPointermove(e) {
-  let canvasZoom = getCanvasZoom();
+  const canvasZoom = getCanvasZoom();
   if (isPointerDown && lastX && lastY) {
     freecamPos.x -= (e.clientX / canvasZoom - lastX) / camera.zoom;
     freecamPos.y -= (e.clientY / canvasZoom - lastY) / camera.zoom;
@@ -115,10 +115,10 @@ function onWheel(e) {
     scrollMomentum -= e.deltaY / 65e3;
     return;
   }
-  if (camera.zoom == 0.1 && e.deltaY > 0 && settings.capZoomOut) return;
+  if (camera.zoom === 0.1 && e.deltaY > 0 && settings.capZoomOut) return;
   var oldzoom = camera.zoom;
   var newzoom = oldzoom * (e.deltaY < 0 ? 1.1 : 0.9);
-  let canvasZoom = getCanvasZoom();
+  const canvasZoom = getCanvasZoom();
   var mouse_x = e.clientX / canvasZoom;
   var mouse_y = e.clientY / canvasZoom;
   var pixels_difference_w = camera.width / oldzoom - camera.width / newzoom;
@@ -144,7 +144,7 @@ function stopFreecamming() {
   if (!scene || !camera) return;
   api.stores.me.inventory.activeInteractiveSlot = lastInteractiveSlot;
   camera.useBounds = true;
-  let charObj = scene.characterManager.characters.get(api.stores.phaser.mainCharacter.id).body;
+  const charObj = scene.characterManager.characters.get(api.stores.phaser.mainCharacter.id).body;
   scene.cameraHelper.startFollowingObject({ object: charObj });
   updateFreecam = null;
   stopDefaultArrows = false;
@@ -171,7 +171,7 @@ api.hotkeys.addConfigurableHotkey({
     stopDefaultArrows = true;
     updateFreecam = (dt) => {
       let moveAmount = 0.8 / camera.zoom * dt;
-      let pressed = api.hotkeys.pressed;
+      const pressed = api.hotkeys.pressed;
       if (pressed.has("ControlLeft")) moveAmount *= 5;
       if (pressed.has("ArrowLeft")) freecamPos.x -= moveAmount;
       if (pressed.has("ArrowRight")) freecamPos.x += moveAmount;
@@ -188,8 +188,8 @@ if (commandLine) {
   commandLine.addCommand("setzoom", [
     { "amount": "number" }
   ], (zoom) => {
-    let scene2 = api.stores?.phaser?.scene;
-    let camera2 = scene2?.cameras?.cameras?.[0];
+    const scene2 = api.stores?.phaser?.scene;
+    const camera2 = scene2?.cameras?.cameras?.[0];
     if (!scene2 || !camera2) return;
     camera2.zoom = parseFloat(zoom);
   });
@@ -198,8 +198,8 @@ var zoomToggled = false;
 var initialZoom = 1;
 var onDown = () => {
   if (!settings.toggleZoomFactor) return;
-  let scene2 = api.stores?.phaser?.scene;
-  let camera2 = scene2?.cameras?.cameras?.[0];
+  const scene2 = api.stores?.phaser?.scene;
+  const camera2 = scene2?.cameras?.cameras?.[0];
   if (!scene2 || !camera2) return;
   if (zoomToggled) {
     camera2.zoom = initialZoom;
@@ -221,7 +221,7 @@ api.onStop(() => {
   window.removeEventListener("wheel", onWheel);
   window.removeEventListener("mousedown", setPointerDown);
   window.removeEventListener("mouseup", setPointerUp);
-  let cam = GL.stores?.phaser.scene.cameras.main;
+  const cam = GL.stores?.phaser.scene.cameras.main;
   if (cam) cam.zoom = 1;
   if (freecamming) {
     stopFreecamming();

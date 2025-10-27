@@ -1,8 +1,8 @@
 import { boatChannels, fishtopiaSplits } from "../constants";
+import SplitsTimer from "../timers/splits";
 import SplitsUI from "../ui/splits";
-import { SplitsAutosplitter } from "./autosplitter";
-import SplitsTimer from '../timers/splits';
 import { onFrame } from "../util";
+import { SplitsAutosplitter } from "./autosplitter";
 
 export default class FishtopiaAutosplitter extends SplitsAutosplitter {
     ui = new SplitsUI(this, fishtopiaSplits);
@@ -13,7 +13,7 @@ export default class FishtopiaAutosplitter extends SplitsAutosplitter {
     constructor() {
         super("Fishtopia");
 
-        let gameSession = api.net.room.state.session.gameSession;
+        const gameSession = api.net.room.state.session.gameSession;
 
         api.net.room.state.session.listen("loadingPhase", (val: boolean) => {
             if(val) return;
@@ -33,10 +33,10 @@ export default class FishtopiaAutosplitter extends SplitsAutosplitter {
         });
 
         api.net.on("send:MESSAGE_FOR_DEVICE", (e: any) => {
-            let id = e.deviceId;
+            const id = e.deviceId;
             if(!id) return;
-            let device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
-            let channel = device?.options?.channel;
+            const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(id);
+            const channel = device?.options?.channel;
             if(!channel) return;
             if(!boatChannels.includes(channel)) return;
 
@@ -51,20 +51,22 @@ export default class FishtopiaAutosplitter extends SplitsAutosplitter {
             });
         });
 
-        let id = api.stores.phaser.mainCharacter.id;
+        const id = api.stores.phaser.mainCharacter.id;
         api.net.room.state.characters.get(id).inventory.slots.onChange((_: any, key: string) => {
             if(key === "gim-fish") {
                 this.timer.split();
                 this.timer.stop();
             }
-        })
+        });
 
         onFrame(() => {
             this.timer.update();
-        })
+        });
     }
 
-    getCategoryId() { return "fishtopia" }
+    getCategoryId() {
+        return "fishtopia";
+    }
 
     reset() {
         this.ui?.remove();

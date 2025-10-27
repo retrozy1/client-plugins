@@ -36,7 +36,7 @@ export interface HeadingEl {
 export type QSElement = BooleanEl | NumberEl | TextEl | DropdownEl | HeadingEl;
 
 export type QuickSettingsReturn = Record<string, any> & {
-    openSettingsMenu: () => void
+    openSettingsMenu: () => void;
     listen: (property: string, callback: (value: any) => void) => void;
     onChange: (key: string, value: any) => void;
-}
+};

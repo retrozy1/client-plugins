@@ -87,6 +87,9 @@ var styles_default = `#startTasBtn {
   color: black;
 }`;
 
+// assets/controller.svg
+var controller_default = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.97,16L5,19C4.67,19.3 4.23,19.5 3.75,19.5A1.75,1.75 0 0,1 2,17.75V17.5L3,10.12C3.21,7.81 5.14,6 7.5,6H16.5C18.86,6 20.79,7.81 21,10.12L22,17.5V17.75A1.75,1.75 0 0,1 20.25,19.5C19.77,19.5 19.33,19.3 19,19L16.03,16H7.97M7,8V10H5V11H7V13H8V11H10V10H8V8H7M16.5,8A0.75,0.75 0 0,0 15.75,8.75A0.75,0.75 0 0,0 16.5,9.5A0.75,0.75 0 0,0 17.25,8.75A0.75,0.75 0 0,0 16.5,8M14.75,9.75A0.75,0.75 0 0,0 14,10.5A0.75,0.75 0 0,0 14.75,11.25A0.75,0.75 0 0,0 15.5,10.5A0.75,0.75 0 0,0 14.75,9.75M18.25,9.75A0.75,0.75 0 0,0 17.5,10.5A0.75,0.75 0 0,0 18.25,11.25A0.75,0.75 0 0,0 19,10.5A0.75,0.75 0 0,0 18.25,9.75M16.5,11.5A0.75,0.75 0 0,0 15.75,12.25A0.75,0.75 0 0,0 16.5,13A0.75,0.75 0 0,0 17.25,12.25A0.75,0.75 0 0,0 16.5,11.5Z" /></svg>';
+
 // plugins/DLDTAS/src/overlay.ts
 var canvas = document.createElement("canvas");
 canvas.width = window.innerWidth;
@@ -101,22 +104,22 @@ api.onStop(() => canvas.remove());
 var propHitboxes = [];
 function initOverlay() {
   document.body.appendChild(canvas);
-  let scene = GL.stores.phaser.scene;
-  let props = scene.worldManager.devices.allDevices.filter((d) => d.deviceOption?.id === "prop");
-  for (let prop of props) {
-    for (let collider of prop.colliders.list) {
+  const scene = GL.stores.phaser.scene;
+  const props = scene.worldManager.devices.allDevices.filter((d) => d.deviceOption?.id === "prop");
+  for (const prop of props) {
+    for (const collider of prop.colliders.list) {
       let { x, y, h, w, angle, r1, r2 } = collider.options;
       x += prop.x;
       y += prop.y;
       if (r1 && r2) {
         if (r1 < 0 || r2 < 0) continue;
-        let ellipse = scene.add.ellipse(x, y, r1 * 2, r2 * 2, 16711680).setDepth(99999999999).setStrokeStyle(3, 16711680);
+        const ellipse = scene.add.ellipse(x, y, r1 * 2, r2 * 2, 16711680).setDepth(99999999999).setStrokeStyle(3, 16711680);
         ellipse.angle = angle;
         ellipse.isFilled = false;
         ellipse.isStroked = true;
         propHitboxes.push(ellipse);
       } else if (w && h) {
-        let rect = scene.add.rectangle(x, y, w, h, 16711680).setDepth(99999999999).setStrokeStyle(3, 16711680);
+        const rect = scene.add.rectangle(x, y, w, h, 16711680).setDepth(99999999999).setStrokeStyle(3, 16711680);
         rect.angle = angle;
         rect.isFilled = false;
         rect.isStroked = true;
@@ -125,7 +128,7 @@ function initOverlay() {
     }
   }
   api.onStop(() => {
-    for (let prop of propHitboxes) {
+    for (const prop of propHitboxes) {
       prop.destroy();
     }
   });
@@ -133,25 +136,25 @@ function initOverlay() {
 }
 var renderHitbox = true;
 function hideHitbox() {
-  for (let prop of propHitboxes) {
+  for (const prop of propHitboxes) {
     prop.visible = false;
   }
   renderHitbox = false;
 }
 function showHitbox() {
-  for (let prop of propHitboxes) {
+  for (const prop of propHitboxes) {
     prop.visible = true;
   }
   renderHitbox = true;
 }
 function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let physics = GL.stores.phaser.mainCharacter.physics;
-  let collider = physics.getBody().collider;
+  const physics = GL.stores.phaser.mainCharacter.physics;
+  const collider = physics.getBody().collider;
   let { halfHeight, radius } = collider.shape;
-  let { x: cX, y: cY } = GL.stores.phaser.scene.cameras.cameras[0].midPoint;
+  const { x: cX, y: cY } = GL.stores.phaser.scene.cameras.cameras[0].midPoint;
   let { x, y } = physics.getBody().rigidBody.translation();
-  let { x: vX, y: vY } = physics.getBody().rigidBody.linvel();
+  const { x: vX, y: vY } = physics.getBody().rigidBody.linvel();
   ctx.fillStyle = "white";
   ctx.strokeStyle = "black";
   ctx.lineWidth = 4;
@@ -184,41 +187,12 @@ function render() {
   ctx.stroke();
 }
 
-// plugins/DLDTAS/src/util.ts
-var defaultState = '{"gravity":0.001,"velocity":{"x":0,"y":0},"movement":{"direction":"none","xVelocity":0,"accelerationTicks":0},"jump":{"isJumping":false,"jumpsLeft":2,"jumpCounter":0,"jumpTicks":118,"xVelocityAtJumpStart":0},"forces":[],"grounded":true,"groundedTicks":0,"lastGroundedAngle":0}';
-function generatePhysicsInput(frame, lastFrame) {
-  let jump = frame.up && !lastFrame?.up;
-  let angle = null;
-  if (!frame.right && !frame.left && !frame.up) angle = null;
-  else if (frame.right && !frame.left && !frame.up) angle = 0;
-  else if (!frame.right && frame.left && !frame.up) angle = 180;
-  else if (!frame.right && !frame.left && frame.up) angle = 270;
-  else if (frame.right && !frame.left && frame.up) angle = 315;
-  else if (frame.right && frame.left && !frame.up) angle = null;
-  else if (!frame.right && frame.left && frame.up) angle = 225;
-  else if (!frame.right && !frame.left && !frame.up) angle = 225;
-  return { angle, jump, _jumpKeyPressed: frame.up };
-}
-function save(frames2) {
-  let saveList = [];
-  for (let frame of frames2) {
-    let { translation, state, ...save2 } = frame;
-    saveList.push(save2);
-  }
-  for (let i = saveList.length - 1; i >= 0; i--) {
-    if (saveList[i].right || saveList[i].left || saveList[i].up) break;
-    saveList.pop();
-  }
-  api.storage.setValue("frames", saveList);
-  return saveList;
-}
-
 // plugins/DLDTAS/src/updateLasers.ts
 var lasers = [];
 var laserOffset = api.storage.getValue("laserOffset", 0);
 api.net.on("DEVICES_STATES_CHANGES", (packet) => {
   for (let i = 0; i < packet.changes.length; i++) {
-    let device = packet.changes[i];
+    const device = packet.changes[i];
     if (lasers.some((l) => l.id === device[0])) {
       packet.changes.splice(i, 1);
       i -= 1;
@@ -231,10 +205,10 @@ function initLasers(values2) {
     alt: true
   }, () => {
     api.hotkeys.releaseAll();
-    let offset = prompt(`Enter the laser offset in frames, from 0 to 65 (currently ${laserOffset})`);
+    const offset = prompt(`Enter the laser offset in frames, from 0 to 65 (currently ${laserOffset})`);
     if (offset === null) return;
-    let parsed = parseInt(offset);
-    if (isNaN(parsed) || parsed < 0 || parsed > 65) {
+    const parsed = parseInt(offset, 10);
+    if (Number.isNaN(parsed) || parsed < 0 || parsed > 65) {
       alert("Invalid offset");
       return;
     }
@@ -253,15 +227,15 @@ function updateLasers(frame) {
   if (lasers.length === 0) {
     lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
   }
-  let states = api.stores.world.devices.states;
-  let devices = api.stores.phaser.scene.worldManager.devices;
-  let active = (frame + laserOffset) % 66 < 36;
+  const states = api.stores.world.devices.states;
+  const devices = api.stores.phaser.scene.worldManager.devices;
+  const active = (frame + laserOffset) % 66 < 36;
   if (!states.has(lasers[0].id)) {
     lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
   }
-  for (let laser of lasers) {
+  for (const laser of lasers) {
     if (!states.has(laser.id)) {
-      let propsMap = /* @__PURE__ */ new Map();
+      const propsMap = /* @__PURE__ */ new Map();
       propsMap.set("GLOBAL_active", active);
       states.set(laser.id, { deviceId: laser.id, properties: propsMap });
     } else {
@@ -269,6 +243,35 @@ function updateLasers(frame) {
     }
     devices.getDeviceById(laser.id).onStateUpdateFromServer("GLOBAL_active", active);
   }
+}
+
+// plugins/DLDTAS/src/util.ts
+var defaultState = '{"gravity":0.001,"velocity":{"x":0,"y":0},"movement":{"direction":"none","xVelocity":0,"accelerationTicks":0},"jump":{"isJumping":false,"jumpsLeft":2,"jumpCounter":0,"jumpTicks":118,"xVelocityAtJumpStart":0},"forces":[],"grounded":true,"groundedTicks":0,"lastGroundedAngle":0}';
+function generatePhysicsInput(frame, lastFrame) {
+  const jump = frame.up && !lastFrame?.up;
+  let angle = null;
+  if (!frame.right && !frame.left && !frame.up) angle = null;
+  else if (frame.right && !frame.left && !frame.up) angle = 0;
+  else if (!frame.right && frame.left && !frame.up) angle = 180;
+  else if (!frame.right && !frame.left && frame.up) angle = 270;
+  else if (frame.right && !frame.left && frame.up) angle = 315;
+  else if (frame.right && frame.left && !frame.up) angle = null;
+  else if (!frame.right && frame.left && frame.up) angle = 225;
+  else if (frame.right && frame.left && frame.up) angle = 225;
+  return { angle, jump, _jumpKeyPressed: frame.up };
+}
+function save(frames2) {
+  const saveList = [];
+  for (const frame of frames2) {
+    const { left, right, up } = frame;
+    saveList.push({ left, right, up });
+  }
+  for (let i = saveList.length - 1; i >= 0; i--) {
+    if (saveList[i].right || saveList[i].left || saveList[i].up) break;
+    saveList.pop();
+  }
+  api.storage.setValue("frames", saveList);
+  return saveList;
 }
 
 // plugins/DLDTAS/src/tools.ts
@@ -308,19 +311,19 @@ var TASTools = class {
     this.physics.state = JSON.parse(defaultState);
   }
   startPlaying() {
-    let { frames: frames2 } = this.values;
+    const { frames: frames2 } = this.values;
     this.slowdownDelayedFrames = 0;
     this.physicsManager.physicsStep = (dt) => {
       this.slowdownDelayedFrames++;
       if (this.slowdownDelayedFrames < this.slowdownAmount) return;
       this.slowdownDelayedFrames = 0;
       updateLasers(this.values.currentFrame);
-      let frame = frames2[this.values.currentFrame];
+      const frame = frames2[this.values.currentFrame];
       if (frame) {
-        let translation = this.rb.translation();
+        const translation = this.rb.translation();
         frames2[this.values.currentFrame].translation = { x: translation.x, y: translation.y };
         frames2[this.values.currentFrame].state = JSON.stringify(this.physics.state);
-        let input = generatePhysicsInput(frame, frames2[this.values.currentFrame - 1]);
+        const input = generatePhysicsInput(frame, frames2[this.values.currentFrame - 1]);
         this.inputManager.getPhysicsInput = () => input;
       }
       this.setMoveSpeed();
@@ -341,12 +344,12 @@ var TASTools = class {
       this.slowdownDelayedFrames++;
       if (this.slowdownDelayedFrames < this.slowdownAmount) return;
       this.slowdownDelayedFrames = 0;
-      let keys = this.inputManager.keyboard.heldKeys;
-      let left = keys.has(37 /* LeftArrow */) || keys.has(65 /* A */);
-      let right = keys.has(39 /* RightArrow */) || keys.has(68 /* D */);
-      let up = keys.has(38 /* UpArrow */) || keys.has(87 /* W */) || keys.has(32 /* Space */);
-      let translation = this.rb.translation();
-      let state = JSON.stringify(this.physics.state);
+      const keys = this.inputManager.keyboard.heldKeys;
+      const left = keys.has(37 /* LeftArrow */) || keys.has(65 /* A */);
+      const right = keys.has(39 /* RightArrow */) || keys.has(68 /* D */);
+      const up = keys.has(38 /* UpArrow */) || keys.has(87 /* W */) || keys.has(32 /* Space */);
+      const translation = this.rb.translation();
+      const state = JSON.stringify(this.physics.state);
       this.values.frames[this.values.currentFrame] = { left, right, up, translation, state };
       this.setMoveSpeed();
       this.nativeStep(dt);
@@ -360,14 +363,14 @@ var TASTools = class {
     };
   }
   advanceFrame() {
-    let frame = this.values.frames[this.values.currentFrame];
+    const frame = this.values.frames[this.values.currentFrame];
     if (!frame) return;
     this.setMoveSpeed();
-    let translation = this.rb.translation();
+    const translation = this.rb.translation();
     frame.translation = { x: translation.x, y: translation.y };
     frame.state = JSON.stringify(this.physics.state);
-    let lastFrame = this.values.frames[this.values.currentFrame - 1];
-    let input = generatePhysicsInput(frame, lastFrame);
+    const lastFrame = this.values.frames[this.values.currentFrame - 1];
+    const input = generatePhysicsInput(frame, lastFrame);
     this.inputManager.getPhysicsInput = () => input;
     this.nativeStep(0);
     this.values.currentFrame++;
@@ -379,7 +382,7 @@ var TASTools = class {
   }
   // this function should only ever be used when going back in time
   setFrame(number) {
-    let frame = this.values.frames[number];
+    const frame = this.values.frames[number];
     if (!frame || !frame.translation || !frame.state) return;
     this.values.currentFrame = number;
     updateLasers(this.values.currentFrame);
@@ -391,20 +394,17 @@ var TASTools = class {
   }
 };
 
-// assets/controller.svg
-var controller_default = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.97,16L5,19C4.67,19.3 4.23,19.5 3.75,19.5A1.75,1.75 0 0,1 2,17.75V17.5L3,10.12C3.21,7.81 5.14,6 7.5,6H16.5C18.86,6 20.79,7.81 21,10.12L22,17.5V17.75A1.75,1.75 0 0,1 20.25,19.5C19.77,19.5 19.33,19.3 19,19L16.03,16H7.97M7,8V10H5V11H7V13H8V11H10V10H8V8H7M16.5,8A0.75,0.75 0 0,0 15.75,8.75A0.75,0.75 0 0,0 16.5,9.5A0.75,0.75 0 0,0 17.25,8.75A0.75,0.75 0 0,0 16.5,8M14.75,9.75A0.75,0.75 0 0,0 14,10.5A0.75,0.75 0 0,0 14.75,11.25A0.75,0.75 0 0,0 15.5,10.5A0.75,0.75 0 0,0 14.75,9.75M18.25,9.75A0.75,0.75 0 0,0 17.5,10.5A0.75,0.75 0 0,0 18.25,11.25A0.75,0.75 0 0,0 19,10.5A0.75,0.75 0 0,0 18.25,9.75M16.5,11.5A0.75,0.75 0 0,0 15.75,12.25A0.75,0.75 0 0,0 16.5,13A0.75,0.75 0 0,0 17.25,12.25A0.75,0.75 0 0,0 16.5,11.5Z" /></svg>';
-
 // plugins/DLDTAS/src/ui.ts
 var frames = api.storage.getValue("frames", []);
 var values = { frames, currentFrame: 0 };
 function createUI() {
   let rowOffset = 0;
   initOverlay();
-  let tools = new TASTools(values, () => {
+  const tools = new TASTools(values, () => {
     scrollTable();
     updateTable();
   });
-  let div = document.createElement("div");
+  const div = document.createElement("div");
   div.id = "inputTable";
   div.innerHTML = `
     <div class="btns">
@@ -436,7 +436,7 @@ function createUI() {
   div.querySelector("#backFrame")?.addEventListener("click", (e) => onBack(e));
   let playing = false;
   let controlling = false;
-  let playBtn = div.querySelector("#play");
+  const playBtn = div.querySelector("#play");
   playBtn?.addEventListener("click", () => {
     if (controlling) return;
     setPlaying(!playing);
@@ -453,13 +453,17 @@ function createUI() {
     }
   }
   div.querySelector("#download")?.addEventListener("click", () => {
-    let data = JSON.stringify({
-      frames: save(values.frames),
-      laserOffset: getLaserOffset()
-    }, null, 4);
-    let blob = new Blob([data], { type: "text/plain" });
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement("a");
+    const data = JSON.stringify(
+      {
+        frames: save(values.frames),
+        laserOffset: getLaserOffset()
+      },
+      null,
+      4
+    );
+    const blob = new Blob([data], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
     a.href = url;
     a.download = "tas.json";
     a.click();
@@ -469,18 +473,18 @@ function createUI() {
     setControlling(false);
     setPlaying(false);
     tools.stopPlaying();
-    let input = document.createElement("input");
+    const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
     input.click();
     input.addEventListener("change", () => {
-      let file = input.files?.[0];
+      const file = input.files?.[0];
       if (!file) return;
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = () => {
-        let data = reader.result;
+        const data = reader.result;
         if (typeof data !== "string") return;
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (Array.isArray(parsed)) {
           values.frames = parsed;
         } else {
@@ -496,7 +500,7 @@ function createUI() {
     });
   });
   div.querySelector("#reset")?.addEventListener("click", () => {
-    let conf = confirm("Are you sure you want to reset?");
+    const conf = confirm("Are you sure you want to reset?");
     if (!conf) return;
     setPlaying(false);
     setControlling(false);
@@ -507,14 +511,14 @@ function createUI() {
     tools.stopPlaying();
     updateTable();
   });
-  let controlBtn = div.querySelector("#control");
+  const controlBtn = div.querySelector("#control");
   controlBtn.addEventListener("click", () => {
     if (playing) return;
     setControlling(!controlling);
   });
-  let countdownDiv = document.createElement("div");
+  const countdownDiv = document.createElement("div");
   countdownDiv.id = "controlCountdown";
-  let countdownContent = document.createElement("div");
+  const countdownContent = document.createElement("div");
   countdownDiv.appendChild(countdownContent);
   let activateTimeout;
   function setControlling(value) {
@@ -538,11 +542,11 @@ function createUI() {
       showHitbox();
     }
   }
-  let slowdowns = [1, 2, 4, 8, 12, 20];
+  const slowdowns = [1, 2, 4, 8, 12, 20];
   let slowdownIndex = 0;
-  let speedupBtn = div.querySelector("#speedup");
-  let speeddownBtn = div.querySelector("#speeddown");
-  let speed = div.querySelector("#speed");
+  const speedupBtn = div.querySelector("#speedup");
+  const speeddownBtn = div.querySelector("#speeddown");
+  const speed = div.querySelector("#speed");
   function updateSlowdown() {
     if (slowdownIndex === 0) speed.innerText = "1x";
     else speed.innerText = `1/${slowdowns[slowdownIndex]}x`;
@@ -561,17 +565,17 @@ function createUI() {
     tools.setSlowdown(slowdowns[slowdownIndex]);
     updateSlowdown();
   });
-  let rows = Math.floor((window.innerHeight - 60) / 26) - 1;
+  const rows = Math.floor((window.innerHeight - 60) / 26) - 1;
   let dragging = false;
   let draggingChecked = false;
-  let props = ["left", "right", "up"];
+  const props = ["left", "right", "up"];
   window.addEventListener("mouseup", () => dragging = false);
   for (let i = 0; i < rows; i++) {
-    let row = document.createElement("tr");
+    const row = document.createElement("tr");
     row.innerHTML = `<td>${i}</td>`;
     for (let j = 0; j < props.length; j++) {
-      let data = document.createElement("td");
-      let input = document.createElement("input");
+      const data = document.createElement("td");
+      const input = document.createElement("input");
       input.type = "checkbox";
       const checkPos = () => {
         if (i + rowOffset < values.currentFrame) {
@@ -602,22 +606,22 @@ function createUI() {
     div.querySelector("table")?.appendChild(row);
   }
   function updateTable() {
-    let table = div.querySelector("table");
-    let rowEls = table?.querySelectorAll("tr:not(:first-child)");
+    const table = div.querySelector("table");
+    const rowEls = table?.querySelectorAll("tr:not(:first-child)");
     if (!rowEls) return;
-    let frames2 = values.frames;
+    const frames2 = values.frames;
     rowOffset = Math.max(0, rowOffset);
     for (let i = frames2.length; i < rowOffset + rowEls.length; i++) {
       if (frames2[i]) continue;
       frames2[i] = { right: false, left: false, up: false };
     }
     for (let i = 0; i < rowEls.length; i++) {
-      let row = rowEls[i];
+      const row = rowEls[i];
       row.classList.toggle("active", i + rowOffset === values.currentFrame);
-      let frame = frames2[i + rowOffset];
+      const frame = frames2[i + rowOffset];
       if (!frame) continue;
       row.firstChild.textContent = (i + rowOffset).toString();
-      let checkboxes = rowEls[i].querySelectorAll("input");
+      const checkboxes = rowEls[i].querySelectorAll("input");
       checkboxes[0].checked = frame.left;
       checkboxes[1].checked = frame.right;
       checkboxes[2].checked = frame.up;

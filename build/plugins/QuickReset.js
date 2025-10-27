@@ -28,10 +28,10 @@ api.hotkeys.addConfigurableHotkey({
   api.net.send("END_GAME");
   api.net.send("RESTORE_MAP_EARLIER");
   ignoreNextStart = true;
-  let interval = setInterval(() => {
+  const interval = setInterval(() => {
     api.net.send("START_GAME", startMessage);
   }, 100);
-  let unsub = api.net.room.state.session.gameSession.listen("phase", (phase) => {
+  const unsub = api.net.room.state.session.gameSession.listen("phase", (phase) => {
     if (phase === "countdown") {
       ignoreNextStart = false;
       clearInterval(interval);

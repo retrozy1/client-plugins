@@ -9,13 +9,24 @@
  * @isLibrary true
  */
 
+// shared/consts.ts
+var summitCoords = [
+  { x: 38.2555427551269, y: 638.38995361328 },
+  { x: 90.2299728393554, y: 638.37768554687 },
+  { x: 285.440002441406, y: 532.7800292968 },
+  { x: 217.550003051757, y: 500.77999877929 },
+  { x: 400.33999633789, y: 413.73999023437 },
+  { x: 356.540008544921, y: 351.6600036621 },
+  { x: 401.269989013671, y: 285.73999023437 }
+];
+
 // libraries/DLDUtils/src/index.ts
 var respawnHeight = 621.093;
 var floorHeight = 638.37;
 var lastCheckpointReached = 0;
 var canRespawn = false;
 api.net.onLoad(() => {
-  let savestates = api.plugin("Savestates");
+  const savestates = api.plugin("Savestates");
   if (savestates) {
     savestates.onStateLoaded((summit) => {
       if (typeof summit !== "number") return;
@@ -32,15 +43,6 @@ api.net.onLoad(() => {
 function cancelRespawn() {
   canRespawn = false;
 }
-var checkpointCoords = [
-  { x: 38.25554275512695, y: 638.3899536132812 },
-  { x: 90.22997283935547, y: 638.377685546875 },
-  { x: 285.44000244140625, y: 532.780029296875 },
-  { x: 217.5500030517578, y: 500.7799987792969 },
-  { x: 400.3399963378906, y: 413.739990234375 },
-  { x: 356.5400085449219, y: 351.6600036621094 },
-  { x: 401.2699890136719, y: 285.739990234375 }
-];
 var doLaserRespawn = true;
 function setLaserRespawnEnabled(enabled) {
   doLaserRespawn = enabled;
@@ -53,8 +55,8 @@ var enable = () => {
   const body = api.stores.phaser.mainCharacter.physics.getBody();
   const shape = body.collider.shape;
   let hurtFrames = 0;
-  let maxHurtFrames = 1;
-  let physics = api.stores.phaser.scene.worldManager.physics;
+  const maxHurtFrames = 1;
+  const physics = api.stores.phaser.scene.worldManager.physics;
   api.patcher.before(physics, "physicsStep", () => {
     if (api.stores.me.movementSpeed === 0) api.stores.me.movementSpeed = 310;
   });
@@ -66,14 +68,14 @@ var enable = () => {
     const devicesInView = api.stores.phaser.scene.worldManager.devices.devicesInView;
     const lasers = devicesInView.filter((d) => d.laser);
     if (lasers.length === 0) return;
-    let lasersOn = states.get(lasers[0].id)?.properties.get("GLOBAL_active");
+    const lasersOn = states.get(lasers[0].id)?.properties.get("GLOBAL_active");
     if (!wasOnLastFrame && lasersOn) {
       startImmunityActive = true;
       setTimeout(() => startImmunityActive = false, 360);
     }
     wasOnLastFrame = lasersOn;
     if (!lasersOn || startImmunityActive) return;
-    let translation = body.rigidBody.translation();
+    const translation = body.rigidBody.translation();
     const topLeft = {
       x: (translation.x - shape.radius) * 100,
       y: (translation.y - shape.halfHeight - shape.radius) * 100
@@ -83,13 +85,13 @@ var enable = () => {
       y: (translation.y + shape.halfHeight + shape.radius) * 100
     };
     let hitLaser = false;
-    for (let laser of lasers) {
+    for (const laser of lasers) {
       if (laser.dots.length <= 1) continue;
-      let start = {
+      const start = {
         x: laser.dots[0].options.x + laser.x,
         y: laser.dots[0].options.y + laser.y
       };
-      let end = {
+      const end = {
         x: laser.dots.at(-1).options.x + laser.x,
         y: laser.dots.at(-1).options.y + laser.y
       };
@@ -102,15 +104,15 @@ var enable = () => {
       hurtFrames++;
       if (hurtFrames >= maxHurtFrames) {
         hurtFrames = 0;
-        body.rigidBody.setTranslation(checkpointCoords[lastCheckpointReached], true);
+        body.rigidBody.setTranslation(summitCoords[lastCheckpointReached], true);
         api.stores.me.isRespawning = true;
         setTimeout(() => api.stores.me.isRespawning = false, 1e3);
       }
     } else {
       hurtFrames = 0;
     }
-    for (let i = lastCheckpointReached + 1; i < checkpointCoords.length; i++) {
-      let checkpoint = checkpointCoords[i];
+    for (let i = lastCheckpointReached + 1; i < summitCoords.length; i++) {
+      const checkpoint = summitCoords[i];
       const summitStart = {
         x: checkpoint.x * 100,
         y: checkpoint.y * 100 + 100
@@ -131,14 +133,14 @@ var enable = () => {
     if (canRespawn && translation.y > floorHeight) {
       canRespawn = false;
       setTimeout(() => {
-        body.rigidBody.setTranslation(checkpointCoords[lastCheckpointReached], true);
+        body.rigidBody.setTranslation(summitCoords[lastCheckpointReached], true);
         api.stores.me.isRespawning = true;
         setTimeout(() => api.stores.me.isRespawning = false, 1e3);
       }, 300);
     }
   });
   body.rigidBody.setTranslation({ x: 33.87, y: 638.38 }, true);
-  for (let id of physics.bodies.staticBodies) {
+  for (const id of physics.bodies.staticBodies) {
     physics.bodies.activeBodies.enableBody(id);
   }
   physics.bodies.activeBodies.disableBody = () => {
@@ -152,12 +154,12 @@ function boundingBoxOverlap(start, end, topLeft, bottomRight) {
   return lineIntersects(start, end, topLeft, { x: bottomRight.x, y: topLeft.y }) || lineIntersects(start, end, topLeft, { x: topLeft.x, y: bottomRight.y }) || lineIntersects(start, end, { x: bottomRight.x, y: topLeft.y }, bottomRight) || lineIntersects(start, end, { x: topLeft.x, y: bottomRight.y }, bottomRight);
 }
 function lineIntersects(start1, end1, start2, end2) {
-  let denominator = (end1.x - start1.x) * (end2.y - start2.y) - (end1.y - start1.y) * (end2.x - start2.x);
-  let numerator1 = (start1.y - start2.y) * (end2.x - start2.x) - (start1.x - start2.x) * (end2.y - start2.y);
-  let numerator2 = (start1.y - start2.y) * (end1.x - start1.x) - (start1.x - start2.x) * (end1.y - start1.y);
-  if (denominator == 0) return numerator1 == 0 && numerator2 == 0;
-  let r = numerator1 / denominator;
-  let s = numerator2 / denominator;
+  const denominator = (end1.x - start1.x) * (end2.y - start2.y) - (end1.y - start1.y) * (end2.x - start2.x);
+  const numerator1 = (start1.y - start2.y) * (end2.x - start2.x) - (start1.x - start2.x) * (end2.y - start2.y);
+  const numerator2 = (start1.y - start2.y) * (end1.x - start1.x) - (start1.x - start2.x) * (end1.y - start1.y);
+  if (denominator === 0) return numerator1 === 0 && numerator2 === 0;
+  const r = numerator1 / denominator;
+  const s = numerator2 / denominator;
   return r >= 0 && r <= 1 && (s >= 0 && s <= 1);
 }
 export {

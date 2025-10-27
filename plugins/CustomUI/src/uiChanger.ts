@@ -1,5 +1,5 @@
-import type { Theme } from './types';
-import defaultThemes from './defaultThemes.json';
+import defaultThemes from "./defaultThemes.json";
+import type { Theme } from "./types";
 
 export default class UIChanger {
     hideTopBar: boolean = api.storage.getValue("hideTopBar", false);
@@ -24,7 +24,7 @@ export default class UIChanger {
     onMouseMove(e: MouseEvent) {
         if(!this.hideTopBar) return;
 
-        let nearTop = e.clientY < 100;
+        const nearTop = e.clientY < 100;
         document.documentElement.classList.toggle("slideOutTop", !nearTop);
     }
 
@@ -34,7 +34,7 @@ export default class UIChanger {
         customThemes: Theme[],
         themeType: "default" | "custom",
         themeIndex: number,
-        questionOpacity: number,
+        questionOpacity: number
     ) {
         this.hideTopBar = hideTopBar;
         this.useCustomTheme = useCustomTheme;
@@ -53,7 +53,7 @@ export default class UIChanger {
 
         this.onSettingsUpdate();
     }
-        
+
     onSettingsUpdate() {
         if(!this.hideTopBar) {
             document.documentElement.classList.remove("slideOutTop");
@@ -61,7 +61,7 @@ export default class UIChanger {
 
         document.documentElement.classList.toggle("useCustomTheme", this.useCustomTheme);
 
-        let theme = this.getActiveTheme();
+        const theme = this.getActiveTheme();
 
         // update variables
         document.documentElement.style.setProperty("--question-bg", theme.question.background);

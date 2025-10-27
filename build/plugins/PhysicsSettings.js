@@ -39,7 +39,7 @@ var settings = api.lib("QuickSettings")("PhysicsSettings", [
 ]);
 api.net.onLoad(() => {
   let allowNext = true;
-  let unsub = api.net.room.state.session.listen("phase", () => {
+  const unsub = api.net.room.state.session.listen("phase", () => {
     allowNext = true;
   });
   api.onStop(() => unsub());
@@ -53,12 +53,12 @@ api.net.onLoad(() => {
 });
 api.openSettingsMenu(settings.openSettingsMenu);
 var updateMapOption = (key, value) => {
-  let options = JSON.parse(api.stores.world.mapOptionsJSON);
+  const options = JSON.parse(api.stores.world.mapOptionsJSON);
   options[key] = value;
   api.stores.world.mapOptionsJSON = JSON.stringify(options);
 };
 var applyAll = () => {
-  let options = JSON.parse(api.stores.world.mapOptionsJSON);
+  const options = JSON.parse(api.stores.world.mapOptionsJSON);
   options.maxJumps = settings.jumps;
   options.jumpHeight = settings.jumpheight;
   api.stores.world.mapOptionsJSON = JSON.stringify(options);

@@ -9,12 +9,14 @@
         "skipLibCheck": true,
         "baseUrl": ".",
         "paths": {
-            "$assets/*": ["./assets/*"]
+            "$assets/*": ["./assets/*"],
+            "$shared/*": ["./shared/*"]
         }
     },
     "include": [
         "./plugins/**/*.ts",
         "./libraries/**/*.ts",
+        "./shared/**/*.ts",
         "./main.d.ts"
     ]
 }

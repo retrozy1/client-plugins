@@ -1,4 +1,4 @@
-import { SplitsAutosplitter } from "../splitters/autosplitter";
+import type { SplitsAutosplitter } from "../splitters/autosplitter";
 import { fmtMs } from "../util";
 import BasicUI from "./basic";
 
@@ -15,11 +15,11 @@ export default class SplitsUI extends BasicUI {
         super(autosplitter);
 
         // create and add the splits table
-        let table = document.createElement("table");
+        const table = document.createElement("table");
         if(this.autosplitter.data.showSplits) this.element.appendChild(table);
-    
-        for(let name of this.splitNames) {
-            let row = document.createElement("tr");
+
+        for(const name of this.splitNames) {
+            const row = document.createElement("tr");
             row.innerHTML = `
             <td style="min-width: 120px;">${name}</td>
             <td style="min-width: 60px; ${this.autosplitter.data.showSplitTimes ? "" : "display: none"}"></td>
@@ -33,13 +33,13 @@ export default class SplitsUI extends BasicUI {
         // add in the split time in the PB
         if(this.autosplitter.data.showPbSplits) {
             for(let i = 0; i < this.autosplitter.pbSplits.length; i++) {
-                let split = this.autosplitter.pbSplits[i];
+                const split = this.autosplitter.pbSplits[i];
                 if(!split) continue;
 
                 this.splitDatas[i][3].innerText = fmtMs(split);
             }
         }
-    
+
         this.element.appendChild(this.total);
     }
 
@@ -60,9 +60,9 @@ export default class SplitsUI extends BasicUI {
     updateSplit(totalMs: number, splitIndex: number, splitMs: number) {
         this.splitDatas[splitIndex][1].innerText = fmtMs(splitMs);
 
-        let pb = this.autosplitter.pbSplits?.[splitIndex];
+        const pb = this.autosplitter.pbSplits?.[splitIndex];
         if(!pb) return;
-        let amountBehind = totalMs - pb;
+        const amountBehind = totalMs - pb;
         if(amountBehind <= 0) {
             this.setTotalAhead(true);
             return;
@@ -77,15 +77,15 @@ export default class SplitsUI extends BasicUI {
     }
 
     finishSplit(totalMs: number, splitIndex: number, splitMs: number) {
-        let els = this.splitDatas[splitIndex];
+        const els = this.splitDatas[splitIndex];
         els[3].innerText = fmtMs(totalMs);
 
-        let pb = this.autosplitter.pbSplits[splitIndex];
-        let bestSplit = this.autosplitter.bestSplits[splitIndex];
+        const pb = this.autosplitter.pbSplits[splitIndex];
+        const bestSplit = this.autosplitter.bestSplits[splitIndex];
         if(!pb || !bestSplit) return;
 
-        let ahead = pb === undefined || totalMs <= pb;
-        let best = bestSplit !== undefined && splitMs < bestSplit;
+        const ahead = pb === undefined || totalMs <= pb;
+        const best = bestSplit !== undefined && splitMs < bestSplit;
 
         if(ahead) els[2].innerText = `-${fmtMs(-totalMs + pb)}`;
         else els[2].innerText = `+${fmtMs(totalMs - pb)}`;

@@ -1,15 +1,15 @@
-import { bytesToFloat, encodeMessage, floatToBytes } from './encoding';
-import { identifier, maxLength, Ops } from './consts';
-import UI from './ui';
+import { identifier, maxLength, Ops } from "./consts";
+import { bytesToFloat, encodeMessage, floatToBytes } from "./encoding";
+import UI from "./ui";
 
 interface MessageState {
     message: string;
     charsRemaining: number;
 }
 
-api.net.onLoad(() => {    
-    let myId = api.stores.network.authId;
-    
+api.net.onLoad(() => {
+    const myId = api.stores.network.authId;
+
     let sending = false;
     let ignoreNextAngle = false;
     let realAngle = 0;
@@ -22,7 +22,7 @@ api.net.onLoad(() => {
             return;
         }
 
-        realAngle = message.angle
+        realAngle = message.angle;
         editFn(null);
     });
 
@@ -32,30 +32,30 @@ api.net.onLoad(() => {
         editFn(null);
     });
 
-    let me = api.net.room.state.characters.get(myId);
+    const me = api.net.room.state.characters.get(myId);
     let angleChangeRes: Function | undefined;
     api.onStop(me.projectiles.listen("aimAngle", (angle: number) => {
         if(angle === 0) return;
         angleChangeRes?.();
     }));
-    
+
     UI.init(async (text: string) => {
-        let messages = encodeMessage(text);
+        const messages = encodeMessage(text);
         if(!messages) return;
         sending = true;
-    
-        for(let message of messages) {
+
+        for(const message of messages) {
             ignoreNextAngle = true;
             send(message);
             await new Promise((res) => angleChangeRes = res);
         }
-        
+
         sending = false;
         send(realAngle);
         UI.addMessage(`${me.name}: ${text}`, true);
     });
 
-    let messageStates = new Map<any, MessageState>();
+    const messageStates = new Map<any, MessageState>();
 
     api.onStop(api.net.room.state.characters.onAdd((char: any) => {
         if(char.id === myId) return;
@@ -63,18 +63,18 @@ api.net.onLoad(() => {
         // This doesn't get cleaned up when the person leaves but whatever
         api.onStop(char.projectiles.listen("aimAngle", (angle: number) => {
             if(angle === 0) return;
-            let bytes = floatToBytes(angle);
+            const bytes = floatToBytes(angle);
 
-            let newPlayer = !messageStates.has(char);
+            const newPlayer = !messageStates.has(char);
             if(newPlayer) messageStates.set(char, { message: "", charsRemaining: 0 });
-            let state = messageStates.get(char)!;
-            
+            const state = messageStates.get(char)!;
+
             // check if the angle is a message
             if(bytes[0] === identifier[0] && bytes[1] === identifier[1] && bytes[2] === identifier[2] && bytes[3] === identifier[3]) {
-                let op = bytes[4];
+                const op = bytes[4];
                 if(op === Ops.Transmit) {
-                    let high = bytes[5];
-                    let low = bytes[6];
+                    const high = bytes[5];
+                    const low = bytes[6];
                     state.charsRemaining = Math.min(maxLength, (high << 8) + low);
                     state.message = "";
                 } else if(op === Ops.Join && newPlayer) {
@@ -128,7 +128,7 @@ api.net.onLoad(() => {
 });
 
 function sendOp(op: Ops) {
-    let message = [...identifier, op, 0, 0];
+    const message = [...identifier, op, 0, 0];
     send(bytesToFloat(message));
 }
 

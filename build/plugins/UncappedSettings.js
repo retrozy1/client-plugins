@@ -10,8 +10,8 @@
 
 // plugins/UncappedSettings/src/index.ts
 function changeHooks(res) {
-  for (let hook of res.hooks) {
-    let key = hook.key.toLowerCase();
+  for (const hook of res.hooks) {
+    const key = hook.key.toLowerCase();
     if (key.includes("duration")) {
       hook.options.min = 1;
       hook.options.max = 60;
@@ -24,7 +24,7 @@ function changeHooks(res) {
 var wrapRequester = api.rewriter.createShared("WrapRequester", (requester) => {
   return function() {
     if (GL.plugins.isEnabled("UncappedSettings") && arguments[0].url === "/api/experience/map/hooks" && arguments[0].success) {
-      let success = arguments[0].success;
+      const success = arguments[0].success;
       arguments[0].success = function(res) {
         changeHooks(res);
         return success.apply(this, arguments);

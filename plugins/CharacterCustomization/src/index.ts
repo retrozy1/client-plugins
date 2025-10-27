@@ -1,13 +1,11 @@
-// @ts-ignore
-import UI from './UI.svelte';
-import CosmeticChanger from './cosmeticChanger';
+import CosmeticChanger from "./cosmeticChanger";
+import UI from "./UI.svelte";
 
-let cosmeticChanger = new CosmeticChanger();
+const cosmeticChanger = new CosmeticChanger();
 
 function showUI() {
-    let div = document.createElement("div");
-    // @ts-ignore
-    let ui = new UI({
+    const div = document.createElement("div");
+    const ui = new UI({
         target: div,
         props: {
             cosmeticChanger
@@ -20,7 +18,6 @@ function showUI() {
         closeOnBackgroundClick: false,
         style: "min-width: min(90vw, 500px)",
         onClosed() {
-            // @ts-ignore
             ui.$destroy();
         },
         buttons: [

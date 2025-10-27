@@ -28,7 +28,7 @@ const settings = api.lib("QuickSettings")("PhysicsSettings", [
 // prevent the client from being snapped back
 api.net.onLoad(() => {
     let allowNext = true;
-    let unsub = api.net.room.state.session.listen("phase", () => {
+    const unsub = api.net.room.state.session.listen("phase", () => {
         allowNext = true;
     });
     api.onStop(() => unsub());
@@ -45,20 +45,20 @@ api.net.onLoad(() => {
 api.openSettingsMenu(settings.openSettingsMenu);
 
 const updateMapOption = (key, value) => {
-    let options = JSON.parse(api.stores.world.mapOptionsJSON);
+    const options = JSON.parse(api.stores.world.mapOptionsJSON);
     options[key] = value;
     api.stores.world.mapOptionsJSON = JSON.stringify(options);
-}
+};
 
 const applyAll = () => {
-    let options = JSON.parse(api.stores.world.mapOptionsJSON);
+    const options = JSON.parse(api.stores.world.mapOptionsJSON);
     options.maxJumps = settings.jumps;
     options.jumpHeight = settings.jumpheight;
     api.stores.world.mapOptionsJSON = JSON.stringify(options);
-}
+};
 
 api.net.onLoad(() => {
-    if(api.stores?.session?.mapStyle !== 'platformer') return;
+    if(api.stores?.session?.mapStyle !== "platformer") return;
 
     api.net.room.state.listen("mapSettings", () => {
         applyAll();
@@ -71,6 +71,6 @@ api.net.onLoad(() => {
     settings.listen("jumpheight", (height) => updateMapOption("jumpHeight", height));
     settings.listen("speed", (speed) => {
         GL.plugin("DLDTAS")?.setMoveSpeed(settings.speed);
-        api.stores.me.movementSpeed = speed
+        api.stores.me.movementSpeed = speed;
     });
 });

@@ -37,7 +37,7 @@ function applySettings() {
 settings.listen("swingSpeed", applySettings);
 settings.listen("swingAmount", applySettings);
 var constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
-  let defaults = Object.assign({}, consts);
+  const defaults = Object.assign({}, consts);
   flagConsts = consts;
   applySettings();
   api.onStop(() => {
@@ -45,7 +45,7 @@ var constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
   });
 });
 api.rewriter.addParseHook("FlagDevice", (code) => {
-  let index = code.indexOf("FlagOriginX:");
+  const index = code.indexOf("FlagOriginX:");
   if (index === -1) return;
   const end = code.lastIndexOf("=", index);
   const start = code.lastIndexOf(",", end);

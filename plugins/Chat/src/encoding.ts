@@ -2,9 +2,9 @@ import { identifier, maxLength, Ops } from "./consts";
 
 // always requires 7 bytes as input
 export function bytesToFloat(bytes: number[]) {
-    let buffer = new ArrayBuffer(8);
-    let view = new Uint8Array(buffer);
-    
+    const buffer = new ArrayBuffer(8);
+    const view = new Uint8Array(buffer);
+
     // the last byte is always 0 since angles are capped at 1e9, and this always makes the exponent negative
     for(let i = 0; i < 7; i++) {
         view[i] = bytes[i];
@@ -14,11 +14,11 @@ export function bytesToFloat(bytes: number[]) {
 }
 
 export function floatToBytes(float: number) {
-    let buffer = new ArrayBuffer(8);
-    let floatView = new Float64Array(buffer);
+    const buffer = new ArrayBuffer(8);
+    const floatView = new Float64Array(buffer);
     floatView[0] = float;
 
-    let byteView = new Uint8Array(buffer);
+    const byteView = new Uint8Array(buffer);
     return Array.from(byteView);
 }
 
@@ -28,20 +28,20 @@ export function encodeMessage(message: string) {
     if(codes.length === 0) return;
 
     codes = codes.slice(0, maxLength); // max of 1k characters
-    let charsLow = codes.length & 0xff;
-    let charsHigh = (codes.length & 0xff00) >> 8;
+    const charsLow = codes.length & 0xff;
+    const charsHigh = (codes.length & 0xff00) >> 8;
 
     // 4 random numbers that just show that this encodes a chat message
     // then an opcode (0 = send)
-    let header = [...identifier, Ops.Transmit, charsHigh, charsLow];
+    const header = [...identifier, Ops.Transmit, charsHigh, charsLow];
 
-    let messages: number[] = [bytesToFloat(header)];
+    const messages: number[] = [bytesToFloat(header)];
 
     // pad the codes to have a multiple of 7
     while(codes.length % 7 !== 0) codes.push(0);
 
     for(let i = 0; i < codes.length; i += 7) {
-        let msg: number[] = [];
+        const msg: number[] = [];
         for(let j = 0; j < 7; j++) {
             msg[j] = codes[i + j];
         }

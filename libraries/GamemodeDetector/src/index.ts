@@ -13,14 +13,14 @@ const gamemodeMusic: Record<string, string> = {
     "Apocalypse": "/assets/map/modes/zombie/music.mp3",
     "Tag": "/assets/map/music/tag/music.mp3",
     "Farmchain": "/assets/map/modes/farm/music.mp3"
-}
+};
 
 export function currentGamemode() {
-    let optionsJson = api.stores?.world?.mapOptionsJSON;
+    const optionsJson = api.stores?.world?.mapOptionsJSON;
     if(!optionsJson) return null;
 
-    let music = JSON.parse(optionsJson).musicUrl;
-    for(let gamemode in gamemodeMusic) {
+    const music = JSON.parse(optionsJson).musicUrl;
+    for(const gamemode in gamemodeMusic) {
         if(music === gamemodeMusic[gamemode]) return gamemode;
     }
 
