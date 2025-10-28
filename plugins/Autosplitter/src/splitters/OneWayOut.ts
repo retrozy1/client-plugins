@@ -7,9 +7,7 @@ import { SplitsAutosplitter } from "./autosplitter";
 export default class OneWayOutAutosplitter extends SplitsAutosplitter {
     ui = new OneWayOutUI(this);
     timer = new SplitsTimer(this, this.ui);
-
     stage = 0;
-
     drops = 0;
     knockouts = 0;
 
@@ -22,7 +20,7 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
             for(const change of msg.changes) {
                 if(msg.values[change[1][0]] === "apiOBAL_healthPercent") {
                     const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
-                    if(device.propOption.id === "barriers/scifi_barrier_1" && change[2][0] === 0) {
+                    if(device?.propOption.id === "barriers/scifi_barrier_1" && change[2][0] === 0) {
                         this.addAttempt();
                         this.ui.updateAttempts();
                         this.timer.start();

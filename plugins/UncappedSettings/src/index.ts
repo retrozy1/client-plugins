@@ -1,4 +1,4 @@
-function changeHooks(res) {
+function changeHooks(res: any) {
     for(const hook of res.hooks) {
         const key = hook.key.toLowerCase();
 
@@ -14,15 +14,15 @@ function changeHooks(res) {
     }
 }
 
-const wrapRequester = api.rewriter.createShared("WrapRequester", (requester) => {
-    return function() {
+const wrapRequester = api.rewriter.createShared("WrapRequester", (requester: any) => {
+    return function(this: any) {
         if(
             GL.plugins.isEnabled("UncappedSettings")
             && arguments[0].url === "/api/experience/map/hooks"
             && arguments[0].success
         ) {
             const success = arguments[0].success;
-            arguments[0].success = function(res) {
+            arguments[0].success = function(res: any) {
                 changeHooks(res);
                 return success.apply(this, arguments);
             };
@@ -34,7 +34,7 @@ const wrapRequester = api.rewriter.createShared("WrapRequester", (requester) => 
 
 api.rewriter.addParseHook(true, (code) => {
     const index = code.indexOf("JSON.stringify({url");
-    if(index === -1) return;
+    if(index === -1) return code;
 
     const start = code.indexOf("=", code.lastIndexOf(",", index)) + 1;
     const end = code.indexOf("})}})}", index) + 6;

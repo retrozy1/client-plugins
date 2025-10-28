@@ -31,14 +31,16 @@ function shouldApply(character) {
 }
 var wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {
   class NewSkin {
+    character;
+    scene;
     skinId = "character_default_cyan";
     latestSkinId = "character_default_cyan";
     constructor(props) {
+      this.character = props.character;
+      this.scene = props.scene;
       if (!props.character || !shouldApply(props.character)) {
         return new Skin(props);
       }
-      this.character = props.character;
-      this.scene = props.scene;
     }
     updateSkin(A) {
       A.id = A.id.replace("character_", "");
@@ -50,12 +52,12 @@ var wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {
       });
       load.start();
     }
-    setupSkin(A) {
-      const x = A.x ?? this.character.spine.x;
-      const y = A.y ?? this.character.spine.y;
+    setupSkin(position) {
+      const x = position.x ?? this.character.spine.x;
+      const y = position.y ?? this.character.spine.y;
       if (this.character.spine) this.character.spine.destroy(true);
       this.character.scale.baseScale = 0.7;
-      this.character.spine = this.scene.add.sprite(x, y, `gim-${A.id}`);
+      this.character.spine = this.scene.add.sprite(x, y, `gim-${position.id}`);
       this.character.spine.setOrigin(0.5, 0.75);
       this.character.spine.skeleton = { color: {}, physicsTranslate: () => {
       } };
@@ -70,7 +72,7 @@ var wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {
 });
 api.rewriter.addParseHook("App", (code) => {
   const index = code.indexOf("JSON.stringify(this.editStyles");
-  if (index === -1) return;
+  if (index === -1) return code;
   const classStart = code.lastIndexOf("class ", index);
   const nameEnd = code.indexOf("{", classStart);
   const name = code.slice(classStart + 6, nameEnd);
@@ -97,12 +99,12 @@ var wrapAnimations = api.rewriter.createShared("WrapAnimations", (Animation) => 
 });
 api.rewriter.addParseHook("FixSpinePlugin", (code) => {
   const index = code.indexOf("onSkinChanged=");
-  if (index === -1) return;
+  if (index === -1) return code;
   const classStart = code.lastIndexOf("class ", index);
   const nameEnd = code.indexOf("{", classStart);
   const name = code.slice(classStart + 6, nameEnd);
   const classEnd = code.indexOf("}}", code.indexOf("this.character=", index)) + 2;
   const classCode = code.slice(classStart, classEnd);
-  code = code.slice(0, classStart) + `const ${name}=(${wrapAnimations} ?? (v => v))(${classCode});` + code.slice(classEnd);
+  code = code.slice(0, classStart) + `const ${name}=(${wrapAnimations}??(v=>v))(${classCode});` + code.slice(classEnd);
   return code;
 });

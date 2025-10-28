@@ -2,8 +2,7 @@ import { invisRegex } from "./consts";
 import type { IBlacklistedName } from "./types";
 
 export default class AutoKicker {
-    myId: string;
-    lastLeaderboard: any[];
+    lastLeaderboard: any[] | null = null;
 
     kickDuplicateNames = false;
     kickSkinless = false;
@@ -11,18 +10,17 @@ export default class AutoKicker {
     kickBlank = false;
     blacklist: IBlacklistedName[] = [];
     idleDelay = 20000;
-
-    el: HTMLDivElement;
     UIVisible = true;
 
     idleKickTimeouts: Map<string, any> = new Map();
-    unOnAdd: () => void;
     kicked = new Set<string>();
 
     constructor() {
         this.loadSettings();
+    }
 
-        api.onStop(() => this.dispose());
+    get myId() {
+        return api.stores.phaser.mainCharacter.id;
     }
 
     loadSettings() {
@@ -49,10 +47,9 @@ export default class AutoKicker {
 
     start() {
         if(api.net.type === "Colyseus") {
-            this.myId = api.stores.phaser.mainCharacter.id;
             const chars = api.net.room.serializer.state.characters;
 
-            this.unOnAdd = chars.onAdd((e: any) => {
+            api.onStop(chars.onAdd((e: any) => {
                 if(!e || e.id === this.myId) return;
                 if(this.kickIdle) {
                     // set and idle kick timeout
@@ -78,9 +75,10 @@ export default class AutoKicker {
                 }
 
                 this.scanPlayersColyseus();
-            });
+            }));
         } else {
             api.net.on("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
+            api.onStop(() => api.net.off("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg));
         }
     }
 
@@ -265,14 +263,9 @@ export default class AutoKicker {
         if(this.kicked.has(id)) return;
         this.kicked.add(id);
 
-        const playername = this.lastLeaderboard.find((e: any) => e.id === id)?.name;
+        const playername = this.lastLeaderboard?.find((e: any) => e.id === id)?.name;
 
         api.net.send("KICK_PLAYER", id);
-        api.notification.open({ message: `Kicked ${playername} for ${reason}` });
-    }
-
-    dispose() {
-        this.unOnAdd?.();
-        api.net.off("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
+        api.notification.open({ message: `Kicked ${playername ?? "player"} for ${reason}` });
     }
 }

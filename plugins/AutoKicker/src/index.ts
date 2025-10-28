@@ -1,4 +1,3 @@
-// @ts-expect-error
 import AutoKicker from "./autokicker";
 import styles from "./styles.scss";
 import UI from "./ui";
@@ -38,6 +37,7 @@ api.hotkeys.addConfigurableHotkey({
     }
 }, () => {
     if(!ui) return;
+
     uiShown = !uiShown;
     if(uiShown) ui.style.display = "block";
     else ui.style.display = "none";

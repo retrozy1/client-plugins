@@ -2,7 +2,7 @@ import type { BasicData, GamemodeData, SplitsData } from "../types";
 import { getGamemodeData } from "../util";
 
 export abstract class Autosplitter {
-    data: GamemodeData;
+    data!: GamemodeData;
 
     constructor(public id: string) {
         this.loadData();

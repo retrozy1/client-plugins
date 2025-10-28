@@ -108,7 +108,7 @@ var formatCallback = api.rewriter.createShared("formatActivityFeed", (fmtFn) => 
 });
 api.rewriter.addParseHook("App", (code) => {
   const index = code.indexOf(">%SPACE_HERE%");
-  if (index === -1) return;
+  if (index === -1) return code;
   const start = code.lastIndexOf("});const", index);
   const end = code.indexOf("=", start);
   const name = code.substring(start + 9, end);

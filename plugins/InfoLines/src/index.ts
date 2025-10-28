@@ -1,6 +1,5 @@
 import VisualCoordinates from "./lines/visualCoordinates";
 import Settings from "./Settings";
-// @ts-expect-error
 import FPS from "./lines/fps";
 import PhysicsCoordinates from "./lines/physicsCoordinates";
 import Velocity from "./lines/velocity";
@@ -15,7 +14,7 @@ export class InfoLines {
         new PhysicsCoordinates(),
         new FPS()
     ];
-    element: HTMLElement;
+    element?: HTMLElement;
     position: string = api.storage.getValue("position", "top right");
 
     constructor() {

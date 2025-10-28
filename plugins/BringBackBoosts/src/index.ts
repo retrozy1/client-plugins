@@ -13,7 +13,7 @@ const settings = api.lib("QuickSettings")("BringBackBoosts", [
 ]);
 api.openSettingsMenu(settings.openSettingsMenu);
 
-settings.listen("useOriginalPhysics", (value) => {
+settings.listen("useOriginalPhysics", (value: boolean) => {
     if(!GL.platformerPhysics) return;
     if(value) {
         GL.platformerPhysics.movement.air = originalAirMovement;
@@ -39,14 +39,14 @@ api.net.onLoad(() => {
     }
 });
 
-var calcGravity: any;
-const calcGravCb = api.rewriter.createShared("CalculateGravity", (func) => {
+var calcGravity: ((id: string) => number) | null = null;
+const calcGravCb = api.rewriter.createShared("CalculateGravity", (func: (id: string) => number) => {
     calcGravity = func;
 });
 
 api.rewriter.addParseHook("App", (code) => {
     const index = code.indexOf("physics.state.forces.some");
-    if(index === -1) return;
+    if(index === -1) return code;
 
     const start = code.lastIndexOf(",", index) + 1;
     const end = code.indexOf("=", start);
@@ -56,7 +56,7 @@ api.rewriter.addParseHook("App", (code) => {
     return code;
 });
 
-const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (func) => {
+const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (func: Function) => {
     // The code used in this has been taken from minified Gimkit code and therefore is nearly unreadable.
     var n = { default: GL.stores },
         a = { default: { normal: 310 } },
@@ -67,7 +67,8 @@ const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel",
                 skipTilesDebug: !1
             }
         };
-    const h = (A, t) => {
+
+    const h = (A: any, t: any) => {
         let e = 0,
             i = 0;
         const s = null == t ? void 0 : t.angle,
@@ -103,9 +104,9 @@ const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel",
         } else e = l;
         return A.physics.state.grounded && A.physics.state.velocity.y > GL.platformerPhysics.platformerGroundSpeed * C && Math.sign(e) === Math.sign(A.physics.state.velocity.x) && (e = A.physics.state.velocity.x),
             A.physics.state.movement.xVelocity = e,
-            A.physics.state.gravity = calcGravity(A.id),
+            A.physics.state.gravity = calcGravity?.(A.id),
             i += A.physics.state.gravity,
-            A.physics.state.forces.forEach((A, _t) => {
+            A.physics.state.forces.forEach((A: any, _t: any) => {
                 const s = A.ticks[0];
                 s && (e += s.x, i += s.y), A.ticks.shift();
             }),
@@ -115,9 +116,9 @@ const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel",
             };
     };
 
-    return function() {
+    return function(this: any) {
         if(GL.platformerPhysics && calcGravity && GL.plugins.isEnabled("BringBackBoosts")) {
-            return h(...arguments);
+            return h(arguments[0], arguments[1]);
         } else {
             return func.apply(this, arguments);
         }
@@ -126,7 +127,7 @@ const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel",
 
 api.rewriter.addParseHook("App", (code) => {
     const index = code.indexOf("g.physics.state.jump.xVelocityAtJumpStart),");
-    if(index === -1) return;
+    if(index === -1) return code;
 
     const start = code.lastIndexOf("(", code.lastIndexOf("=>", index));
     const end = code.indexOf("}}", code.indexOf("y:", index)) + 2;

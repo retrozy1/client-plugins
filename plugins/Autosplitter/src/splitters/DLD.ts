@@ -8,8 +8,8 @@ import { SplitsAutosplitter } from "./autosplitter";
 
 export default class DLDAutosplitter extends SplitsAutosplitter {
     declare data: DLDData;
-    ui: DLDSummitUI | DLDFullGameUI;
-    timer: BasicTimer | SplitsTimer;
+    ui!: DLDSummitUI | DLDFullGameUI;
+    timer!: BasicTimer | SplitsTimer;
 
     category: string = "Current Patch";
 

@@ -8,7 +8,7 @@ api.net.onLoad(() => {
     const red = 0xff0000;
     const gray = 0x555555;
 
-    const addHealthbar = (character) => {
+    const addHealthbar = (character: Gimloader.Stores.Character) => {
         const bg = scene.add.rectangle(0, 0, width, 10, gray);
         const health = scene.add.rectangle(0, 0, width, 10, red);
         const shield = scene.add.rectangle(0, 0, width, 10, blue);

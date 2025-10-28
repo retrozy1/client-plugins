@@ -51,6 +51,6 @@ api.net.on("DEVICES_STATES_CHANGES", (event) => {
 });
 api.net.onLoad(() => {
   GL.notification.open({ message: "IdleForXp is active" });
-  setInterval(answerQuestion, 3e4);
-  api.onStop(() => clearInterval(answerQuestion));
+  const answerInterval = setInterval(answerQuestion, 3e4);
+  api.onStop(() => clearInterval(answerInterval));
 });

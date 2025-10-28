@@ -1,5 +1,4 @@
 import type { EasyAccessWritable, IFrame } from "./types";
-// @ts-expect-error
 import AnglePicker from "./ui/AnglePicker.svelte";
 
 export const blankFrame: IFrame = {
@@ -17,7 +16,6 @@ export function between(number: number, bound1: number, bound2: number) {
 export function showAnglePicker(initial: number) {
     return new Promise<number>((res) => {
         const div = document.createElement("div");
-        // @ts-expect-error
         const anglePicker = new AnglePicker({
             target: div,
             props: {
@@ -29,7 +27,6 @@ export function showAnglePicker(initial: number) {
             title: "Pick an angle",
             closeOnBackgroundClick: false,
             onClosed() {
-                // @ts-expect-error
                 anglePicker.$destroy();
             },
             buttons: [{
@@ -76,7 +73,7 @@ export function easyAccessWritable<T = any>(initial: T) {
     return returnObj;
 }
 
-export const defaultState = {
+export const defaultState: Record<string, any> = {
     gravity: 0,
     velocity: {
         x: 0,
@@ -106,7 +103,7 @@ export function getFrameState(state: any) {
 }
 
 export function makeFrameState() {
-    const state = api.stores.phaser.mainCharacter.physics.state;
+    const state = api.stores.phaser.mainCharacter.physics.state as Record<string, any>;
     const returnObj: any = {};
 
     for(const key in state) {
@@ -126,7 +123,7 @@ export function updateDeviceState(device: any, key: string, value: any) {
         states.set(deviceId, { deviceId, properties: new Map() });
     }
 
-    states.get(deviceId).properties.set(key, value);
+    states.get(deviceId)?.properties.set(key, value);
     device.onStateUpdateFromServer(key, value);
 }
 

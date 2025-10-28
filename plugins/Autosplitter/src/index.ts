@@ -1,12 +1,11 @@
-import Settings from "./settings/Settings.svelte";
 import type { Autosplitter } from "./splitters/autosplitter";
+import Settings from "./settings/Settings.svelte";
 import DLDAutosplitter from "./splitters/DLD";
 import FishtopiaAutosplitter from "./splitters/fishtopia";
 import OneWayOutAutosplitter from "./splitters/OneWayOut";
 import styles from "./styles.scss";
 
 api.UI.addStyles(styles);
-
 let autosplitter: Autosplitter;
 
 api.net.onLoad((_, gamemode) => {
@@ -21,7 +20,6 @@ api.net.onLoad((_, gamemode) => {
 
 api.openSettingsMenu(() => {
     const div = document.createElement("div");
-    // @ts-expect-error
     const settings = new Settings({
         target: div
     });

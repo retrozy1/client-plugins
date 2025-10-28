@@ -11,7 +11,8 @@
         "forOfStatement.spaceAfterForKeyword": false,
         "forStatement.spaceAfterForKeyword": false,
         "whileStatement.spaceAfterWhileKeyword": false,
-        "importDeclaration.sortTypeOnlyImports": "first",
+        "module.sortImportDeclarations": "maintain",
+        "importDeclaration.sortTypeOnlyImports": "last",
         "jsx.bracketPosition": "maintain"
     },
     "json": {},

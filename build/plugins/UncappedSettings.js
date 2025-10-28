@@ -35,7 +35,7 @@ var wrapRequester = api.rewriter.createShared("WrapRequester", (requester) => {
 });
 api.rewriter.addParseHook(true, (code) => {
   const index = code.indexOf("JSON.stringify({url");
-  if (index === -1) return;
+  if (index === -1) return code;
   const start = code.indexOf("=", code.lastIndexOf(",", index)) + 1;
   const end = code.indexOf("})}})}", index) + 6;
   const func = code.slice(start, end);

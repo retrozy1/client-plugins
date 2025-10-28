@@ -1,4 +1,4 @@
-let startMessage = null;
+let startMessage: any = null;
 let ignoreNextStart = false;
 
 api.net.on("send:START_GAME", (message) => {
@@ -17,15 +17,15 @@ api.hotkeys.addConfigurableHotkey({
 }, () => {
     if(api.net.type !== "Colyseus" || !GL.net.isHost) return;
 
-    api.net.send("END_GAME");
-    api.net.send("RESTORE_MAP_EARLIER");
+    api.net.send("END_GAME", undefined);
+    api.net.send("RESTORE_MAP_EARLIER", undefined);
 
     ignoreNextStart = true;
     const interval = setInterval(() => {
         api.net.send("START_GAME", startMessage);
     }, 100);
 
-    const unsub = api.net.room.state.session.gameSession.listen("phase", (phase) => {
+    const unsub = api.net.room.state.session.gameSession.listen("phase", (phase: string) => {
         if(phase === "countdown") {
             ignoreNextStart = false;
             clearInterval(interval);
@@ -45,6 +45,6 @@ api.hotkeys.addConfigurableHotkey({
 }, () => {
     if(api.net.type !== "Colyseus" || !GL.net.isHost) return;
 
-    api.net.send("END_GAME");
-    api.net.send("RESTORE_MAP_EARLIER");
+    api.net.send("END_GAME", undefined);
+    api.net.send("RESTORE_MAP_EARLIER", undefined);
 });

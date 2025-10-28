@@ -1,6 +1,4 @@
-// @ts-expect-error
 import atlas from "../assets/gim_atlas.txt";
-// @ts-expect-error
 import json from "../assets/gim_json.txt";
 
 export default class CosmeticChanger {

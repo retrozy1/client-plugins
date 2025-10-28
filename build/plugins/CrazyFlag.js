@@ -28,7 +28,7 @@ var settings = api.lib("QuickSettings")("CrazyFlag", [
   }
 ]);
 api.openSettingsMenu(settings.openSettingsMenu);
-var flagConsts;
+var flagConsts = null;
 function applySettings() {
   if (!flagConsts) return;
   flagConsts.FlagSwingInterval = 1 / settings.swingSpeed;
@@ -41,12 +41,13 @@ var constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
   flagConsts = consts;
   applySettings();
   api.onStop(() => {
+    if (!flagConsts) return;
     Object.assign(flagConsts, defaults);
   });
 });
 api.rewriter.addParseHook("FlagDevice", (code) => {
   const index = code.indexOf("FlagOriginX:");
-  if (index === -1) return;
+  if (index === -1) return code;
   const end = code.lastIndexOf("=", index);
   const start = code.lastIndexOf(",", end);
   const name = code.slice(start + 1, end);

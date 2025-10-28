@@ -1,5 +1,5 @@
-import Settings from "./Settings.svelte";
 import type { QSElement, QuickSettingsReturn } from "./types";
+import Settings from "./Settings.svelte";
 
 export default function QuickSettings(name: string, els: QSElement[]): QuickSettingsReturn {
     if(!Array.isArray(els)) throw new Error("Elements isn't an array");
@@ -22,8 +22,6 @@ export default function QuickSettings(name: string, els: QSElement[]): QuickSett
 
     settings.openSettingsMenu = () => {
         const div = document.createElement("div");
-
-        // @ts-expect-error
         const component = new Settings({
             target: div,
             props: {
@@ -35,7 +33,6 @@ export default function QuickSettings(name: string, els: QSElement[]): QuickSett
 
         api.UI.showModal(div, {
             buttons: [{ text: "Close", style: "primary" }],
-            // @ts-expect-error
             onClosed: () => component.$destroy()
         });
     };

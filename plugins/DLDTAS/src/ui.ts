@@ -222,7 +222,7 @@ export function createUI() {
 
     let dragging = false;
     let draggingChecked = false;
-    const props = ["left", "right", "up"];
+    const props: ("left" | "right" | "up")[] = ["left", "right", "up"];
 
     window.addEventListener("mouseup", () => dragging = false);
 

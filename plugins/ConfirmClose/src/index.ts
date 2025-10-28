@@ -1,5 +1,5 @@
 api.net.onLoad(() => {
-    const beforeUnload = (e) => {
+    const beforeUnload = (e: BeforeUnloadEvent) => {
         e.preventDefault();
     };
 

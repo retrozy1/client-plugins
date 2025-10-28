@@ -18,6 +18,7 @@
     "scripts": {
         "check": "biome lint && dprint check && tsc",
         "format": "dprint fmt",
+        "lint": "biome lint",
         "build": "gimloader build",
         "serve": "gimloader serve"
     },

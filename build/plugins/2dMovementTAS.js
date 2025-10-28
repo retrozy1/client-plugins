@@ -1051,7 +1051,7 @@ function updateDeviceState(device, key, value) {
   if (!states.has(deviceId)) {
     states.set(deviceId, { deviceId, properties: /* @__PURE__ */ new Map() });
   }
-  states.get(deviceId).properties.set(key, value);
+  states.get(deviceId)?.properties.set(key, value);
   device.onStateUpdateFromServer(key, value);
 }
 function downloadFile(contents, name) {
@@ -1154,10 +1154,11 @@ var TASTools = class {
         `${amount}/${this.tagMaxEnergy} <item-image item="energy" />`
       );
     }
-    GL.stores.me.inventory.slots.get("energy").amount = amount;
+    const energySlot = GL.stores.me.inventory.slots.get("energy");
+    if (energySlot) energySlot.amount = amount;
   }
   getEnergy() {
-    return GL.stores.me.inventory.slots.get("energy").amount ?? 0;
+    return GL.stores.me.inventory.slots.get("energy")?.amount ?? 0;
   }
   goBackToFrame(number) {
     for (let i = currentFrame.value - 1; i >= number; i--) {
@@ -1319,7 +1320,7 @@ var TASTools = class {
   updateUI() {
     const frame = this.frames[currentFrame.value];
     if (frame.answer) {
-      GL.stores.phaser.scene.worldManager.devices.allDevices.find((d) => d.options?.openWhenReceivingOn === "answer questions").openDeviceUI();
+      GL.stores.phaser.scene.worldManager.devices.allDevices.find((d) => d.options?.openWhenReceivingOn === "answer questions")?.openDeviceUI();
     } else {
       GL.stores.me.currentAction = "none";
     }

@@ -82,22 +82,21 @@ var invisRegex = new RegExp(`[${characters.join("")}\\s]`, "g");
 
 // plugins/AutoKicker/src/autokicker.ts
 var AutoKicker = class {
-  myId;
-  lastLeaderboard;
+  lastLeaderboard = null;
   kickDuplicateNames = false;
   kickSkinless = false;
   kickIdle = false;
   kickBlank = false;
   blacklist = [];
   idleDelay = 2e4;
-  el;
   UIVisible = true;
   idleKickTimeouts = /* @__PURE__ */ new Map();
-  unOnAdd;
   kicked = /* @__PURE__ */ new Set();
   constructor() {
     this.loadSettings();
-    api.onStop(() => this.dispose());
+  }
+  get myId() {
+    return api.stores.phaser.mainCharacter.id;
   }
   loadSettings() {
     const settings = api.storage.getValue("Settings", {});
@@ -120,9 +119,8 @@ var AutoKicker = class {
   }
   start() {
     if (api.net.type === "Colyseus") {
-      this.myId = api.stores.phaser.mainCharacter.id;
       const chars = api.net.room.serializer.state.characters;
-      this.unOnAdd = chars.onAdd((e) => {
+      api.onStop(chars.onAdd((e) => {
         if (!e || e.id === this.myId) return;
         if (this.kickIdle) {
           const timeout = setTimeout(() => {
@@ -141,9 +139,10 @@ var AutoKicker = class {
           });
         }
         this.scanPlayersColyseus();
-      });
+      }));
     } else {
       api.net.on("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
+      api.onStop(() => api.net.off("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg));
     }
   }
   boundBlueboatMsg = this.onBlueboatMsg.bind(this);
@@ -284,13 +283,9 @@ var AutoKicker = class {
   blueboatKick(id, reason) {
     if (this.kicked.has(id)) return;
     this.kicked.add(id);
-    const playername = this.lastLeaderboard.find((e) => e.id === id)?.name;
+    const playername = this.lastLeaderboard?.find((e) => e.id === id)?.name;
     api.net.send("KICK_PLAYER", id);
-    api.notification.open({ message: `Kicked ${playername} for ${reason}` });
-  }
-  dispose() {
-    this.unOnAdd?.();
-    api.net.off("UPDATED_PLAYER_LEADERBOARD", this.boundBlueboatMsg);
+    api.notification.open({ message: `Kicked ${playername ?? "player"} for ${reason}` });
   }
 };
 

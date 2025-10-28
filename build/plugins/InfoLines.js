@@ -26,9 +26,7 @@ api.net.onLoad(() => {
   });
 });
 var BaseLine = class {
-  name;
-  enabled;
-  enabledDefault;
+  enabled = false;
   settings;
   subscribedCallbacks = [];
   constructor() {

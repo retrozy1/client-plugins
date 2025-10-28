@@ -109,6 +109,7 @@ function initOverlay() {
   for (const prop of props) {
     for (const collider of prop.colliders.list) {
       let { x, y, h, w, angle, r1, r2 } = collider.options;
+      if (!x || !y) continue;
       x += prop.x;
       y += prop.y;
       if (r1 && r2) {
@@ -239,9 +240,9 @@ function updateLasers(frame) {
       propsMap.set("GLOBAL_active", active);
       states.set(laser.id, { deviceId: laser.id, properties: propsMap });
     } else {
-      states.get(laser.id).properties.set("GLOBAL_active", active);
+      states.get(laser.id)?.properties.set("GLOBAL_active", active);
     }
-    devices.getDeviceById(laser.id).onStateUpdateFromServer("GLOBAL_active", active);
+    devices.getDeviceById(laser.id)?.onStateUpdateFromServer("GLOBAL_active", active);
   }
 }
 

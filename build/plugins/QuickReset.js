@@ -25,8 +25,8 @@ api.hotkeys.addConfigurableHotkey({
   }
 }, () => {
   if (api.net.type !== "Colyseus" || !GL.net.isHost) return;
-  api.net.send("END_GAME");
-  api.net.send("RESTORE_MAP_EARLIER");
+  api.net.send("END_GAME", void 0);
+  api.net.send("RESTORE_MAP_EARLIER", void 0);
   ignoreNextStart = true;
   const interval = setInterval(() => {
     api.net.send("START_GAME", startMessage);
@@ -49,6 +49,6 @@ api.hotkeys.addConfigurableHotkey({
   }
 }, () => {
   if (api.net.type !== "Colyseus" || !GL.net.isHost) return;
-  api.net.send("END_GAME");
-  api.net.send("RESTORE_MAP_EARLIER");
+  api.net.send("END_GAME", void 0);
+  api.net.send("RESTORE_MAP_EARLIER", void 0);
 });

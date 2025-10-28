@@ -1,5 +1,11 @@
-let questions = [];
+let questions: any[] = [];
 let answerDeviceId: string, currentQuestionId: string;
+
+interface Packet {
+    key: string;
+    deviceId: string;
+    data: any;
+}
 
 function answerQuestion() {
     if(!currentQuestionId) return;
@@ -7,7 +13,7 @@ function answerQuestion() {
     const question = questions.find(q => q._id === currentQuestionId);
     if(!question) return;
 
-    const packet = {
+    const packet: Packet = {
         key: "answered",
         deviceId: answerDeviceId,
         data: {}
@@ -16,7 +22,7 @@ function answerQuestion() {
     if(question.type === "text") {
         packet.data.answer = question.answers[0].text;
     } else {
-        const correctAnswerId = question.answers.find((a) => a.correct)._id;
+        const correctAnswerId = question.answers.find((a: any) => a.correct)._id;
         packet.data.answer = correctAnswerId;
     }
 
@@ -48,7 +54,7 @@ api.net.on("DEVICES_STATES_CHANGES", (event) => {
 
 api.net.onLoad(() => {
     GL.notification.open({ message: "IdleForXp is active" });
-    setInterval(answerQuestion, 30000);
+    const answerInterval = setInterval(answerQuestion, 30000);
 
-    api.onStop(() => clearInterval(answerQuestion));
+    api.onStop(() => clearInterval(answerInterval));
 });

@@ -2337,7 +2337,6 @@ function QuickSettings(name, els) {
     });
     api.UI.showModal(div, {
       buttons: [{ text: "Close", style: "primary" }],
-      // @ts-expect-error
       onClosed: () => component.$destroy()
     });
   };

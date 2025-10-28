@@ -90,11 +90,13 @@ export default class TASTools {
                 `${amount}/${this.tagMaxEnergy} <item-image item="energy" />`
             );
         }
-        GL.stores.me.inventory.slots.get("energy").amount = amount;
+
+        const energySlot = GL.stores.me.inventory.slots.get("energy");
+        if(energySlot) energySlot.amount = amount;
     }
 
     getEnergy(): number {
-        return GL.stores.me.inventory.slots.get("energy").amount ?? 0;
+        return GL.stores.me.inventory.slots.get("energy")?.amount ?? 0;
     }
 
     goBackToFrame(number: number) {
@@ -295,7 +297,7 @@ export default class TASTools {
         // open the device
         if(frame.answer) {
             GL.stores.phaser.scene.worldManager.devices.allDevices
-                .find((d: any) => d.options?.openWhenReceivingOn === "answer questions").openDeviceUI();
+                .find((d: any) => d.options?.openWhenReceivingOn === "answer questions")?.openDeviceUI();
         } else {
             // close the device
             GL.stores.me.currentAction = "none";

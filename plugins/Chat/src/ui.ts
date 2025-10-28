@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { maxLength } from "./consts";
 import styles from "./styles.css";
 
@@ -28,7 +27,7 @@ const formatCallback = api.rewriter.createShared("formatActivityFeed", (fmtFn: F
 
 api.rewriter.addParseHook("App", (code) => {
     const index = code.indexOf(">%SPACE_HERE%");
-    if(index === -1) return;
+    if(index === -1) return code;
 
     const start = code.lastIndexOf("});const", index);
     const end = code.indexOf("=", start);

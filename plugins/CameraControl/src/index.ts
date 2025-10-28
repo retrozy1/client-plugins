@@ -51,8 +51,8 @@ for(const key of stopKeys) {
     });
 }
 
-let updateFreecam = null;
-const updateScroll = (dt) => {
+let updateFreecam: ((dt: number) => void) | null = null;
+const updateScroll = (dt: number) => {
     const camera = api.stores?.phaser?.scene?.cameras?.cameras?.[0];
     if(!camera) return;
 
@@ -88,7 +88,8 @@ const getCanvasZoom = () => {
 };
 
 let isPointerDown = false;
-const setPointerDown = (e) => {
+const setPointerDown = (e: MouseEvent) => {
+    if(!(e.target instanceof HTMLElement)) return;
     if(e.target.nodeName !== "CANVAS") return;
     isPointerDown = true;
 };
@@ -97,7 +98,7 @@ window.addEventListener("pointerdown", setPointerDown);
 window.addEventListener("pointerup", setPointerUp);
 
 let lastX: number, lastY: number;
-function onPointermove(e) {
+function onPointermove(e: PointerEvent) {
     const canvasZoom = getCanvasZoom();
 
     if(isPointerDown && lastX && lastY) {
@@ -109,7 +110,8 @@ function onPointermove(e) {
     lastY = e.clientY / canvasZoom;
 }
 
-function onWheel(e) {
+function onWheel(e: WheelEvent) {
+    if(!(e.target instanceof HTMLElement)) return;
     if(e.target.nodeName !== "CANVAS") return;
 
     if(!freecamming || !settings.mouseControls) {
@@ -216,7 +218,7 @@ const commandLine = api.lib("CommandLine");
 if(commandLine) {
     commandLine.addCommand("setzoom", [
         { "amount": "number" }
-    ], (zoom) => {
+    ], (zoom: string) => {
         const scene = api.stores?.phaser?.scene;
         const camera = scene?.cameras?.cameras?.[0];
         if(!scene || !camera) return;
@@ -247,7 +249,7 @@ const onDown = () => {
 api.hotkeys.addConfigurableHotkey({
     category: "Camera Control",
     title: "Quick Zoom Toggle",
-    stopPropagation: false
+    preventDefault: false
 }, onDown);
 
 api.onStop(() => {

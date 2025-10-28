@@ -40,9 +40,9 @@ function updateLasers(frame) {
       propsMap.set("GLOBAL_active", active);
       states.set(laser.id, { deviceId: laser.id, properties: propsMap });
     } else {
-      states.get(laser.id).properties.set("GLOBAL_active", active);
+      states.get(laser.id)?.properties.set("GLOBAL_active", active);
     }
-    devices.getDeviceById(laser.id).onStateUpdateFromServer("GLOBAL_active", active);
+    devices.getDeviceById(laser.id)?.onStateUpdateFromServer("GLOBAL_active", active);
   }
 }
 

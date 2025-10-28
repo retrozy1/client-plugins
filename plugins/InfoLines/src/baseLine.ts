@@ -30,9 +30,9 @@ export interface Setting {
 export type Settings = Record<string, Setting>;
 
 export default abstract class BaseLine {
-    name: string;
-    enabled: boolean;
-    enabledDefault: boolean;
+    abstract name: string;
+    abstract enabledDefault: boolean;
+    enabled = false;
     settings?: Settings;
 
     subscribedCallbacks: ((value: string) => void)[] = [];

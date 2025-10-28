@@ -5,9 +5,10 @@ const DLDUtils = api.lib("DLDUtils");
 const defaultState =
     '{"gravity":0.001,"velocity":{"x":0,"y":0},"movement":{"direction":"none","xVelocity":0,"accelerationTicks":0},"jump":{"isJumping":false,"jumpsLeft":2,"jumpCounter":0,"jumpTicks":118,"xVelocityAtJumpStart":0},"forces":[],"grounded":true,"groundedTicks":0,"lastGroundedAngle":0}';
 
-let stateLoadCallbacks = [];
+type StateLoadCallback = (summit: number | "custom") => void;
+let stateLoadCallbacks: StateLoadCallback[] = [];
 
-const tp = (summit) => {
+const tp = (summit: number) => {
     if(!gameLoaded) return;
     const physics = api.stores.phaser.mainCharacter.physics;
     const rb = physics.getBody().rigidBody;
@@ -22,7 +23,6 @@ const tp = (summit) => {
 
 let lastPos = api.storage.getValue("lastPos", null);
 let lastState = api.storage.getValue("lastState", null);
-
 let gameLoaded = false;
 
 const saveState = () => {
@@ -64,7 +64,7 @@ api.net.onLoad(() => {
     if(commandLine) {
         commandLine.addCommand("summit", [
             { "number": ["0", "1", "2", "3", "4", "5", "6"] }
-        ], (summit) => {
+        ], (summit: string) => {
             tp(parseInt(summit, 10));
         });
 
@@ -112,10 +112,10 @@ for(let i = 0; i <= 6; i++) {
     }, () => tp(i));
 }
 
-export function onStateLoaded(callback) {
+export function onStateLoaded(callback: StateLoadCallback) {
     stateLoadCallbacks.push(callback);
 }
 
-export function offStateLoaded(callback) {
+export function offStateLoaded(callback: StateLoadCallback) {
     stateLoadCallbacks = stateLoadCallbacks.filter(cb => cb !== callback);
 }

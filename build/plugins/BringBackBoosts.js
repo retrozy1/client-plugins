@@ -49,13 +49,13 @@ api.net.onLoad(() => {
     GL.platformerPhysics.movement.air = originalAirMovement;
   }
 });
-var calcGravity;
+var calcGravity = null;
 var calcGravCb = api.rewriter.createShared("CalculateGravity", (func) => {
   calcGravity = func;
 });
 api.rewriter.addParseHook("App", (code) => {
   const index = code.indexOf("physics.state.forces.some");
-  if (index === -1) return;
+  if (index === -1) return code;
   const start = code.lastIndexOf(",", index) + 1;
   const end = code.indexOf("=", start);
   const name = code.slice(start, end);
@@ -88,7 +88,7 @@ var wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (
       const s2 = 20 / I.PhysicsConstants.tickRate;
       t2 *= A.physics.state.movement.accelerationTicks * s2, i2 && (t2 = Math.min(i2, t2)), e = l > A.physics.state.movement.xVelocity ? Phaser.Math.Clamp(A.physics.state.movement.xVelocity + t2, A.physics.state.movement.xVelocity, l) : Phaser.Math.Clamp(A.physics.state.movement.xVelocity - t2, l, A.physics.state.movement.xVelocity);
     } else e = l;
-    return A.physics.state.grounded && A.physics.state.velocity.y > GL.platformerPhysics.platformerGroundSpeed * C && Math.sign(e) === Math.sign(A.physics.state.velocity.x) && (e = A.physics.state.velocity.x), A.physics.state.movement.xVelocity = e, A.physics.state.gravity = calcGravity(A.id), i += A.physics.state.gravity, A.physics.state.forces.forEach((A2, _t) => {
+    return A.physics.state.grounded && A.physics.state.velocity.y > GL.platformerPhysics.platformerGroundSpeed * C && Math.sign(e) === Math.sign(A.physics.state.velocity.x) && (e = A.physics.state.velocity.x), A.physics.state.movement.xVelocity = e, A.physics.state.gravity = calcGravity?.(A.id), i += A.physics.state.gravity, A.physics.state.forces.forEach((A2, _t) => {
       const s2 = A2.ticks[0];
       s2 && (e += s2.x, i += s2.y), A2.ticks.shift();
     }), {
@@ -98,7 +98,7 @@ var wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (
   };
   return function() {
     if (GL.platformerPhysics && calcGravity && GL.plugins.isEnabled("BringBackBoosts")) {
-      return h(...arguments);
+      return h(arguments[0], arguments[1]);
     } else {
       return func.apply(this, arguments);
     }
@@ -106,7 +106,7 @@ var wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (
 });
 api.rewriter.addParseHook("App", (code) => {
   const index = code.indexOf("g.physics.state.jump.xVelocityAtJumpStart),");
-  if (index === -1) return;
+  if (index === -1) return code;
   const start = code.lastIndexOf("(", code.lastIndexOf("=>", index));
   const end = code.indexOf("}}", code.indexOf("y:", index)) + 2;
   const func = code.slice(start, end);

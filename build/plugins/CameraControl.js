@@ -91,6 +91,7 @@ var getCanvasZoom = () => {
 };
 var isPointerDown = false;
 var setPointerDown = (e) => {
+  if (!(e.target instanceof HTMLElement)) return;
   if (e.target.nodeName !== "CANVAS") return;
   isPointerDown = true;
 };
@@ -109,6 +110,7 @@ function onPointermove(e) {
   lastY = e.clientY / canvasZoom;
 }
 function onWheel(e) {
+  if (!(e.target instanceof HTMLElement)) return;
   if (e.target.nodeName !== "CANVAS") return;
   if (!freecamming || !settings.mouseControls) {
     if (settings.shiftToZoom && !api.hotkeys.pressed.has("ShiftLeft")) return;
@@ -212,7 +214,7 @@ var onDown = () => {
 api.hotkeys.addConfigurableHotkey({
   category: "Camera Control",
   title: "Quick Zoom Toggle",
-  stopPropagation: false
+  preventDefault: false
 }, onDown);
 api.onStop(() => {
   if (commandLine) {

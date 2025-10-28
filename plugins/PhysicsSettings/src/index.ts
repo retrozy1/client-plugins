@@ -44,7 +44,7 @@ api.net.onLoad(() => {
 
 api.openSettingsMenu(settings.openSettingsMenu);
 
-const updateMapOption = (key, value) => {
+const updateMapOption = (key: string, value: any) => {
     const options = JSON.parse(api.stores.world.mapOptionsJSON);
     options[key] = value;
     api.stores.world.mapOptionsJSON = JSON.stringify(options);
@@ -67,9 +67,9 @@ api.net.onLoad(() => {
     GL.plugin("DLDTAS")?.setMoveSpeed(settings.speed);
     api.stores.me.movementSpeed = settings.speed;
 
-    settings.listen("jumps", (jumps) => updateMapOption("maxJumps", jumps));
-    settings.listen("jumpheight", (height) => updateMapOption("jumpHeight", height));
-    settings.listen("speed", (speed) => {
+    settings.listen("jumps", (jumps: number) => updateMapOption("maxJumps", jumps));
+    settings.listen("jumpheight", (height: number) => updateMapOption("jumpHeight", height));
+    settings.listen("speed", (speed: number) => {
         GL.plugin("DLDTAS")?.setMoveSpeed(settings.speed);
         api.stores.me.movementSpeed = speed;
     });
