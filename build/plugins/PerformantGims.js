@@ -7,6 +7,7 @@
  * @webpage https://gimloader.github.io/plugins/performantgims
  * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
  * @hasSettings true
+ * @reloadRequired ingame
  */
 
 // plugins/PerformantGims/src/index.ts
