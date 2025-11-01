@@ -30,11 +30,12 @@ export default {
         "DLDTAS": "./plugins/DLDTAS",
         "InfoLines": "./plugins/InfoLines",
         "InputRecorder": "./plugins/InputRecorder",
+        "GamemodeLinks": "./plugins/GamemodeLinks",
         "Desync": "./libraries/Desync",
         "DLDUtils": "./libraries/DLDUtils",
         "GamemodeDetector": "./libraries/GamemodeDetector",
         "MobxUtils": "./libraries/MobxUtils",
-        "QuickSettings": "./libraries/QuickSettings"
+        "QuickSettings": "./libraries/QuickSettings",
     },
     plugins: [
         sassPlugin({ type: "css-text" }),
