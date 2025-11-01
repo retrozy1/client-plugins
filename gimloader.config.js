@@ -35,7 +35,7 @@ export default {
         "DLDUtils": "./libraries/DLDUtils",
         "GamemodeDetector": "./libraries/GamemodeDetector",
         "MobxUtils": "./libraries/MobxUtils",
-        "QuickSettings": "./libraries/QuickSettings",
+        "QuickSettings": "./libraries/QuickSettings"
     },
     plugins: [
         sassPlugin({ type: "css-text" }),
