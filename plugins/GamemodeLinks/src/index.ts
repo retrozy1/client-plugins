@@ -80,13 +80,20 @@ if(root === "gamemode") {
     api.rewriter.addParseHook("App", code => {
         // Updates the hooks
         if(code.includes("We're showing this hook for testing purposes")) {
-            const stateVarName = code.split("state:")[1].split(",")[0];
+            const stateStart = code.indexOf("state:") + 6;
+            const stateEnd = code.indexOf(",", stateStart);
+            const stateVarName = code.slice(stateStart, stateEnd).trim();
 
             return code.replace(".readOnly]);", `.readOnly]);${setHooksWrapper}?.(${stateVarName});`);
             // Updates the map id/name, and cleans up when clicking off the popup
         } else if(code.includes("The more reliable, the easier it is for crewmates to win")) {
-            const gameVarName = code.split(".name,description:")[1].split(".tagline")[0];
-            const closePopupVarName = code.split('(["Escape"],()=>{')[1].split("()});const")[0];
+            const nameStart = code.indexOf(".name,description:") + 17;
+            const nameEnd = code.indexOf(".tagline", nameStart);
+            const gameVarName = code.slice(nameStart, nameEnd).trim();
+
+            const closeStart = code.indexOf('(["Escape"],()=>{') + 18;
+            const closeEnd = code.indexOf("()});const", closeStart);
+            const closePopupVarName = code.slice(closeStart, closeEnd).trim();
 
             code = code.replace(`(!0),${closePopupVarName}=()=>{`, `(!0),${closePopupVarName}=()=>{${closePopupWrapper}?.();`);
 
