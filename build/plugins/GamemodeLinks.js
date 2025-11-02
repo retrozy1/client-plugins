@@ -149,14 +149,21 @@ if (root === "gamemode") {
       const stateVarName = code.slice(stateStart, stateEnd).trim();
       return code.replace(".readOnly]);", `.readOnly]);${setHooksWrapper}?.(${stateVarName});`);
     } else if (code.includes("The more reliable, the easier it is for crewmates to win")) {
-      const nameStart = code.indexOf(".name,description:") + 17;
+      const nameStart = code.indexOf(".name,description:") + 18;
       const nameEnd = code.indexOf(".tagline", nameStart);
       const gameVarName = code.slice(nameStart, nameEnd).trim();
-      const closeStart = code.indexOf('(["Escape"],()=>{') + 18;
+      const closeStart = code.indexOf('(["Escape"],()=>{') + 17;
       const closeEnd = code.indexOf("()});const", closeStart);
       const closePopupVarName = code.slice(closeStart, closeEnd).trim();
       code = code.replace(`(!0),${closePopupVarName}=()=>{`, `(!0),${closePopupVarName}=()=>{${closePopupWrapper}?.();`);
-      return code.replace('"EXPERIENCE_HOOKS"})', `"EXPERIENCE_HOOKS"});${setMapDataWrapper}?.(${gameVarName}?._id, ${gameVarName}?.name);`);
+      code = code.replace(
+        /`\$\{([a-zA-Z_$][\w$]*)\(\)\}\/host\?id=\$\{([a-zA-Z_$][\w$]*)\}`;/,
+        `\`\${$1()}/host?id=\${$2}\`;${closePopupWrapper}?.();`
+      );
+      return code.replace(
+        '"EXPERIENCE_HOOKS"})',
+        `"EXPERIENCE_HOOKS"});${setMapDataWrapper}?.(${gameVarName}?._id, ${gameVarName}?.name);`
+      );
     }
     return code;
   });
