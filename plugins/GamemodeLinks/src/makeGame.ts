@@ -92,7 +92,7 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
         body: JSON.stringify(body)
     });
 
-    if(creationRes.status === 500) throw new Error("This map doesn't exits, or you had invalid search parameters");
+    if(creationRes.status === 500) throw new Error("This map doesn't exist, or you had invalid search parameters");
 
     return await creationRes.text();
 }
