@@ -83,15 +83,14 @@ async function makeGame(id2, entries) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-  if (creationRes.status === 500) throw new Error("This map doesn't exits, or you had invalid search parameters");
+  if (creationRes.status === 500) throw new Error("This map doesn't exist, or you had invalid search parameters");
   return await creationRes.text();
 }
 
 // plugins/GamemodeLinks/src/index.ts
-var url = new URL(window.location.href);
-var [_, root, id] = url.pathname.split("/");
+var [root, id] = location.pathname.split("/").slice(1);
 if (root === "gamemode") {
-  const gameRes = makeGame(id, url.searchParams.entries());
+  const gameRes = makeGame(id, new URLSearchParams(location.search).entries());
   gameRes.then((gameId) => {
     const tab = window.open("");
     tab.location.href = `https://www.gimkit.com/host?id=${gameId}`;
@@ -100,8 +99,8 @@ if (root === "gamemode") {
   gameRes.catch((error) => alert(error.message));
 } else {
   let cleanup = function() {
-    setLink("/kits");
-    document.title = "Kits | Gimkit";
+    setLink(pathname);
+    document.title = title;
   };
   cleanup2 = cleanup;
   fetch("/api/games/summary/me").then((res) => res.json()).then(({ games }) => {
@@ -118,13 +117,11 @@ if (root === "gamemode") {
       default: initialSelectedKitId
     };
     const settings = api.lib("QuickSettings")("GamemodeLinks", [obj]);
-    settings.listen(
-      "kit",
-      (kitTitle) => api.storage.setValue("selectedKitId", games.find((g) => g.title === kitTitle)._id)
-    );
+    settings.listen("kit", (kitTitle) => api.storage.setValue("selectedKitId", games.find((g) => g.title === kitTitle)._id));
     api.openSettingsMenu(settings.openSettingsMenu);
   }, console.error);
   const setLink = (path) => history.pushState({}, "", path);
+  const { pathname } = location, { title } = document;
   const setHooksWrapper = api.rewriter.createShared("SetHooksWrapper", (hooks) => {
     hooks = { ...hooks };
     const kitKey = Object.keys(hooks).find((hook) => hook.toLowerCase().includes("kit"));
@@ -147,24 +144,24 @@ if (root === "gamemode") {
   const closePopupWrapper = api.rewriter.createShared("ClosePopupWrapper", cleanup);
   api.rewriter.addParseHook("App", (code) => {
     if (code.includes("We're showing this hook for testing purposes")) {
-      const stateVarName = code.split("state:")[1].split(",")[0];
+      const stateStart = code.indexOf("state:") + 6;
+      const stateEnd = code.indexOf(",", stateStart);
+      const stateVarName = code.slice(stateStart, stateEnd).trim();
       return code.replace(".readOnly]);", `.readOnly]);${setHooksWrapper}?.(${stateVarName});`);
     } else if (code.includes("The more reliable, the easier it is for crewmates to win")) {
-      const gameVarName = code.split(".name,description:")[1].split(".tagline")[0];
-      const closePopupVarName = code.split('(["Escape"],()=>{')[1].split("()});const")[0];
+      const nameStart = code.indexOf(".name,description:") + 17;
+      const nameEnd = code.indexOf(".tagline", nameStart);
+      const gameVarName = code.slice(nameStart, nameEnd).trim();
+      const closeStart = code.indexOf('(["Escape"],()=>{') + 18;
+      const closeEnd = code.indexOf("()});const", closeStart);
+      const closePopupVarName = code.slice(closeStart, closeEnd).trim();
       code = code.replace(`(!0),${closePopupVarName}=()=>{`, `(!0),${closePopupVarName}=()=>{${closePopupWrapper}?.();`);
-      return code.replace(
-        '"EXPERIENCE_HOOKS"})',
-        `"EXPERIENCE_HOOKS"});${setMapDataWrapper}?.(${gameVarName}?._id, ${gameVarName}?.name);`
-      );
+      return code.replace('"EXPERIENCE_HOOKS"})', `"EXPERIENCE_HOOKS"});${setMapDataWrapper}?.(${gameVarName}?._id, ${gameVarName}?.name);`);
     }
     return code;
   });
   api.onStop(() => {
     if (location.pathname.startsWith("/gamemode")) cleanup();
-    api.rewriter.removeSharedById("SetHooksWrapper");
-    api.rewriter.removeSharedById("SetMapDataWrapper");
-    api.rewriter.removeSharedById("ClosePopupWrapper");
   });
 }
 var cleanup2;
