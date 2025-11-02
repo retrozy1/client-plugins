@@ -95,8 +95,5 @@ if(root === "gamemode") {
 
     api.onStop(() => {
         if(location.pathname.startsWith("/gamemode")) cleanup();
-        api.rewriter.removeSharedById("SetHooksWrapper");
-        api.rewriter.removeSharedById("SetMapDataWrapper");
-        api.rewriter.removeSharedById("ClosePopupWrapper");
     });
 }
