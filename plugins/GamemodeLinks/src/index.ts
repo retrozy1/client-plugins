@@ -41,9 +41,11 @@ if(root === "gamemode") {
 
     type Hooks = Record<string, string | number>;
 
+    const { pathname } = location, { title } = document;
+
     function cleanup() {
-        setLink("/kits");
-        document.title = "Kits | Gimkit";
+        setLink(pathname);
+        document.title = title;
     }
 
     const setHooksWrapper = api.rewriter.createShared("SetHooksWrapper", (hooks: Hooks) => {
