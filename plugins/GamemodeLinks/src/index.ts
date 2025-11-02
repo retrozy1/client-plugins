@@ -24,15 +24,13 @@ if(root === "gamemode") {
                 api.storage.setValue("selectedKitId", initialSelectedKitId);
             }
 
-            const obj: Record<string, any> = {
+            const settings = api.lib("QuickSettings")("GamemodeLinks", [{
                 type: "dropdown",
                 id: "kit",
                 title: "Kit",
                 options: games.map((g: any) => g.title),
                 default: initialSelectedKitId
-            };
-
-            const settings = api.lib("QuickSettings")("GamemodeLinks", [obj]);
+            }]);
             settings.listen("kit", (kitTitle: string) => api.storage.setValue("selectedKitId", games.find((g: any) => g.title === kitTitle)._id));
             api.openSettingsMenu(settings.openSettingsMenu);
         }, console.error);
@@ -41,7 +39,7 @@ if(root === "gamemode") {
 
     type Hooks = Record<string, string | number>;
 
-    const { pathname } = location, { title } = document;
+    let { pathname } = location, { title } = document;
 
     function cleanup() {
         setLink(pathname);
@@ -65,11 +63,16 @@ if(root === "gamemode") {
         const searchParams = new URLSearchParams(hooks as Record<string, string>);
         const newLink = `?${searchParams.toString()}`;
         if(location.search === newLink) return;
-        setLink(`?${searchParams.toString()}`);
+        setLink(newLink);
     });
 
     const setMapDataWrapper = api.rewriter.createShared("SetMapDataWrapper", (id: string, name: string) => {
-        if(location.pathname.split("/")[2] === id) return;
+        const path = location.pathname.split("/");
+        if(path[1] !== "gamemode") {
+            pathname = location.pathname;
+            title = document.title;
+        }
+        if(path[2] === id) return;
 
         document.title = name;
         setLink("/gamemode/" + id + location.search);
