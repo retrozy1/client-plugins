@@ -1,12 +1,11 @@
-import makeGame from "./makeGame";
-
-const url = new URL(window.location.href);
-const [_, root, id] = url.pathname.split("/");
-
 // Not putting fetch types here until gimloader documents them
 
+import makeGame from "./makeGame";
+
+const [root, id] = location.pathname.split("/").slice(1);
+
 if(root === "gamemode") {
-    const gameRes = makeGame(id, url.searchParams.entries());
+    const gameRes = makeGame(id, new URLSearchParams(location.search).entries());
 
     gameRes.then(gameId => {
         const tab = window.open("")!;
