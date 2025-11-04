@@ -90,13 +90,27 @@ async function makeGame(id2, entries) {
 // plugins/GamemodeLinks/src/index.ts
 var [root, id] = location.pathname.split("/").slice(1);
 if (root === "gamemode") {
-  const gameRes = makeGame(id, new URLSearchParams(location.search).entries());
-  gameRes.then((gameId) => {
+  api.rewriter.addParseHook("NotFound", (code) => code.replace(
+    `title:"Hmmm, we couldn't find that...",subTitle:"Sorry, the page you visited doesn't exist."`,
+    `title:"Press any key to open the game.",subTitle:"Or, allow popups for gimkit.com."`
+  ));
+  makeGame(id, new URLSearchParams(location.search).entries()).then((gameId) => {
+    const tabHref = `https://www.gimkit.com/host?id=${gameId}`;
     const tab = window.open("");
-    tab.location.href = `https://www.gimkit.com/host?id=${gameId}`;
-    location.href = "/";
-  });
-  gameRes.catch((error) => alert(error.message));
+    if (tab) {
+      tab.location.href = tabHref;
+      location.href = "/";
+    } else {
+      addEventListener("keydown", () => {
+        const tab2 = window.open("");
+        if (!tab2) {
+          throw new Error("Could not open game. Try again.");
+        }
+        tab2.location.href = tabHref;
+        location.href = "/";
+      });
+    }
+  }).catch((err) => alert(err.message));
 } else {
   let cleanup = function() {
     setLink(pathname);
@@ -109,19 +123,18 @@ if (root === "gamemode") {
       initialSelectedKitId = games[0]._id;
       api.storage.setValue("selectedKitId", initialSelectedKitId);
     }
-    const obj = {
+    const settings = api.lib("QuickSettings")("GamemodeLinks", [{
       type: "dropdown",
       id: "kit",
       title: "Kit",
       options: games.map((g) => g.title),
       default: initialSelectedKitId
-    };
-    const settings = api.lib("QuickSettings")("GamemodeLinks", [obj]);
+    }]);
     settings.listen("kit", (kitTitle) => api.storage.setValue("selectedKitId", games.find((g) => g.title === kitTitle)._id));
     api.openSettingsMenu(settings.openSettingsMenu);
   }, console.error);
   const setLink = (path) => history.pushState({}, "", path);
-  const { pathname } = location, { title } = document;
+  let { pathname } = location, { title } = document;
   const setHooksWrapper = api.rewriter.createShared("SetHooksWrapper", (hooks) => {
     hooks = { ...hooks };
     const kitKey = Object.keys(hooks).find((hook) => hook.toLowerCase().includes("kit"));
@@ -134,10 +147,15 @@ if (root === "gamemode") {
     const searchParams = new URLSearchParams(hooks);
     const newLink = `?${searchParams.toString()}`;
     if (location.search === newLink) return;
-    setLink(`?${searchParams.toString()}`);
+    setLink(newLink);
   });
   const setMapDataWrapper = api.rewriter.createShared("SetMapDataWrapper", (id2, name) => {
-    if (location.pathname.split("/")[2] === id2) return;
+    const path = location.pathname.split("/");
+    if (path[1] !== "gamemode") {
+      pathname = location.pathname;
+      title = document.title;
+    }
+    if (path[2] === id2) return;
     document.title = name;
     setLink("/gamemode/" + id2 + location.search);
   });

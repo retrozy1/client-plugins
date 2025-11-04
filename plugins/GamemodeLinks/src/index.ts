@@ -5,15 +5,31 @@ import makeGame from "./makeGame";
 const [root, id] = location.pathname.split("/").slice(1);
 
 if(root === "gamemode") {
-    const gameRes = makeGame(id, new URLSearchParams(location.search).entries());
+    api.rewriter.addParseHook("NotFound", code =>
+        code.replace(
+            `title:"Hmmm, we couldn't find that...",subTitle:"Sorry, the page you visited doesn't exist."`,
+            `title:"Press any key to open the game.",subTitle:"Or, allow popups for gimkit.com."`
+        ));
 
-    gameRes.then(gameId => {
-        const tab = window.open("")!;
-        tab.location.href = `https://www.gimkit.com/host?id=${gameId}`;
-        location.href = "/";
-    });
-
-    gameRes.catch((error: Error) => alert(error.message));
+    makeGame(id, new URLSearchParams(location.search).entries())
+        .then(gameId => {
+            const tabHref = `https://www.gimkit.com/host?id=${gameId}`;
+            const tab = window.open("");
+            if(tab) {
+                tab.location.href = tabHref;
+                location.href = "/";
+            } else {
+                addEventListener("keydown", () => {
+                    const tab = window.open("");
+                    if(!tab) {
+                        throw new Error("Could not open game. Try again.");
+                    }
+                    tab.location.href = tabHref;
+                    location.href = "/";
+                });
+            }
+        })
+        .catch((err: Error) => alert(err.message));
 } else {
     fetch("/api/games/summary/me")
         .then(res => res.json())
