@@ -8,7 +8,6 @@ const isGamemodePathnameString = "location.pathname.startsWith('/gamemode/')";
 api.rewriter.addParseHook("NotFound", code =>
     code.replace(
         `title:"Hmmm, we couldn't find that...",subTitle:"Sorry, the page you visited doesn't exist."`,
-
         `title:${isGamemodePathnameString} ? "Press any key to open the game." : "Hmmm, we couldn't find that...",
         subTitle:${isGamemodePathnameString} ? "Or, allow popups for gimkit.com." : "Sorry, the page you visited doesn't exist."`
     ));
