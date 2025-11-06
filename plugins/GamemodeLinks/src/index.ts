@@ -51,9 +51,9 @@ if(root === "gamemode") {
                     default: initialSelectedKitId
                 }
             ]);
-            
+
             api.settings.listen("kit", (kitTitle: string) => {
-                api.storage.setValue("selectedKitId", games.find((g: any) => g.title === kitTitle)._id)
+                api.storage.setValue("selectedKitId", games.find((g: any) => g.title === kitTitle)._id);
             });
         }, console.error);
 
