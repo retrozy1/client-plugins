@@ -2,31 +2,27 @@
  * @name BringBackBoosts
  * @description Restores boosts in Don't Look Down. Will cause you to desync, so others cannot see you move.
  * @author TheLazySquid
- * @version 0.5.3
+ * @version 0.6.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/BringBackBoosts.js
  * @webpage https://gimloader.github.io/plugins/bringbackboosts
  * @reloadRequired ingame
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/libraries/DLDUtils.js
- * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
  * @hasSettings true
  * @gamemode dontLookDown
  */
 
 // plugins/BringBackBoosts/src/index.ts
-var settings = api.lib("QuickSettings")("BringBackBoosts", [
+api.settings.create([
   {
-    type: "heading",
-    text: "BringBackBoosts Settings"
-  },
-  {
-    type: "boolean",
+    type: "toggle",
     id: "useOriginalPhysics",
     title: "Use Release Physics",
+    description: "Modifies air movement to more closely match the physics from the original launch of platforming",
     default: false
   }
 ]);
-api.openSettingsMenu(settings.openSettingsMenu);
-settings.listen("useOriginalPhysics", (value) => {
+api.settings.listen("useOriginalPhysics", (value) => {
+  console.log("Updated to", value);
   if (!GL.platformerPhysics) return;
   if (value) {
     GL.platformerPhysics.movement.air = originalAirMovement;
@@ -45,7 +41,7 @@ var originalAirMovement = {
   maxAccelerationSpeed: 0.155
 };
 api.net.onLoad(() => {
-  if (settings.useOriginalPhysics) {
+  if (api.settings.useOriginalPhysics) {
     GL.platformerPhysics.movement.air = originalAirMovement;
   }
 });

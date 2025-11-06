@@ -2,9 +2,10 @@
  * @name QuickSettings
  * @description Easily make simple settings menus
  * @author TheLazySquid
- * @version 0.3.1
+ * @version 0.3.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
  * @isLibrary true
+ * @deprecated QuickSettings has been superceded by api.settings
  */
 
 // node_modules/svelte/src/runtime/internal/utils.js

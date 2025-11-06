@@ -2,41 +2,40 @@
  * @name CrazyFlag
  * @description Make the flags in capture the flag or creative swing like crazy!
  * @author TheLazySquid
- * @version 1.2.2
+ * @version 1.3.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/CrazyFlag.js
  * @webpage https://gimloader.github.io/plugins/crazyflag
  * @reloadRequired ingame
- * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
  * @hasSettings true
  */
 
 // plugins/CrazyFlag/src/index.ts
-var settings = api.lib("QuickSettings")("CrazyFlag", [
-  { type: "heading", text: "Crazy Flag Settings" },
+api.settings.create([
   {
     type: "number",
     id: "swingSpeed",
-    title: "Swing Speed (1 = default)",
+    title: "Swing Speed",
+    description: "1 = normal speed",
     default: 2,
     min: 0
   },
   {
     type: "number",
     id: "swingAmount",
-    title: "Swing Amount (1 = default)",
+    title: "Swing Amount",
+    description: "1 = normal speed",
     default: 120,
     min: 0
   }
 ]);
-api.openSettingsMenu(settings.openSettingsMenu);
 var flagConsts = null;
 function applySettings() {
   if (!flagConsts) return;
-  flagConsts.FlagSwingInterval = 1 / settings.swingSpeed;
-  flagConsts.FlagSwingAmplitude = settings.swingAmount / 10;
+  flagConsts.FlagSwingInterval = 1 / api.settings.swingSpeed;
+  flagConsts.FlagSwingAmplitude = api.settings.swingAmount / 10;
 }
-settings.listen("swingSpeed", applySettings);
-settings.listen("swingAmount", applySettings);
+api.settings.listen("swingSpeed", applySettings);
+api.settings.listen("swingAmount", applySettings);
 var constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
   const defaults = Object.assign({}, consts);
   flagConsts = consts;

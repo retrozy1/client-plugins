@@ -2,24 +2,20 @@
  * @name PhysicsSettings
  * @description Allows you to configure various things about the physics in platformer modes (client-side only)
  * @author TheLazySquid
- * @version 0.1.3
+ * @version 0.2.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/PhysicsSettings.js
  * @webpage https://gimloader.github.io/plugins/physicssettings
- * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
  * @hasSettings true
  * @gamemode 2d
  */
 
 // plugins/PhysicsSettings/src/index.ts
-var settings = api.lib("QuickSettings")("PhysicsSettings", [
-  {
-    type: "heading",
-    text: "Physics Settings"
-  },
+api.settings.create([
   {
     type: "number",
     id: "jumps",
-    title: "Number of Jumps (2 default)",
+    title: "Number of Jumps",
+    description: "How many jumps should the character get, including the one on the ground? 2 by default.",
     min: 0,
     step: 1,
     default: 2
@@ -27,13 +23,15 @@ var settings = api.lib("QuickSettings")("PhysicsSettings", [
   {
     type: "number",
     id: "jumpheight",
-    title: "Jump Height (2 default)",
+    title: "Jump Height",
+    description: "How high should the character jump? 1.92 by default.",
     default: 1.92
   },
   {
     type: "number",
     id: "speed",
-    title: "Grounded Move Speed (310 default)",
+    title: "Grounded Move Speed",
+    description: "How fast should the character move on the ground? 310 by default.",
     default: 310
   }
 ]);
@@ -51,7 +49,6 @@ api.net.onLoad(() => {
     editFn(null);
   });
 });
-api.openSettingsMenu(settings.openSettingsMenu);
 var updateMapOption = (key, value) => {
   const options = JSON.parse(api.stores.world.mapOptionsJSON);
   options[key] = value;
@@ -59,8 +56,8 @@ var updateMapOption = (key, value) => {
 };
 var applyAll = () => {
   const options = JSON.parse(api.stores.world.mapOptionsJSON);
-  options.maxJumps = settings.jumps;
-  options.jumpHeight = settings.jumpheight;
+  options.maxJumps = api.settings.jumps;
+  options.jumpHeight = api.settings.jumpheight;
   api.stores.world.mapOptionsJSON = JSON.stringify(options);
 };
 api.net.onLoad(() => {
@@ -68,12 +65,12 @@ api.net.onLoad(() => {
   api.net.room.state.listen("mapSettings", () => {
     applyAll();
   });
-  GL.plugin("DLDTAS")?.setMoveSpeed(settings.speed);
-  api.stores.me.movementSpeed = settings.speed;
-  settings.listen("jumps", (jumps) => updateMapOption("maxJumps", jumps));
-  settings.listen("jumpheight", (height) => updateMapOption("jumpHeight", height));
-  settings.listen("speed", (speed) => {
-    GL.plugin("DLDTAS")?.setMoveSpeed(settings.speed);
+  GL.plugin("DLDTAS")?.setMoveSpeed(api.settings.speed);
+  api.stores.me.movementSpeed = api.settings.speed;
+  api.settings.listen("jumps", (jumps) => updateMapOption("maxJumps", jumps));
+  api.settings.listen("jumpheight", (height) => updateMapOption("jumpHeight", height));
+  api.settings.listen("speed", (speed) => {
+    GL.plugin("DLDTAS")?.setMoveSpeed(api.settings.speed);
     api.stores.me.movementSpeed = speed;
   });
 });

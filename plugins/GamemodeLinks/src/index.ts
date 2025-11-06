@@ -42,15 +42,19 @@ if(root === "gamemode") {
                 api.storage.setValue("selectedKitId", initialSelectedKitId);
             }
 
-            const settings = api.lib("QuickSettings")("GamemodeLinks", [{
-                type: "dropdown",
-                id: "kit",
-                title: "Kit",
-                options: games.map((g: any) => g.title),
-                default: initialSelectedKitId
-            }]);
-            settings.listen("kit", (kitTitle: string) => api.storage.setValue("selectedKitId", games.find((g: any) => g.title === kitTitle)._id));
-            api.openSettingsMenu(settings.openSettingsMenu);
+            api.settings.create([
+                {
+                    type: "dropdown",
+                    id: "kit",
+                    title: "Kit",
+                    options: games.map((g: any) => g.title),
+                    default: initialSelectedKitId
+                }
+            ]);
+            
+            api.settings.listen("kit", (kitTitle: string) => {
+                api.storage.setValue("selectedKitId", games.find((g: any) => g.title === kitTitle)._id)
+            });
         }, console.error);
 
     const setLink = (path: string) => history.pushState({}, "", path);

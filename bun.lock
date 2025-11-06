@@ -6,9 +6,9 @@
       "devDependencies": {
         "@biomejs/biome": "2.3.1",
         "@dimforge/rapier2d-compat": "~0.17.2",
-        "@gimloader/build": "^1.2.1",
+        "@gimloader/build": "^1.2.2",
         "@types/bun": "^1.3.0",
-        "@types/gimloader": "^1.8.2",
+        "@types/gimloader": "^1.9.0",
         "compress-json": "^3.4.0",
         "dprint": "^0.50.2",
         "esbuild-sass-plugin": "^3.3.1",
@@ -115,7 +115,7 @@
 
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.25.11", "", { "os": "win32", "cpu": "x64" }, "sha512-D7Hpz6A2L4hzsRpPaCYkQnGOotdUpDzSGRIv9I+1ITdHROSFUWW95ZPZWQmGka1Fg7W3zFJowyn9WGwMJ0+KPA=="],
 
-    "@gimloader/build": ["@gimloader/build@1.2.1", "", { "dependencies": { "chokidar": "^4.0.3", "esbuild": "^0.25.9", "yargs": "^17.7.2", "zod": "^4.1.12" }, "bin": { "gimloader": "dist/cli.js", "gl": "dist/cli.js" } }, "sha512-UsrsTUK/VksmjIAmiLbeNXDeh1TPLy23282ysoB9G3llR6lljJK5ek0WA7TxIrQwX2i9Rpf+r4EyGtN3xMhNSg=="],
+    "@gimloader/build": ["@gimloader/build@1.2.2", "", { "dependencies": { "chokidar": "^4.0.3", "esbuild": "^0.25.9", "yargs": "^17.7.2", "zod": "^4.1.12" }, "bin": { "gimloader": "dist/cli.js", "gl": "dist/cli.js" } }, "sha512-eDMzMo7AyvVV+98xI2YQ9RoFWcRsl34GjmOV62rp/Fz01o6R90jaJDnslUd9JpS5CXCgcHDDA8Y1Q4q/GEimyg=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 
@@ -157,7 +157,7 @@
 
     "@types/estree": ["@types/estree@1.0.8", "", {}, "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="],
 
-    "@types/gimloader": ["@types/gimloader@1.8.2", "", { "dependencies": { "@dimforge/rapier2d-compat": "~0.17.2", "@types/react": "*", "@types/react-dom": "*", "eventemitter2": "~6.4.9", "phaser": "~3.90.0" } }, "sha512-w67T8kwSSL+MeVk9BnYojsAKxr3iKkq8yVYyZu9+Dzz10lRzdfWhw7sYDg1Qb7iensfudcdM7tw64E2EfU6JQQ=="],
+    "@types/gimloader": ["@types/gimloader@1.9.0", "", { "dependencies": { "@dimforge/rapier2d-compat": "~0.17.2", "@types/react": "*", "@types/react-dom": "*", "eventemitter2": "~6.4.9", "phaser": "~3.90.0" } }, "sha512-PIdRDB/f9hv5NF9gBdVAbegbEp/trAhicujYTYTMLhABN1dTmj4ao+aWgl+vE5oxTVxkptGEddvghnr6WkxB3w=="],
 
     "@types/node": ["@types/node@24.9.1", "", { "dependencies": { "undici-types": "~7.16.0" } }, "sha512-QoiaXANRkSXK6p0Duvt56W208du4P9Uye9hWLWgGMDTEoKPhuenzNcC4vGUmrNkiOKTlIrBoyNQYNpSwfEZXSg=="],
 

@@ -2,32 +2,31 @@
  * @name PerformantGims
  * @description Replaces configurable gims with images of them. Looks like crap, runs really fast.
  * @author TheLazySquid
- * @version 0.4.1
+ * @version 0.5.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/PerformantGims.js
  * @webpage https://gimloader.github.io/plugins/performantgims
- * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
- * @hasSettings true
  * @reloadRequired ingame
+ * @hasSettings true
  */
 
 // plugins/PerformantGims/src/index.ts
-var settings = api.lib("QuickSettings")("PerformantGims", [
-  {
-    type: "heading",
-    text: "Performant Gims Settings"
-  },
+api.settings.create([
   {
     type: "dropdown",
-    title: "Apply To (Reload to see changes)",
+    title: "Apply To",
+    description: "Which characters should be converted into still images? You will need to reload to see changes.",
     id: "applyTo",
-    options: ["Everything", "Sentries", "Others"],
-    default: "Others"
+    options: [
+      { value: "everything", label: "Everything" },
+      { value: "sentries", label: "Sentries" },
+      { value: "others", label: "Others" }
+    ],
+    default: "others"
   }
 ]);
-api.openSettingsMenu(settings.openSettingsMenu);
 function shouldApply(character) {
-  if (settings.applyTo === "Everything") return true;
-  else if (settings.applyTo === "Sentries") return character.type === "sentry";
+  if (api.settings.applyTo === "everything") return true;
+  else if (api.settings.applyTo === "sentries") return character.type === "sentry";
   return character.id !== api.stores.network.authId;
 }
 var wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {

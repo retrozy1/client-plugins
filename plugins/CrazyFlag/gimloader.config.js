@@ -8,8 +8,5 @@ export default {
     webpage: "https://gimloader.github.io/plugins/crazyflag",
     reloadRequired: "ingame",
     hasSettings: true,
-    version: "1.2.2",
-    libs: [
-        "QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js"
-    ]
+    version: "1.3.0"
 };

@@ -1,36 +1,35 @@
-const settings = api.lib("QuickSettings")("CameraControl", [
+api.settings.create([
     {
-        type: "heading",
-        text: "CameraControl Settings"
-    },
-    {
-        type: "boolean",
+        type: "toggle",
         id: "shiftToZoom",
         title: "Hold Shift to Zoom",
+        description: "Whether to only allow zooming with the scroll wheel when holding shift",
         default: true
     },
     {
-        type: "boolean",
+        type: "toggle",
         id: "mouseControls",
         title: "Use mouse controls while freecamming",
+        description: "Click and drag on the screen to move the camera while freecamming",
         default: true
     },
     {
         type: "number",
         id: "toggleZoomFactor",
         title: "Toggle Zoom Factor",
+        description: "The factor to zoom in/out by when pressing the quick zoom toggle hotkey",
         min: 0.05,
         max: 20,
         default: 2
     },
     {
-        type: "boolean",
+        type: "toggle",
         id: "capZoomOut",
         title: "Cap Zoom Out",
+        description: "Prevents zooming out too far (below 0.1x zoom) to avoid lag and crashes",
         default: true
     }
 ]);
-api.openSettingsMenu(settings.openSettingsMenu);
 
 let freecamming = false;
 let freecamPos = { x: 0, y: 0 };
@@ -60,7 +59,7 @@ const updateScroll = (dt: number) => {
     camera.zoom += scrollMomentum * dt;
     if(scrollMomentum > 0) changedZoom = true;
 
-    if(settings.capZoomOut) {
+    if(api.settings.capZoomOut) {
         if(camera.zoom <= 0.1) {
             scrollMomentum = 0;
         }
@@ -114,13 +113,13 @@ function onWheel(e: WheelEvent) {
     if(!(e.target instanceof HTMLElement)) return;
     if(e.target.nodeName !== "CANVAS") return;
 
-    if(!freecamming || !settings.mouseControls) {
-        if(settings.shiftToZoom && !api.hotkeys.pressed.has("ShiftLeft")) return;
+    if(!freecamming || !api.settings.mouseControls) {
+        if(api.settings.shiftToZoom && !api.hotkeys.pressed.has("ShiftLeft")) return;
         scrollMomentum -= e.deltaY / 65000;
         return;
     }
 
-    if(camera.zoom === 0.1 && e.deltaY > 0 && settings.capZoomOut) return;
+    if(camera.zoom === 0.1 && e.deltaY > 0 && api.settings.capZoomOut) return;
 
     var oldzoom = camera.zoom;
     var newzoom = oldzoom * (e.deltaY < 0 ? 1.1 : 0.9);
@@ -230,7 +229,7 @@ if(commandLine) {
 let zoomToggled = false;
 let initialZoom = 1;
 const onDown = () => {
-    if(!settings.toggleZoomFactor) return;
+    if(!api.settings.toggleZoomFactor) return;
 
     const scene = api.stores?.phaser?.scene;
     const camera = scene?.cameras?.cameras?.[0];
@@ -240,7 +239,7 @@ const onDown = () => {
         camera.zoom = initialZoom;
     } else {
         initialZoom = camera.zoom;
-        camera.zoom /= settings.toggleZoomFactor;
+        camera.zoom /= api.settings.toggleZoomFactor;
     }
 
     zoomToggled = !zoomToggled;

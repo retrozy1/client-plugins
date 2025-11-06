@@ -2,48 +2,46 @@
  * @name CameraControl
  * @description Lets you freely move and zoom your camera
  * @author TheLazySquid
- * @version 0.5.6
+ * @version 0.6.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/CameraControl.js
- * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
  * @optionalLib CommandLine | https://raw.githubusercontent.com/Blackhole927/gimkitmods/main/libraries/CommandLine/CommandLine.js
  * @hasSettings true
  * @gamemode 2d
  */
 
 // plugins/CameraControl/src/index.ts
-var settings = api.lib("QuickSettings")("CameraControl", [
+api.settings.create([
   {
-    type: "heading",
-    text: "CameraControl Settings"
-  },
-  {
-    type: "boolean",
+    type: "toggle",
     id: "shiftToZoom",
     title: "Hold Shift to Zoom",
+    description: "Whether to only allow zooming with the scroll wheel when holding shift",
     default: true
   },
   {
-    type: "boolean",
+    type: "toggle",
     id: "mouseControls",
     title: "Use mouse controls while freecamming",
+    description: "Click and drag on the screen to move the camera while freecamming",
     default: true
   },
   {
     type: "number",
     id: "toggleZoomFactor",
     title: "Toggle Zoom Factor",
+    description: "The factor to zoom in/out by when pressing the quick zoom toggle hotkey",
     min: 0.05,
     max: 20,
     default: 2
   },
   {
-    type: "boolean",
+    type: "toggle",
     id: "capZoomOut",
     title: "Cap Zoom Out",
+    description: "Prevents zooming out too far (below 0.1x zoom) to avoid lag and crashes",
     default: true
   }
 ]);
-api.openSettingsMenu(settings.openSettingsMenu);
 var freecamming = false;
 var freecamPos = { x: 0, y: 0 };
 var scrollMomentum = 0;
@@ -68,7 +66,7 @@ var updateScroll = (dt) => {
   scrollMomentum *= 0.97 ** dt;
   camera2.zoom += scrollMomentum * dt;
   if (scrollMomentum > 0) changedZoom = true;
-  if (settings.capZoomOut) {
+  if (api.settings.capZoomOut) {
     if (camera2.zoom <= 0.1) {
       scrollMomentum = 0;
     }
@@ -112,12 +110,12 @@ function onPointermove(e) {
 function onWheel(e) {
   if (!(e.target instanceof HTMLElement)) return;
   if (e.target.nodeName !== "CANVAS") return;
-  if (!freecamming || !settings.mouseControls) {
-    if (settings.shiftToZoom && !api.hotkeys.pressed.has("ShiftLeft")) return;
+  if (!freecamming || !api.settings.mouseControls) {
+    if (api.settings.shiftToZoom && !api.hotkeys.pressed.has("ShiftLeft")) return;
     scrollMomentum -= e.deltaY / 65e3;
     return;
   }
-  if (camera.zoom === 0.1 && e.deltaY > 0 && settings.capZoomOut) return;
+  if (camera.zoom === 0.1 && e.deltaY > 0 && api.settings.capZoomOut) return;
   var oldzoom = camera.zoom;
   var newzoom = oldzoom * (e.deltaY < 0 ? 1.1 : 0.9);
   const canvasZoom = getCanvasZoom();
@@ -199,7 +197,7 @@ if (commandLine) {
 var zoomToggled = false;
 var initialZoom = 1;
 var onDown = () => {
-  if (!settings.toggleZoomFactor) return;
+  if (!api.settings.toggleZoomFactor) return;
   const scene2 = api.stores?.phaser?.scene;
   const camera2 = scene2?.cameras?.cameras?.[0];
   if (!scene2 || !camera2) return;
@@ -207,7 +205,7 @@ var onDown = () => {
     camera2.zoom = initialZoom;
   } else {
     initialZoom = camera2.zoom;
-    camera2.zoom /= settings.toggleZoomFactor;
+    camera2.zoom /= api.settings.toggleZoomFactor;
   }
   zoomToggled = !zoomToggled;
 };

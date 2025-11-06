@@ -1,24 +1,23 @@
 import type { Vector } from "@dimforge/rapier2d-compat";
 
-const settings = api.lib("QuickSettings")("PerformantGims", [
-    {
-        type: "heading",
-        text: "Performant Gims Settings"
-    },
+api.settings.create([
     {
         type: "dropdown",
-        title: "Apply To (Reload to see changes)",
+        title: "Apply To",
+        description: "Which characters should be converted into still images? You will need to reload to see changes.",
         id: "applyTo",
-        options: ["Everything", "Sentries", "Others"],
-        default: "Others"
+        options: [
+            { value: "everything", label: "Everything" },
+            { value: "sentries", label: "Sentries" },
+            { value: "others", label: "Others" }
+        ],
+        default: "others"
     }
 ]);
 
-api.openSettingsMenu(settings.openSettingsMenu);
-
 function shouldApply(character: Gimloader.Stores.Character) {
-    if(settings.applyTo === "Everything") return true;
-    else if(settings.applyTo === "Sentries") return character.type === "sentry";
+    if(api.settings.applyTo === "everything") return true;
+    else if(api.settings.applyTo === "sentries") return character.type === "sentry";
 
     return character.id !== api.stores.network.authId;
 }

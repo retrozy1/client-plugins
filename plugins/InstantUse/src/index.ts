@@ -14,7 +14,6 @@ api.hotkeys.addConfigurableHotkey({
 
     // trigger it
     if(device) {
-        // @ts-expect-error Improperly documented
         device.interactiveZones?.onInteraction?.();
     }
 });

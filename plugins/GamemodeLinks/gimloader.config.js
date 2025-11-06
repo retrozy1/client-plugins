@@ -6,10 +6,7 @@ export default {
     author: "retrozy",
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/GamemodeLinks.js",
     webpage: "https://gimloader.github.io/plugins/gamemodelinks",
-    version: "0.0.1",
+    version: "0.1.0",
     hasSettings: true,
-    reloadRequired: true,
-    libs: [
-        "QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js"
-    ]
+    reloadRequired: true
 };

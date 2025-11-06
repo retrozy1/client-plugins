@@ -2,11 +2,10 @@
  * @name GamemodeLinks
  * @description Creates game rooms from links, particularly useful in bookmarks.
  * @author retrozy
- * @version 0.0.1
+ * @version 0.1.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/GamemodeLinks.js
  * @webpage https://gimloader.github.io/plugins/gamemodelinks
  * @reloadRequired true
- * @needsLib QuickSettings | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/QuickSettings.js
  * @hasSettings true
  */
 
@@ -125,15 +124,18 @@ if (root === "gamemode") {
       initialSelectedKitId = games[0]._id;
       api.storage.setValue("selectedKitId", initialSelectedKitId);
     }
-    const settings = api.lib("QuickSettings")("GamemodeLinks", [{
-      type: "dropdown",
-      id: "kit",
-      title: "Kit",
-      options: games.map((g) => g.title),
-      default: initialSelectedKitId
-    }]);
-    settings.listen("kit", (kitTitle) => api.storage.setValue("selectedKitId", games.find((g) => g.title === kitTitle)._id));
-    api.openSettingsMenu(settings.openSettingsMenu);
+    api.settings.create([
+      {
+        type: "dropdown",
+        id: "kit",
+        title: "Kit",
+        options: games.map((g) => g.title),
+        default: initialSelectedKitId
+      }
+    ]);
+    api.settings.listen("kit", (kitTitle) => {
+      api.storage.setValue("selectedKitId", games.find((g) => g.title === kitTitle)._id);
+    });
   }, console.error);
   const setLink = (path) => history.pushState({}, "", path);
   let { pathname } = location, { title } = document;

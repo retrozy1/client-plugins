@@ -1,12 +1,9 @@
-const settings = api.lib("QuickSettings")("PhysicsSettings", [
-    {
-        type: "heading",
-        text: "Physics Settings"
-    },
+api.settings.create([
     {
         type: "number",
         id: "jumps",
-        title: "Number of Jumps (2 default)",
+        title: "Number of Jumps",
+        description: "How many jumps should the character get, including the one on the ground? 2 by default.",
         min: 0,
         step: 1,
         default: 2
@@ -14,13 +11,15 @@ const settings = api.lib("QuickSettings")("PhysicsSettings", [
     {
         type: "number",
         id: "jumpheight",
-        title: "Jump Height (2 default)",
+        title: "Jump Height",
+        description: "How high should the character jump? 1.92 by default.",
         default: 1.92
     },
     {
         type: "number",
         id: "speed",
-        title: "Grounded Move Speed (310 default)",
+        title: "Grounded Move Speed",
+        description: "How fast should the character move on the ground? 310 by default.",
         default: 310
     }
 ]);
@@ -42,8 +41,6 @@ api.net.onLoad(() => {
     });
 });
 
-api.openSettingsMenu(settings.openSettingsMenu);
-
 const updateMapOption = (key: string, value: any) => {
     const options = JSON.parse(api.stores.world.mapOptionsJSON);
     options[key] = value;
@@ -52,8 +49,8 @@ const updateMapOption = (key: string, value: any) => {
 
 const applyAll = () => {
     const options = JSON.parse(api.stores.world.mapOptionsJSON);
-    options.maxJumps = settings.jumps;
-    options.jumpHeight = settings.jumpheight;
+    options.maxJumps = api.settings.jumps;
+    options.jumpHeight = api.settings.jumpheight;
     api.stores.world.mapOptionsJSON = JSON.stringify(options);
 };
 
@@ -64,13 +61,13 @@ api.net.onLoad(() => {
         applyAll();
     });
 
-    GL.plugin("DLDTAS")?.setMoveSpeed(settings.speed);
-    api.stores.me.movementSpeed = settings.speed;
+    GL.plugin("DLDTAS")?.setMoveSpeed(api.settings.speed);
+    api.stores.me.movementSpeed = api.settings.speed;
 
-    settings.listen("jumps", (jumps: number) => updateMapOption("maxJumps", jumps));
-    settings.listen("jumpheight", (height: number) => updateMapOption("jumpHeight", height));
-    settings.listen("speed", (speed: number) => {
-        GL.plugin("DLDTAS")?.setMoveSpeed(settings.speed);
+    api.settings.listen("jumps", (jumps: number) => updateMapOption("maxJumps", jumps));
+    api.settings.listen("jumpheight", (height: number) => updateMapOption("jumpHeight", height));
+    api.settings.listen("speed", (speed: number) => {
+        GL.plugin("DLDTAS")?.setMoveSpeed(api.settings.speed);
         api.stores.me.movementSpeed = speed;
     });
 });

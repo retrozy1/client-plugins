@@ -1,19 +1,16 @@
 // biome-ignore-all lint: This file includes minified code
-const settings = api.lib("QuickSettings")("BringBackBoosts", [
+api.settings.create([
     {
-        type: "heading",
-        text: "BringBackBoosts Settings"
-    },
-    {
-        type: "boolean",
+        type: "toggle",
         id: "useOriginalPhysics",
         title: "Use Release Physics",
+        description: "Modifies air movement to more closely match the physics from the original launch of platforming",
         default: false
     }
 ]);
-api.openSettingsMenu(settings.openSettingsMenu);
 
-settings.listen("useOriginalPhysics", (value: boolean) => {
+api.settings.listen("useOriginalPhysics", (value: boolean) => {
+    console.log("Updated to", value);
     if(!GL.platformerPhysics) return;
     if(value) {
         GL.platformerPhysics.movement.air = originalAirMovement;
@@ -34,7 +31,7 @@ const originalAirMovement = {
 };
 
 api.net.onLoad(() => {
-    if(settings.useOriginalPhysics) {
+    if(api.settings.useOriginalPhysics) {
         GL.platformerPhysics.movement.air = originalAirMovement;
     }
 });
