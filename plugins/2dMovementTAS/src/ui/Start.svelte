@@ -7,7 +7,7 @@
     let save = api.storage.getValue("save");
 
     let frames: IFrame[] = [];
-    let startPos: { x: number, y: number } | undefined;
+    let startPos: { x: number; y: number } | undefined;
 
     function continueTAS() {
         frames = save.frames;

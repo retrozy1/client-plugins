@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { blankFrame, between, showAnglePicker } from '../util';
-    import type { IFrame } from '../types';
+    import { between, blankFrame, showAnglePicker } from "../util";
+    import type { IFrame } from "../types";
     import { currentFrame } from "../stores";
-    import TASTools from '../tools';
+    import TASTools from "../tools";
 
     export let frames: IFrame[];
-    export let startPos: { x: number, y: number } | undefined;
+    export let startPos: { x: number; y: number } | undefined;
     let height: number;
     let offset = 0;
     $: rows = Math.floor(height / 26) - 1;
@@ -28,10 +28,10 @@
 
     let dragging = false;
     let dragFill: boolean;
-    let dragKey: string;
+    let dragKey: "moving" | "answer" | "purchase";
     let dragStart: number;
 
-    function onClick(index: number, key: string) {
+    function onClick(index: number, key: "moving") {
         if($currentFrame > index) tools.goBackToFrame(index);
         dragFill = !frames[index][key];
         frames[index][key] = dragFill;
@@ -84,7 +84,7 @@
         showAnglePicker(frames[index].angle)
             .then((angle) => {
                 pickingAngle = false;
-                frames[index].angle = angle
+                frames[index].angle = angle;
             });
     }
 
@@ -92,10 +92,10 @@
 
     function onKeydown(e: KeyboardEvent) {
         if(playing || pickingAngle) return;
-        
+
         // move forward or backward
         if(e.key === "ArrowRight") {
-            if(e.shiftKey) for(let i = 0; i < 5; i++) tools.advanceFrame();
+            if(e.shiftKey) { for(let i = 0; i < 5; i++) tools.advanceFrame(); }
             else tools.advanceFrame();
         } else if(e.key === "ArrowLeft") {
             if(e.shiftKey) tools.goBackToFrame(Math.max(0, $currentFrame - 5));
@@ -139,8 +139,7 @@
     }
 </script>
 
-<svelte:window bind:innerHeight={height} on:pointerup={() => dragging = false}
-on:pointerup={() => draggingMovement = false} on:keydown={onKeydown} />
+<svelte:window bind:innerHeight={height} on:pointerup={() => dragging = false} on:pointerup={() => draggingMovement = false} on:keydown={onKeydown} />
 
 <div class="UI" on:wheel={onScroll}>
     <div class="controls">
@@ -176,27 +175,23 @@ on:pointerup={() => draggingMovement = false} on:keydown={onKeydown} />
 
             {@const purchaseDisabled = frames[index].answer || frames[index - 1]?.answer || frames[index - 2]?.answer
                 || frames[index - 1]?.purchase || frames[index - 2]?.purchase}
-                
+
             {@const moveDisabled = frames[index].answer || frames[index - 1]?.answer}
 
-            <tr on:pointerover={() => onAngleMouseover(index)} on:pointerover={() => onMouseover(index)}
-            class:active={$currentFrame === index}>
-                <td class="frame">{ index }</td>
+            <tr on:pointerover={() => onAngleMouseover(index)} on:pointerover={() => onMouseover(index)} class:active={$currentFrame === index}>
+                <td class="frame">{index}</td>
                 <td on:mousedown={() => answerDisabled || toggleBlockingAction(index, "answer")}>
-                    <input type="checkbox" on:click|preventDefault bind:checked={frames[index].answer}
-                    class:disabled={answerDisabled}/>
+                    <input type="checkbox" on:click|preventDefault bind:checked={frames[index].answer} class:disabled={answerDisabled} />
                 </td>
                 <td on:mousedown={() => purchaseDisabled || toggleBlockingAction(index, "purchase")}>
-                    <input type="checkbox" on:click|preventDefault bind:checked={frames[index].purchase}
-                    class:disabled={purchaseDisabled}/>
+                    <input type="checkbox" on:click|preventDefault bind:checked={frames[index].purchase} class:disabled={purchaseDisabled} />
                 </td>
-                <td on:mousedown={() => moveDisabled || onClick(index, 'moving')}>
-                    <input type="checkbox" on:click|preventDefault bind:checked={frames[index].moving}
-                    class:disabled={moveDisabled} />
+                <td on:mousedown={() => moveDisabled || onClick(index, "moving")}>
+                    <input type="checkbox" on:click|preventDefault bind:checked={frames[index].moving} class:disabled={moveDisabled} />
                 </td>
                 <td class="angle" class:dragged={draggingMovement && between(index, draggingMovementStart, draggingMovementEnd)}>
                     <div class="number" on:pointerdown={() => updateAngle(index)}>
-                        <div style="transform: rotate({frames[index].angle + 90}deg);">
+                        <div style="transform: rotate({frames[index].angle + 90}deg)">
                             &uArr;
                         </div>
                         {Math.round(frames[index].angle * 100) / 100}°

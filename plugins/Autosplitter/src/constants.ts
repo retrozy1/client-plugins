@@ -1,6 +1,7 @@
+import type { GamemodesData } from "./types";
 import type { Area, Box } from "./util";
 
-export const gamemodes = ["DLD", "Fishtopia", "OneWayOut"];
+export const gamemodes: (keyof GamemodesData)[] = ["DLD", "Fishtopia", "OneWayOut"];
 export const DLDSplits = ["Summit 1", "Summit 2", "Summit 3", "Summit 4", "Summit 5", "Summit 6"];
 export const fishtopiaSplits = ["Fishtopia", "Purple Pond", "Sandy Shores", "Cosmic Cove", "Lucky Lake"];
 

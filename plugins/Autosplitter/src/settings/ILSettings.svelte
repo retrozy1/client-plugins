@@ -14,14 +14,17 @@
     <div>Attempts:</div>
     <input type="number" bind:value={data.attempts[id]} />
     <div>Personal best:</div>
-    <input value={data.ilpbs[id] ? fmtMs(data.ilpbs[id]) : ''} on:change={(e) => {
-        if(!e.currentTarget.value) {
-            data.ilpbs[id] = null;
-            return;
-        }
-        let ms = parseTime(e.currentTarget.value);
-        data.ilpbs[id] = ms;
-    }} />
+    <input
+        value={data.ilpbs[id] ? fmtMs(data.ilpbs[id]) : ""}
+        on:change={(e) => {
+            if(!e.currentTarget.value) {
+                data.ilpbs[id] = null;
+                return;
+            }
+            let ms = parseTime(e.currentTarget.value);
+            data.ilpbs[id] = ms;
+        }}
+    />
 </div>
 {#if category !== "Current Patch"}
     <h2>Preboosts</h2>
@@ -29,14 +32,17 @@
         <div>Attempts:</div>
         <input type="number" bind:value={data.attempts[preboostsId]} />
         <div>Personal best:</div>
-        <input value={data.ilpbs[preboostsId] ? fmtMs(data.ilpbs[preboostsId]) : ''} on:change={(e) => {
-            if(!e.currentTarget.value) {
-                data.ilpbs[preboostsId] = null;
-                return;
-            }
-            let ms = parseTime(e.currentTarget.value);
-            data.ilpbs[preboostsId] = ms;
-        }} />
+        <input
+            value={data.ilpbs[preboostsId] ? fmtMs(data.ilpbs[preboostsId]) : ""}
+            on:change={(e) => {
+                if(!e.currentTarget.value) {
+                    data.ilpbs[preboostsId] = null;
+                    return;
+                }
+                let ms = parseTime(e.currentTarget.value);
+                data.ilpbs[preboostsId] = ms;
+            }}
+        />
     </div>
 {/if}
 

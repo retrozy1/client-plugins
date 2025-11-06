@@ -11,12 +11,13 @@
         "esbuild-sass-plugin": "^3.3.1",
         "esbuild-svelte": "^0.9.3",
         "svelte": "^4.2.20",
+        "svelte-check": "^4.3.3",
         "svelte-preprocess": "^6.0.3",
         "svelte-toggle": "^4.0.1"
     },
     "description": "Official client-side plugins for Gimloader",
     "scripts": {
-        "check": "biome lint && dprint check && tsc",
+        "check": "biome lint && dprint check && tsc && svelte-check",
         "format": "dprint fmt",
         "lint": "biome lint",
         "build": "gimloader build",

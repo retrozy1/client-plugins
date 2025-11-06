@@ -1,6 +1,6 @@
 <script lang="ts">
+    import type { GamemodesData, SplitsData } from "../types";
     import { gamemodes } from "../constants";
-    import type { GamemodesData } from "../types";
     import { downloadFile, getGamemodeData, readFile } from "../util";
     import Dld from "./DLD.svelte";
     import Fishtopia from "./Fishtopia.svelte";
@@ -8,19 +8,18 @@
 
     let activeTab = gamemodes[0];
     let dataObj: any = {};
-
     for(let gamemode of gamemodes) {
         dataObj[gamemode] = getGamemodeData(gamemode);
     }
-    
-    let data = dataObj as GamemodesData;
+
+    let data: GamemodesData = dataObj;
 
     export function save() {
         for(let gamemode of gamemodes) {
             (window as any).GL.storage.setValue("Autosplitter", `${gamemode}Data`, data[gamemode]);
         }
     }
-    
+
     function exportAll() {
         let json: Record<string, Record<string, any>> = {};
         for(let gamemode of gamemodes) {
@@ -28,7 +27,7 @@
             if(!data) continue;
             json[gamemode] = data;
         }
-    
+
         downloadFile(JSON.stringify(json), "splits.json");
     }
 
@@ -41,7 +40,7 @@
 
                     (window as any).GL.storage.setValue("Autosplitter", `${gamemode}Data`, newData[gamemode]);
                 }
-            })
+            });
     }
 
     function exportMode() {
@@ -54,15 +53,14 @@
             .then((newData) => {
                 data[activeTab] = newData;
                 (window as any).GL.storage.setValue("Autosplitter", `${activeTab}Data`, newData);
-            })
+            });
     }
 </script>
 
 <div class="wrap">
     <div class="tabs">
         {#each gamemodes as tab}
-            <button class="tab" class:active={activeTab === tab}
-            on:click={() => activeTab = tab}>
+            <button class="tab" class:active={activeTab === tab} on:click={() => activeTab = tab}>
                 {tab}
             </button>
         {/each}

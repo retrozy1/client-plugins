@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { categories, DLDSplits } from '../constants';
-    import type { DLDData } from '../types';
-    import FullGame from './FullGame.svelte';
-    import IlSettings from './ILSettings.svelte';
-    import DLDToggles from './DLDToggles.svelte';
+    import { categories, DLDSplits } from "../constants";
+    import type { DLDData } from "../types";
+    import FullGame from "./FullGame.svelte";
+    import IlSettings from "./ILSettings.svelte";
+    import DLDToggles from "./DLDToggles.svelte";
 
     export let data: DLDData;
-    
+
     let category = categories[0];
-    let mode = 'Full Game';
+    let mode = "Full Game";
 </script>
 
 <select bind:value={category}>
@@ -20,7 +20,7 @@
 <select bind:value={mode}>
     <option value="Full Game">Full Game</option>
     {#each DLDSplits as split, i}
-        <option value="{i}">{split}</option>
+        <option value={i}>{split}</option>
     {/each}
 </select>
 
@@ -29,7 +29,7 @@
     {#key category}
         {#if mode !== "Full Game"}
             <IlSettings {data} {category} summit={parseInt(mode)} />
-        {:else}    
+        {:else}
             <FullGame splits={DLDSplits} {data} {category} />
         {/if}
     {/key}

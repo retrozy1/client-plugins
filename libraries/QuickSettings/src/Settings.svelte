@@ -19,35 +19,37 @@
 <div class="settings">
     {#each els as el}
         {#if el.type === "heading"}
-            <h2>{ el.text }</h2>
+            <h2>{el.text}</h2>
         {:else if el.type === "boolean"}
             <div class="setting">
                 <div class="text">
                     {el.title}
                 </div>
-                <Toggle hideLabel bind:toggled={settings[el.id]}
-                on:toggle={() => settings.onChange(el.id)} />
+                <Toggle hideLabel bind:toggled={settings[el.id]} on:toggle={() => settings.onChange(el.id)} />
             </div>
         {:else if el.type === "number"}
             <div class="setting">
                 <div class="text">
                     {el.title}
                 </div>
-                <input bind:value={settings[el.id]} type="number"
-                on:change={() => {
-                    settings[el.id] = clampNum(settings[el.id], el);
-                    settings.onChange(el.id);
-                }}
-                min={el.min} max={el.max} step={el.step} />
+                <input
+                    bind:value={settings[el.id]}
+                    type="number"
+                    on:change={() => {
+                        settings[el.id] = clampNum(settings[el.id], el);
+                        settings.onChange(el.id);
+                    }}
+                    min={el.min}
+                    max={el.max}
+                    step={el.step}
+                />
             </div>
         {:else if el.type === "text"}
             <div class="setting">
                 <div class="text">
                     {el.title}
                 </div>
-                <input bind:value={settings[el.id]} type="text"
-                on:change={() => settings.onChange(el.id)}
-                maxlength={el.maxLength} />
+                <input bind:value={settings[el.id]} type="text" on:change={() => settings.onChange(el.id)} maxlength={el.maxLength} />
             </div>
         {:else if el.type === "dropdown"}
             <div class="setting">

@@ -25,3 +25,6 @@ jobs:
 
       - name: Check types
         run: bunx tsc
+
+      - name: Check svelte files
+        run: bunx svelte-check

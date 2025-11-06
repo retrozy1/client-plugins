@@ -1,8 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type CosmeticChanger from "./cosmeticChanger";
-    import { decompress } from 'compress-json';
-    
+    import { decompress } from "compress-json";
+
     export let cosmeticChanger: CosmeticChanger;
 
     let skinType = cosmeticChanger.skinType;
@@ -24,7 +24,7 @@
             } else {
                 customSkinFile = file;
             }
-        }
+        };
 
         input.click();
     }
@@ -46,7 +46,7 @@
 
         if(!skinData.style) return;
         styles = skinData.style;
-        console.log(styles)
+        console.log(styles);
 
         for(let style of styles.categories) {
             if(style.type === "color") {
@@ -54,7 +54,7 @@
             }
         }
     }
-    
+
     export function save() {
         cosmeticChanger.setSkin(skinType, skinId, customSkinFile, selectedStyles);
         cosmeticChanger.setTrail(trailType, trailId);
@@ -71,8 +71,7 @@
         <option value="custom">Custom</option>
     </select>
     {#if skinType === "id"}
-        <input bind:value={skinId} type="text" placeholder="Skin ID" 
-        on:change={onSkinIdEntered} on:keydown={(e) => e.stopPropagation()} />
+        <input bind:value={skinId} type="text" placeholder="Skin ID" on:change={onSkinIdEntered} on:keydown={(e) => e.stopPropagation()} />
         {#if styles}
             {#each styles.categories as category}
                 <h2>{category.name}</h2>
@@ -81,9 +80,13 @@
                 {:else}
                     <div class="colors">
                         {#each category.options as option, i}
-                            <button class="color" style="background-color:{option.preview.color};"
-                            class:selected={selectedStyles[category.name] ? selectedStyles[category.name] === option.name : i === 0}
-                            on:click={() => selectedStyles[category.name] = option.name}></button>
+                            <button
+                                class="color"
+                                style:background-color={option.preview.color}
+                                class:selected={selectedStyles[category.name] ? selectedStyles[category.name] === option.name : i === 0}
+                                on:click={() => selectedStyles[category.name] = option.name}
+                            >
+                            </button>
                         {/each}
                     </div>
                 {/if}
@@ -91,8 +94,7 @@
         {/if}
     {:else if skinType === "custom"}
         <button on:click={uploadSkin}>
-            Current: {customSkinFile ? customSkinFile.name : "None"}.
-            Upload skin
+            Current: {customSkinFile ? customSkinFile.name : "None"}. Upload skin
         </button>
     {/if}
 </div>

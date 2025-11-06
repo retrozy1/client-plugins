@@ -24,13 +24,11 @@
     }
 </script>
 
-<svelte:window on:pointerup={() => dragging = false}
-    on:pointermove={updateAngle} />
+<svelte:window on:pointerup={() => dragging = false} on:pointermove={updateAngle} />
 
 <div>
     <div class="circleWrap">
-        <div class="circle" bind:this={circle}
-        on:pointerdown={onMousedown}>
+        <div class="circle" bind:this={circle} on:pointerdown={onMousedown}>
             <div class="pointer" style="transform: rotate({angle - 90}deg)"></div>
         </div>
     </div>
