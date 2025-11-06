@@ -30,6 +30,7 @@ export default {
         "DLDTAS": "./plugins/DLDTAS",
         "InfoLines": "./plugins/InfoLines",
         "InputRecorder": "./plugins/InputRecorder",
+        "GamemodeLinks": "./plugins/GamemodeLinks",
         "Desync": "./libraries/Desync",
         "DLDUtils": "./libraries/DLDUtils",
         "GamemodeDetector": "./libraries/GamemodeDetector",
