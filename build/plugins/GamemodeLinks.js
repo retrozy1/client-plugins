@@ -2,7 +2,7 @@
  * @name GamemodeLinks
  * @description Creates game rooms from links, particularly useful in bookmarks.
  * @author retrozy
- * @version 0.1.1
+ * @version 0.1.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/GamemodeLinks.js
  * @webpage https://gimloader.github.io/plugins/gamemodelinks
  * @reloadRequired true
@@ -67,15 +67,14 @@ async function makeGame(id2, entries) {
     }
   };
   if (hooks.some((hook) => hook.type === "kit")) {
-    let selectedKitId = api.storage.getValue("selectedKitId");
-    if (!selectedKitId) {
+    if (!api.settings.kit) {
       const meRes = await fetch("/api/games/summary/me");
       const { games } = await meRes.json();
       if (!games.length) throw new Error("You don't have any kits");
-      selectedKitId = games[0]._id;
-      api.storage.setValue("selectedKitId", selectedKitId);
+      api.settings.kit = games[0]._id;
+      api.storage.setValue("selectedKitId", api.settings.kit);
     }
-    body.options.hookOptions.kit = selectedKitId;
+    body.options.hookOptions.kit = api.settings.kit;
   }
   const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
     method: "POST",
@@ -119,25 +118,15 @@ if (root === "gamemode") {
   };
   cleanup2 = cleanup;
   fetch("/api/games/summary/me").then((res) => res.json()).then(({ games }) => {
-    let initialSelectedKitId = api.storage.getValue("selectedKitId");
-    if (!initialSelectedKitId) {
-      initialSelectedKitId = games[0]._id;
-      api.storage.setValue("selectedKitId", initialSelectedKitId);
-    }
     api.settings.create([
       {
         type: "dropdown",
         id: "kit",
         title: "Kit",
         description: "Which kit should be used when starting a game from a link?",
-        options: games.map((g) => ({ label: g.title, value: g._id })),
-        default: initialSelectedKitId
+        options: games.map((g) => ({ label: g.title, value: g._id }))
       }
     ]);
-    api.settings.listen("kit", (id2) => {
-      console.log("Selected kit:", id2);
-      api.storage.setValue("selectedKitId", id2);
-    });
   }, console.error);
   const setLink = (path) => history.pushState({}, "", path);
   let { pathname } = location, { title } = document;

@@ -36,27 +36,15 @@ if(root === "gamemode") {
     fetch("/api/games/summary/me")
         .then(res => res.json())
         .then(({ games }) => {
-            let initialSelectedKitId = api.storage.getValue("selectedKitId");
-            if(!initialSelectedKitId) {
-                initialSelectedKitId = games[0]._id;
-                api.storage.setValue("selectedKitId", initialSelectedKitId);
-            }
-
             api.settings.create([
                 {
                     type: "dropdown",
                     id: "kit",
                     title: "Kit",
                     description: "Which kit should be used when starting a game from a link?",
-                    options: games.map((g: any) => ({ label: g.title, value: g._id })),
-                    default: initialSelectedKitId
+                    options: games.map((g: any) => ({ label: g.title, value: g._id }))
                 }
             ]);
-
-            api.settings.listen("kit", (id: string) => {
-                console.log("Selected kit:", id);
-                api.storage.setValue("selectedKitId", id);
-            });
         }, console.error);
 
     const setLink = (path: string) => history.pushState({}, "", path);

@@ -6,7 +6,7 @@ export default {
     author: "retrozy",
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/GamemodeLinks.js",
     webpage: "https://gimloader.github.io/plugins/gamemodelinks",
-    version: "0.1.1",
+    version: "0.1.2",
     hasSettings: true,
     reloadRequired: true
 };

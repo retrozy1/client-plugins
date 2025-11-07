@@ -72,18 +72,16 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
     };
 
     if(hooks.some((hook: any) => hook.type === "kit")) {
-        let selectedKitId = api.storage.getValue("selectedKitId");
-
-        if(!selectedKitId) {
+        if(!api.settings.kit) {
             const meRes = await fetch("/api/games/summary/me");
             const { games } = await meRes.json();
 
             if(!games.length) throw new Error("You don't have any kits");
-            selectedKitId = games[0]._id;
-            api.storage.setValue("selectedKitId", selectedKitId);
+            api.settings.kit = games[0]._id;
+            api.storage.setValue("selectedKitId", api.settings.kit);
         }
 
-        body.options.hookOptions.kit = selectedKitId;
+        body.options.hookOptions.kit = api.settings.kit;
     }
 
     const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
