@@ -47,13 +47,15 @@ if(root === "gamemode") {
                     type: "dropdown",
                     id: "kit",
                     title: "Kit",
-                    options: games.map((g: any) => g.title),
+                    description: "Which kit should be used when starting a game from a link?",
+                    options: games.map((g: any) => ({ label: g.title, value: g._id })),
                     default: initialSelectedKitId
                 }
             ]);
 
-            api.settings.listen("kit", (kitTitle: string) => {
-                api.storage.setValue("selectedKitId", games.find((g: any) => g.title === kitTitle)._id);
+            api.settings.listen("kit", (id: string) => {
+                console.log("Selected kit:", id);
+                api.storage.setValue("selectedKitId", id);
             });
         }, console.error);
 

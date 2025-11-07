@@ -2,7 +2,7 @@
  * @name GamemodeLinks
  * @description Creates game rooms from links, particularly useful in bookmarks.
  * @author retrozy
- * @version 0.1.0
+ * @version 0.1.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/GamemodeLinks.js
  * @webpage https://gimloader.github.io/plugins/gamemodelinks
  * @reloadRequired true
@@ -129,12 +129,14 @@ if (root === "gamemode") {
         type: "dropdown",
         id: "kit",
         title: "Kit",
-        options: games.map((g) => g.title),
+        description: "Which kit should be used when starting a game from a link?",
+        options: games.map((g) => ({ label: g.title, value: g._id })),
         default: initialSelectedKitId
       }
     ]);
-    api.settings.listen("kit", (kitTitle) => {
-      api.storage.setValue("selectedKitId", games.find((g) => g.title === kitTitle)._id);
+    api.settings.listen("kit", (id2) => {
+      console.log("Selected kit:", id2);
+      api.storage.setValue("selectedKitId", id2);
     });
   }, console.error);
   const setLink = (path) => history.pushState({}, "", path);
