@@ -25,4 +25,6 @@ api.net.onLoad(() => {
         }
         if(enabled) editFn(null);
     });
+
+    api.net.on("send:INPUT", (_, editFn) => editFn(null));
 });

@@ -2,8 +2,9 @@
  * @name Desync
  * @description Easily make simple settings menus
  * @author TheLazySquid
- * @version 0.1.1
+ * @version 0.1.2
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/Desync.js
+ * @gamemode 2d
  * @isLibrary true
  */
 
@@ -30,6 +31,7 @@ api.net.onLoad(() => {
     }
     if (enabled) editFn(null);
   });
+  api.net.on("send:INPUT", (_, editFn) => editFn(null));
 });
 export {
   enable
