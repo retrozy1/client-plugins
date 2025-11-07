@@ -20,4 +20,4 @@ If you want to add a new script, create a new subdirectory inside /plugins or /l
 
 ### Before committing
 
-Before committing your changes, run `bun run lint` to format the code. Then, run `bun run check` to confirm that code is linted and without type errors.
+Before committing your changes, run `bun run format` to format the code. Then, run `bun run check` to confirm that code is linted and without type errors.
