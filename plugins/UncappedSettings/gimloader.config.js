@@ -6,6 +6,5 @@ export default {
     author: "TheLazySquid",
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/UncappedSettings.js",
     webpage: "https://gimloader.github.io/plugins/uncappedsettings",
-    reloadRequired: true,
-    version: "0.2.2"
+    version: "0.3.0"
 };
