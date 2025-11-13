@@ -2,9 +2,10 @@
  * @name AutoKicker
  * @description Automatically kicks players from your lobby with a customizable set of rules
  * @author TheLazySquid
- * @version 0.2.4
+ * @version 0.2.5
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/AutoKicker.js
  * @webpage https://gimloader.github.io/plugins/autokicker
+ * @changelog Fix typo in hotkey name
  */
 
 // plugins/AutoKicker/src/consts.ts
@@ -516,7 +517,7 @@ var checkStart = () => {
 };
 api.hotkeys.addConfigurableHotkey({
   category: "Auto Kicker",
-  title: "Togapie UI",
+  title: "Toggle UI",
   preventDefault: false,
   default: {
     key: "KeyK",

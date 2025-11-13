@@ -29,7 +29,7 @@ const checkStart = () => {
 
 api.hotkeys.addConfigurableHotkey({
     category: "Auto Kicker",
-    title: "Togapie UI",
+    title: "Toggle UI",
     preventDefault: false,
     default: {
         key: "KeyK",
