@@ -1,4 +1,3 @@
-// @ts-expect-error Types aren't updated yet
 api.net.modifyFetchResponse("/api/experience/map/hooks", (data) => {
     for(const hook of data.hooks) {
         const key = hook.key.toLowerCase();
