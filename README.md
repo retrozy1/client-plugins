@@ -16,7 +16,7 @@ This repository uses the [Gimloader build tools](https://github.com/Gimloader/bu
 
 ### Adding a script
 
-If you want to add a new script, create a new subdirectory inside /plugins or /libraries with the files `gimloader.config.js` and `src/index.ts` in it. See the [build tools readme](https://github.com/Gimloader/build) or look at other scripts for information on what to include in the `gimloader.config.js` file. Additionally, add an alias for your script in the root `gimloader.config.js` file.
+If you want to add a new script, create a new subdirectory inside /plugins or /libraries with the files `gimloader.config.js` and `src/index.ts` in it. See the [build tools readme](https://github.com/Gimloader/build) or look at other scripts for information on what to include in the `gimloader.config.js` file.
 
 ### Before committing
 
