@@ -12,7 +12,7 @@
 // plugins/Healthbars/src/index.ts
 api.net.onLoad(() => {
   const options = JSON.parse(api.stores.world.mapOptionsJSON);
-  if (!options.showHealthAndShield || options.healthMode != "healthAndShield") return;
+  if (!options.showHealthAndShield || options.healthMode !== "healthAndShield") return;
   const { scene } = api.stores.phaser;
   const width = 130;
   const blue = 6853868;
