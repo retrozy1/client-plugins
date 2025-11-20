@@ -1,5 +1,6 @@
-/** @type { import("@gimloader/build").SingleConfig } */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "./src/index.ts",
     name: "DLDTAS",
     description: "Allows you to create TASes for Dont Look Down",
@@ -11,4 +12,4 @@ export default {
         "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/libraries/DLDUtils.js"
     ],
     gamemodes: ["dontLookDown"]
-};
+});

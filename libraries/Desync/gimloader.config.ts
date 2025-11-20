@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "Desync",
     description: "Easily make simple settings menus",
@@ -10,4 +11,4 @@ export default {
     changelog: ["Added webpage link"],
     gamemodes: ["2d"],
     isLibrary: true
-};
+});

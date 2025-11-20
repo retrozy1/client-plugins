@@ -1,5 +1,6 @@
-/** @type {import('@gimloader/build').SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "CharacterCustomization",
     description: "Allows you to use any gim or a custom gim client-side",
@@ -9,4 +10,4 @@ export default {
     webpage: "https://gimloader.github.io/plugins/charactercustomization",
     hasSettings: true,
     gamemodes: ["2d"]
-};
+});

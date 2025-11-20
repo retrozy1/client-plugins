@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "DLDUtils",
     description: "Allows plugins to move characters without the server's permission",
@@ -13,4 +14,4 @@ export default {
     ],
     gamemodes: ["dontLookDown"],
     isLibrary: true
-};
+});

@@ -2130,8 +2130,9 @@ function instance2($$self, $$props, $$invalidate) {
   function onKeydown(e) {
     if (playing || pickingAngle) return;
     if (e.key === "ArrowRight") {
-      if (e.shiftKey) for (let i = 0; i < 5; i++) tools.advanceFrame();
-      else tools.advanceFrame();
+      if (e.shiftKey) {
+        for (let i = 0; i < 5; i++) tools.advanceFrame();
+      } else tools.advanceFrame();
     } else if (e.key === "ArrowLeft") {
       if (e.shiftKey) tools.goBackToFrame(Math.max(0, $currentFrame - 5));
       else if ($currentFrame >= 1) tools.backFrame();

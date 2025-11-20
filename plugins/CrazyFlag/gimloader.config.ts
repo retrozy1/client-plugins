@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "CrazyFlag",
     description: "Make the flags in capture the flag or creative swing like crazy!",
@@ -9,4 +10,4 @@ export default {
     reloadRequired: "ingame",
     hasSettings: true,
     version: "1.3.0"
-};
+});

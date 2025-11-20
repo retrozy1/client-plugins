@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "QuickReset",
     description: "Quickly lets you restart 2d gamemodes",
@@ -8,4 +9,4 @@ export default {
     webpage: "https://gimloader.github.io/plugins/quickreset",
     version: "0.3.0",
     gamemodes: ["2d"]
-};
+});

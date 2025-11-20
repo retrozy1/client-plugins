@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "ClickTP",
     description: "Ctrl+Click to teleport anywhere client-side",
@@ -11,4 +12,4 @@ export default {
         "Desync | https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/libraries/Desync.js"
     ],
     gamemodes: ["2d"]
-};
+});

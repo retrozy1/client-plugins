@@ -1,9 +1,9 @@
 import { sassPlugin } from "esbuild-sass-plugin";
 import svelte from "esbuild-svelte";
 import { sveltePreprocess } from "svelte-preprocess";
+import { workspaceConfig } from "@gimloader/build";
 
-/** @type {import('@gimloader/build').Config} */
-export default {
+export default workspaceConfig({
     type: "workspace",
     splitPluginsAndLibraries: true,
     autoAlias: [
@@ -25,4 +25,4 @@ export default {
             ".svg": "text"
         }
     }
-}
+});

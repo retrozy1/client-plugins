@@ -1,5 +1,6 @@
-/** @type {import('@gimloader/build').Config} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "GamemodeLinks",
     description: "Creates game rooms from links, particularly useful in bookmarks.",
@@ -9,4 +10,4 @@ export default {
     version: "0.1.2",
     hasSettings: true,
     reloadRequired: true
-};
+});

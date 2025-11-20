@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "./src/index.ts",
     name: "Chat",
     description: "Adds an in-game chat to 2d gamemodes",
@@ -8,4 +9,4 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/Chat.js",
     webpage: "https://gimloader.github.io/plugins/chat",
     gamemodes: ["2d"]
-};
+});

@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "CameraControl",
     description: "Lets you freely move and zoom your camera",
@@ -11,4 +12,4 @@ export default {
         "CommandLine | https://raw.githubusercontent.com/Blackhole927/gimkitmods/main/libraries/CommandLine/CommandLine.js"
     ],
     gamemodes: ["2d"]
-};
+});

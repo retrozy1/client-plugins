@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "IdleForXp",
     description: "Automatically performs actions to let you gain XP while idle",
@@ -9,4 +10,4 @@ export default {
     reloadRequired: "ingame",
     version: "0.3.2",
     gamemodes: ["2d"]
-};
+});

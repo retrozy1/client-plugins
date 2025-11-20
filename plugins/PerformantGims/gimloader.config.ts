@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "PerformantGims",
     description: "Replaces configurable gims with images of them. Looks like crap, runs really fast.",
@@ -9,4 +10,4 @@ export default {
     hasSettings: true,
     reloadRequired: "ingame",
     version: "0.5.0"
-};
+});

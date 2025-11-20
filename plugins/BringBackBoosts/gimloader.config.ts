@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "BringBackBoosts",
     description: "Restores boosts in Don't Look Down. Will cause you to desync, so others cannot see you move.",
@@ -13,4 +14,4 @@ export default {
         "DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/libraries/DLDUtils.js"
     ],
     gamemodes: ["dontLookDown"]
-};
+});

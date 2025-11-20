@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "AutoKicker",
     description: "Automatically kicks players from your lobby with a customizable set of rules",
@@ -8,4 +9,4 @@ export default {
     downloadUrl: "https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/AutoKicker.js",
     webpage: "https://gimloader.github.io/plugins/autokicker",
     changelog: ["Fix typo in hotkey name"]
-};
+});

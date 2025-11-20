@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "GamemodeDetector",
     description: "Detects which official 2d gamemode the player is in",
@@ -9,4 +10,4 @@ export default {
     version: "0.2.2",
     changelog: ["Added webpage link"],
     isLibrary: true
-};
+});

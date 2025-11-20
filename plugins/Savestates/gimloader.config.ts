@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "Savestates",
     description: "Allows you to save and load states/summits in Don't Look Down. Only client side, nobody else can see you move.",
@@ -14,4 +15,4 @@ export default {
         "CommandLine | https://raw.githubusercontent.com/Blackhole927/gimkitmods/main/libraries/CommandLine/CommandLine.js"
     ],
     gamemodes: ["dontLookDown"]
-};
+});

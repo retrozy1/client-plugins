@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "Autosplitter",
     description: "Automatically times speedruns for various gamemodes",
@@ -9,4 +10,4 @@ export default {
     webpage: "https://gimloader.github.io/plugins/autosplitter",
     hasSettings: true,
     gamemodes: ["dontLookDown", "fishtopia", "oneWayOut"]
-};
+});

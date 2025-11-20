@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "MobxUtils",
     description: "Some simple utilities for react injection with MobX",
@@ -9,4 +10,4 @@ export default {
     version: "0.3.2",
     changelog: ["Added webpage link"],
     isLibrary: true
-};
+});

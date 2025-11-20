@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "Healthbars",
     description: "Adds healthbars underneath players' names",
@@ -9,4 +10,4 @@ export default {
     version: "0.1.3",
     gamemodes: ["2d"],
     changelog: ["Fixed healthbars appearing when fragility is used"]
-};
+});

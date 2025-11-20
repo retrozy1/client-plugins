@@ -1,5 +1,6 @@
-/** @type {import("@gimloader/build").SingleConfig} */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "PhysicsSettings",
     description: "Allows you to configure various things about the physics in platformer modes (client-side only)",
@@ -9,4 +10,4 @@ export default {
     hasSettings: true,
     version: "0.2.0",
     gamemodes: ["2d"]
-};
+});

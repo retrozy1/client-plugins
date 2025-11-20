@@ -1,5 +1,6 @@
-/** @type { import("@gimloader/build").SingleConfig } */
-export default {
+import { singleConfig } from "@gimloader/build";
+
+export default singleConfig({
     input: "src/index.ts",
     name: "InfoLines",
     description: "Displays a configurable list of info on the screen",
@@ -9,4 +10,4 @@ export default {
     webpage: "https://gimloader.github.io/plugins/infolines",
     hasSettings: true,
     gamemodes: ["2d"]
-};
+});
