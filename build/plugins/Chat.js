@@ -176,11 +176,12 @@ api.net.onLoad(() => {
   const me = api.net.room.state.characters.get(myId);
   const Comms = api.lib("Communication");
   const comms = new Comms("Chat");
+  api.onStop(comms.destroy);
   UI.init(async (text) => {
     await comms.send(text);
     UI.addMessage(`${me.name}: ${text}`, true);
   });
-  api.onStop(comms.onMessage((message, char) => {
+  comms.onMessage((message, char) => {
     if (typeof message === "string") {
       UI.addMessage(`${char.name}: ${message}`);
     } else {
@@ -193,8 +194,8 @@ api.net.onLoad(() => {
         comms.send(0 /* Join */);
       }
     }
-  }));
-  api.onStop(Comms.onEnabled((immediate) => {
+  });
+  comms.onEnabled((immediate) => {
     UI.setEnabled(true);
     if (immediate) {
       comms.send(2 /* Greet */);
@@ -202,13 +203,13 @@ api.net.onLoad(() => {
       UI.addMessage("The chat is active!");
       comms.send(0 /* Join */);
     }
-  }));
-  api.onStop(Comms.onDisabled((immediate) => {
+  });
+  comms.onDisabled((immediate) => {
     UI.setEnabled(false);
     if (!immediate) {
       UI.addMessage("The chat is no longer active");
     }
-  }));
+  });
   window.addEventListener("beforeunload", () => {
     comms.send(1 /* Leave */);
   });
