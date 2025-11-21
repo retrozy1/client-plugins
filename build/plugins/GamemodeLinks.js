@@ -2,11 +2,12 @@
  * @name GamemodeLinks
  * @description Creates game rooms from links, particularly useful in bookmarks.
  * @author retrozy
- * @version 0.1.2
+ * @version 0.2.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/GamemodeLinks.js
  * @webpage https://gimloader.github.io/plugins/gamemodelinks
  * @reloadRequired true
  * @hasSettings true
+ * @changelog Fixed kit not properly working when joining from url
  */
 
 // plugins/GamemodeLinks/src/makeGame.ts
@@ -74,7 +75,7 @@ async function makeGame(id2, entries) {
       api.settings.kit = games[0]._id;
       api.storage.setValue("selectedKitId", api.settings.kit);
     }
-    body.options.hookOptions.kit = api.settings.kit;
+    body.options.hookOptions.kitId = api.settings.kit;
   }
   const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
     method: "POST",
@@ -87,29 +88,9 @@ async function makeGame(id2, entries) {
 
 // plugins/GamemodeLinks/src/index.ts
 var [root, id] = location.pathname.split("/").slice(1);
-var isGamemodePathnameString = "location.pathname.startsWith('/gamemode/')";
-api.rewriter.addParseHook("NotFound", (code) => code.replace(
-  `title:"Hmmm, we couldn't find that...",subTitle:"Sorry, the page you visited doesn't exist."`,
-  `title:${isGamemodePathnameString} ? "Press any key to open the game." : "Hmmm, we couldn't find that...",
-        subTitle:${isGamemodePathnameString} ? "Or, allow popups for gimkit.com." : "Sorry, the page you visited doesn't exist."`
-));
 if (root === "gamemode") {
   makeGame(id, new URLSearchParams(location.search).entries()).then((gameId) => {
-    const tabHref = `https://www.gimkit.com/host?id=${gameId}`;
-    const tab = window.open("");
-    if (tab) {
-      tab.location.href = tabHref;
-      location.href = "/";
-    } else {
-      addEventListener("keydown", () => {
-        const tab2 = window.open("");
-        if (!tab2) {
-          throw new Error("Could not open game. Try again.");
-        }
-        tab2.location.href = tabHref;
-        location.href = "/";
-      });
-    }
+    location.href = `https://www.gimkit.com/host?id=${gameId}`;
   }).catch((err) => alert(err.message));
 } else {
   let cleanup = function() {

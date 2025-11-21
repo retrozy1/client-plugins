@@ -81,7 +81,7 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
             api.storage.setValue("selectedKitId", api.settings.kit);
         }
 
-        body.options.hookOptions.kit = api.settings.kit;
+        body.options.hookOptions.kitId = api.settings.kit;
     }
 
     const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
