@@ -2,12 +2,12 @@
  * @name GamemodeLinks
  * @description Creates game rooms from links, particularly useful in bookmarks.
  * @author retrozy
- * @version 0.2.0
+ * @version 0.2.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/GamemodeLinks.js
  * @webpage https://gimloader.github.io/plugins/gamemodelinks
  * @reloadRequired true
  * @hasSettings true
- * @changelog Fixed kit not properly working when joining from url
+ * @changelog Actually fixed kit not properly working when joining from url
  */
 
 // plugins/GamemodeLinks/src/makeGame.ts
@@ -67,7 +67,8 @@ async function makeGame(id2, entries) {
       }
     }
   };
-  if (hooks.some((hook) => hook.type === "kit")) {
+  const kitHook = hooks.find((hook) => hook.type === "kit");
+  if (kitHook) {
     if (!api.settings.kit) {
       const meRes = await fetch("/api/games/summary/me");
       const { games } = await meRes.json();
@@ -75,7 +76,7 @@ async function makeGame(id2, entries) {
       api.settings.kit = games[0]._id;
       api.storage.setValue("selectedKitId", api.settings.kit);
     }
-    body.options.hookOptions.kitId = api.settings.kit;
+    body.options.hookOptions[kitHook.key] = api.settings.kit;
   }
   const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
     method: "POST",
@@ -90,7 +91,7 @@ async function makeGame(id2, entries) {
 var [root, id] = location.pathname.split("/").slice(1);
 if (root === "gamemode") {
   makeGame(id, new URLSearchParams(location.search).entries()).then((gameId) => {
-    location.href = `https://www.gimkit.com/host?id=${gameId}`;
+    location.href = `/host?id=${gameId}`;
   }).catch((err) => alert(err.message));
 } else {
   let cleanup = function() {

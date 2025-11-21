@@ -7,7 +7,7 @@ const [root, id] = location.pathname.split("/").slice(1);
 if(root === "gamemode") {
     makeGame(id, new URLSearchParams(location.search).entries())
         .then(gameId => {
-            location.href = `https://www.gimkit.com/host?id=${gameId}`;
+            location.href = `/host?id=${gameId}`;
         })
         .catch((err: Error) => alert(err.message));
 } else {

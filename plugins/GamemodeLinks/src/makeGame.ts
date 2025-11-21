@@ -71,7 +71,8 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
         }
     };
 
-    if(hooks.some((hook: any) => hook.type === "kit")) {
+    const kitHook = hooks.find((hook: any) => hook.type === "kit");
+    if(kitHook) {
         if(!api.settings.kit) {
             const meRes = await fetch("/api/games/summary/me");
             const { games } = await meRes.json();
@@ -81,7 +82,7 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
             api.storage.setValue("selectedKitId", api.settings.kit);
         }
 
-        body.options.hookOptions.kitId = api.settings.kit;
+        body.options.hookOptions[kitHook.key] = api.settings.kit;
     }
 
     const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
