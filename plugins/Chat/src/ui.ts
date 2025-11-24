@@ -1,3 +1,4 @@
+import minifiedNavigator from "$shared/minifiedNavigator";
 import { maxLength } from "./consts";
 import styles from "./styles.css";
 
@@ -26,15 +27,10 @@ const formatCallback = api.rewriter.createShared("formatActivityFeed", (fmtFn: F
 });
 
 api.rewriter.addParseHook("App", (code) => {
-    const index = code.indexOf(">%SPACE_HERE%");
-    if(index === -1) return code;
+    if(!code.includes(">%SPACE_HERE%")) return code;
 
-    const start = code.lastIndexOf("});const", index);
-    const end = code.indexOf("=", start);
-    const name = code.substring(start + 9, end);
-    code += `${formatCallback}?.(${name});`;
-
-    return code;
+    const name = minifiedNavigator(code, ".outputTag,attribs:{}})})});const ", "=").inBetween;
+    return code + `${formatCallback}?.(${name});`;
 });
 
 export default class UI {

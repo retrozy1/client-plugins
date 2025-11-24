@@ -9,5 +9,6 @@ export default singleConfig({
     webpage: "https://gimloader.github.io/plugins/performantgims",
     hasSettings: true,
     reloadRequired: "ingame",
-    version: "0.5.0"
+    version: "0.5.1",
+    changelog: ["Switched to a utility for rewriting source code"]
 });

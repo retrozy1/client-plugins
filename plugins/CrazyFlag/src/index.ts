@@ -1,3 +1,5 @@
+import minifiedNavigator from "$shared/minifiedNavigator";
+
 api.settings.create([
     {
         type: "number",
@@ -53,13 +55,6 @@ const constsCallback = api.rewriter.createShared("FlagConsts", (consts: any) => 
 });
 
 api.rewriter.addParseHook("FlagDevice", (code) => {
-    const index = code.indexOf("FlagOriginX:");
-    if(index === -1) return code;
-
-    const end = code.lastIndexOf("=", index);
-    const start = code.lastIndexOf(",", end);
-    const name = code.slice(start + 1, end);
-    code += `${constsCallback}?.(${name});`;
-
-    return code;
+    const name = minifiedNavigator(code, ")}),", "=").inBetween;
+    return code + `${constsCallback}?.(${name});`;
 });

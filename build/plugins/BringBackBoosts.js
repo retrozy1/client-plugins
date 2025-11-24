@@ -2,14 +2,59 @@
  * @name BringBackBoosts
  * @description Restores boosts in Don't Look Down. Will cause you to desync, so others cannot see you move.
  * @author TheLazySquid
- * @version 0.6.0
+ * @version 0.6.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/BringBackBoosts.js
  * @webpage https://gimloader.github.io/plugins/bringbackboosts
  * @reloadRequired ingame
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/libraries/DLDUtils.js
  * @hasSettings true
  * @gamemode dontLookDown
+ * @changelog Switched to a utility for rewriting source code
  */
+
+// shared/minifiedNavigator.ts
+function minifiedNavigator(code, start, end) {
+  if (typeof start === "string") start = [start];
+  if (typeof end === "string") end = [end];
+  let startIndex = 0;
+  if (start) {
+    for (const snippet of start) {
+      startIndex = code.indexOf(snippet, startIndex) + snippet.length;
+    }
+  }
+  let endIndex = startIndex;
+  if (end) {
+    for (const snippet in end) {
+      endIndex = code.indexOf(end[snippet], endIndex);
+      if (Number(snippet) < end.length - 1) endIndex += end[snippet].length;
+    }
+  } else {
+    endIndex = code.length - 1;
+  }
+  const startCode = code.slice(0, startIndex);
+  const endCode = code.substring(endIndex);
+  return {
+    startIndex,
+    endIndex,
+    inBetween: code.slice(startIndex, endIndex),
+    insertAfterStart(string) {
+      return startCode + string + this.inBetween + endCode;
+    },
+    insertBeforeEnd(string) {
+      return startCode + this.inBetween + string + endCode;
+    },
+    replaceEntireBetween(string) {
+      return startCode + string + endCode;
+    },
+    replaceBetween(...args) {
+      const changedMiddle = this.inBetween.replace(...args);
+      return this.replaceEntireBetween(changedMiddle);
+    },
+    deleteBetween() {
+      return startCode + endCode;
+    }
+  };
+}
 
 // plugins/BringBackBoosts/src/index.ts
 api.settings.create([
@@ -50,13 +95,9 @@ var calcGravCb = api.rewriter.createShared("CalculateGravity", (func) => {
   calcGravity = func;
 });
 api.rewriter.addParseHook("App", (code) => {
-  const index = code.indexOf("physics.state.forces.some");
-  if (index === -1) return code;
-  const start = code.lastIndexOf(",", index) + 1;
-  const end = code.indexOf("=", start);
-  const name = code.slice(start, end);
-  code += `${calcGravCb}?.(${name});`;
-  return code;
+  if (!code.includes("physics.state.forces.some")) return code;
+  const name = minifiedNavigator(code, [".tickRate);return{airGravity:", ".tickRate)),"], "=").inBetween;
+  return code + `${calcGravCb}?.(${name});`;
 });
 var wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (func) => {
   var n = { default: GL.stores }, a = { default: { normal: 310 } }, I = {
@@ -101,11 +142,8 @@ var wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (
   };
 });
 api.rewriter.addParseHook("App", (code) => {
-  const index = code.indexOf("g.physics.state.jump.xVelocityAtJumpStart),");
-  if (index === -1) return code;
-  const start = code.lastIndexOf("(", code.lastIndexOf("=>", index));
-  const end = code.indexOf("}}", code.indexOf("y:", index)) + 2;
-  const func = code.slice(start, end);
-  code = code.slice(0, start) + `(${wrapCalcMovementVelocity} ?? (v => v))(${func})` + code.slice(end);
-  return code;
+  if (!code.includes(".physics.state.jump.xVelocityAtJumpStart),")) return code;
+  const functionSegment = minifiedNavigator(code, [".input):{x:0,y:0}},", "="], ["}}", ","]);
+  const func = functionSegment.inBetween;
+  return functionSegment.replaceEntireBetween(`(${wrapCalcMovementVelocity} ?? (v => v))(${func})`);
 });

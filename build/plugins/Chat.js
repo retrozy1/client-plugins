@@ -2,10 +2,11 @@
  * @name Chat
  * @description Adds an in-game chat to 2d gamemodes
  * @author TheLazySquid
- * @version 0.2.3
+ * @version 0.2.4
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/Chat.js
  * @webpage https://gimloader.github.io/plugins/chat
  * @gamemode 2d
+ * @changelog Switched to a utility for rewriting source code
  */
 
 // plugins/Chat/src/consts.ts
@@ -46,6 +47,50 @@ function encodeMessage(message) {
     messages.push(bytesToFloat(msg));
   }
   return messages;
+}
+
+// shared/minifiedNavigator.ts
+function minifiedNavigator(code, start, end) {
+  if (typeof start === "string") start = [start];
+  if (typeof end === "string") end = [end];
+  let startIndex = 0;
+  if (start) {
+    for (const snippet of start) {
+      startIndex = code.indexOf(snippet, startIndex) + snippet.length;
+    }
+  }
+  let endIndex = startIndex;
+  if (end) {
+    for (const snippet in end) {
+      endIndex = code.indexOf(end[snippet], endIndex);
+      if (Number(snippet) < end.length - 1) endIndex += end[snippet].length;
+    }
+  } else {
+    endIndex = code.length - 1;
+  }
+  const startCode = code.slice(0, startIndex);
+  const endCode = code.substring(endIndex);
+  return {
+    startIndex,
+    endIndex,
+    inBetween: code.slice(startIndex, endIndex),
+    insertAfterStart(string) {
+      return startCode + string + this.inBetween + endCode;
+    },
+    insertBeforeEnd(string) {
+      return startCode + this.inBetween + string + endCode;
+    },
+    replaceEntireBetween(string) {
+      return startCode + string + endCode;
+    },
+    replaceBetween(...args) {
+      const changedMiddle = this.inBetween.replace(...args);
+      return this.replaceEntireBetween(changedMiddle);
+    },
+    deleteBetween() {
+      return startCode + endCode;
+    }
+  };
 }
 
 // plugins/Chat/src/styles.css
@@ -107,13 +152,9 @@ var formatCallback = api.rewriter.createShared("formatActivityFeed", (fmtFn) => 
   format = fmtFn;
 });
 api.rewriter.addParseHook("App", (code) => {
-  const index = code.indexOf(">%SPACE_HERE%");
-  if (index === -1) return code;
-  const start = code.lastIndexOf("});const", index);
-  const end = code.indexOf("=", start);
-  const name = code.substring(start + 9, end);
-  code += `${formatCallback}?.(${name});`;
-  return code;
+  if (!code.includes(">%SPACE_HERE%")) return code;
+  const name = minifiedNavigator(code, ".outputTag,attribs:{}})})});const ", "=").inBetween;
+  return code + `${formatCallback}?.(${name});`;
 });
 var UI = class _UI {
   static send;
