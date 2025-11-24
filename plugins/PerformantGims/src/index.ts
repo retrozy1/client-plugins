@@ -1,4 +1,4 @@
-import minifiedNavigator from '$shared/minifiedNavigator';
+import minifiedNavigator from "$shared/minifiedNavigator";
 import type { Vector } from "@dimforge/rapier2d-compat";
 
 api.settings.create([
@@ -74,7 +74,7 @@ api.rewriter.addParseHook("App", (code) => {
     const className = minifiedNavigator(code, ".DEFAULT_CYAN};class ", "{").inBetween;
     const classSection = minifiedNavigator(code, ".DEFAULT_CYAN};", ["this.character=", "var"]);
     const classCode = classSection.inBetween;
-    return classSection.replaceEntireBetween(`const ${className}=(${wrapSkin} ?? (v => v))(${classCode});`)
+    return classSection.replaceEntireBetween(`const ${className}=(${wrapSkin} ?? (v => v))(${classCode});`);
 });
 
 const wrapAnimations = api.rewriter.createShared("WrapAnimations", (Animation: any) => {
@@ -93,12 +93,12 @@ const wrapAnimations = api.rewriter.createShared("WrapAnimations", (Animation: a
 });
 
 api.rewriter.addParseHook("FixSpinePlugin", (code) => {
-    if (!code.includes("onSkinChanged=")) return code;
+    if(!code.includes("onSkinChanged=")) return code;
 
     const className = minifiedNavigator(code, "BODY:5};class ", "{").inBetween;
-    console.log(className)
+    console.log(className);
     const classSection = minifiedNavigator(code, "BODY:5};", ["this.character=", "if"]);
     const classCode = classSection.inBetween;
-    console.log(classCode)
-    return classSection.replaceEntireBetween(`const ${className}=(${wrapAnimations} ?? (v => v))(${classCode});`)
+    console.log(classCode);
+    return classSection.replaceEntireBetween(`const ${className}=(${wrapAnimations} ?? (v => v))(${classCode});`);
 });

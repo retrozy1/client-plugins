@@ -10,5 +10,5 @@ export default singleConfig({
     version: "0.2.2",
     hasSettings: true,
     reloadRequired: true,
-    changelog: ["Switched to a utility for rewriting source code"],
+    changelog: ["Switched to a utility for rewriting source code"]
 });

@@ -1,6 +1,6 @@
 // Not putting fetch types here until gimloader documents them
 
-import minifiedNavigator from '$shared/minifiedNavigator';
+import minifiedNavigator from "$shared/minifiedNavigator";
 import makeGame from "./makeGame";
 
 const [root, id] = location.pathname.split("/").slice(1);
@@ -81,12 +81,12 @@ if(root === "gamemode") {
         if(code.includes("We're showing this hook for testing purposes")) {
             const name = minifiedNavigator(code, "state:", ",").inBetween;
             // Updates the hooks
-            return minifiedNavigator(code, ".readOnly]);").insertAfterStart(`${setHooksWrapper}?.(${name});`)
+            return minifiedNavigator(code, ".readOnly]);").insertAfterStart(`${setHooksWrapper}?.(${name});`);
         } else if(code.includes("The more reliable, the easier it is for crewmates to win")) {
             const gameVarName = minifiedNavigator(code, ".name,description:", ".").inBetween;
 
             // Triggers manual popup closes
-            code = minifiedNavigator(code, [")=>{const[", "{"]).insertAfterStart(`${closePopupWrapper}?.();`)
+            code = minifiedNavigator(code, [")=>{const[", "{"]).insertAfterStart(`${closePopupWrapper}?.();`);
             // Updates the selected game
             return minifiedNavigator(code, '"EXPERIENCE_HOOKS"})').insertAfterStart(
                 `;${setMapDataWrapper}?.(${gameVarName}?._id, ${gameVarName}?.name);`
