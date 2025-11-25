@@ -139,7 +139,6 @@ if (root === "gamemode") {
   }).catch((err) => alert(err.message));
 } else {
   let cleanup = function() {
-    if (!location.pathname.startsWith("/gamemode")) return;
     setLink(pathname);
     document.title = title;
   };
@@ -157,7 +156,6 @@ if (root === "gamemode") {
   }, console.error);
   const setLink = (path) => history.pushState({}, "", path);
   let { pathname } = location, { title } = document;
-  api.onStop(cleanup);
   const setHooksWrapper = api.rewriter.createShared("SetHooksWrapper", (hooks) => {
     hooks = { ...hooks };
     const kitKey = Object.keys(hooks).find((hook) => hook.toLowerCase().includes("kit"));
@@ -183,7 +181,7 @@ if (root === "gamemode") {
     setLink("/gamemode/" + id2 + location.search);
   });
   const closePopupWrapper = api.rewriter.createShared("ClosePopupWrapper", cleanup);
-  api.net.modifyFetchRequest("**/create", cleanup);
+  api.net.modifyFetchResponse("**/create", cleanup);
   api.rewriter.addParseHook("App", (code) => {
     if (code.includes("We're showing this hook for testing purposes")) {
       const name = minifiedNavigator(code, "state:", ",").inBetween;
@@ -196,6 +194,9 @@ if (root === "gamemode") {
       );
     }
     return code;
+  });
+  api.onStop(() => {
+    if (location.pathname.startsWith("/gamemode")) cleanup();
   });
 }
 var cleanup2;

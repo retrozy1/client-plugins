@@ -33,12 +33,9 @@ if(root === "gamemode") {
     let { pathname } = location, { title } = document;
 
     function cleanup() {
-        if(!location.pathname.startsWith("/gamemode")) return;
         setLink(pathname);
         document.title = title;
     }
-
-    api.onStop(cleanup);
 
     const setHooksWrapper = api.rewriter.createShared("SetHooksWrapper", (hooks: Hooks) => {
         hooks = { ...hooks };
@@ -75,9 +72,10 @@ if(root === "gamemode") {
     const closePopupWrapper = api.rewriter.createShared("ClosePopupWrapper", cleanup);
 
     // Creating games will close the popup
-    api.net.modifyFetchRequest("**/create", cleanup);
+    api.net.modifyFetchResponse("**/create", cleanup);
 
     api.rewriter.addParseHook("App", code => {
+        // Updates the hooks
         if(code.includes("We're showing this hook for testing purposes")) {
             const name = minifiedNavigator(code, "state:", ",").inBetween;
             // Updates the hooks
@@ -93,5 +91,9 @@ if(root === "gamemode") {
             );
         }
         return code;
+    });
+
+    api.onStop(() => {
+        if(location.pathname.startsWith("/gamemode")) cleanup();
     });
 }

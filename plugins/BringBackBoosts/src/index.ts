@@ -1,5 +1,3 @@
-import minifiedNavigator from "$shared/minifiedNavigator";
-
 // biome-ignore-all lint: This file includes minified code
 api.settings.create([
     {
@@ -44,10 +42,15 @@ const calcGravCb = api.rewriter.createShared("CalculateGravity", (func: (id: str
 });
 
 api.rewriter.addParseHook("App", (code) => {
-    if(!code.includes("physics.state.forces.some")) return code;
+    const index = code.indexOf("physics.state.forces.some");
+    if(index === -1) return code;
 
-    const name = minifiedNavigator(code, [".tickRate);return{airGravity:", ".tickRate)),"], "=").inBetween;
-    return code + `${calcGravCb}?.(${name});`;
+    const start = code.lastIndexOf(",", index) + 1;
+    const end = code.indexOf("=", start);
+    const name = code.slice(start, end);
+    code += `${calcGravCb}?.(${name});`;
+
+    return code;
 });
 
 const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel", (func: Function) => {
@@ -120,9 +123,13 @@ const wrapCalcMovementVelocity = api.rewriter.createShared("WrapCalcMovmentVel",
 });
 
 api.rewriter.addParseHook("App", (code) => {
-    if(!code.includes(".physics.state.jump.xVelocityAtJumpStart),")) return code;
+    const index = code.indexOf("g.physics.state.jump.xVelocityAtJumpStart),");
+    if(index === -1) return code;
 
-    const functionSegment = minifiedNavigator(code, [".input):{x:0,y:0}},", "="], ["}}", ","]);
-    const func = functionSegment.inBetween;
-    return functionSegment.replaceEntireBetween(`(${wrapCalcMovementVelocity} ?? (v => v))(${func})`);
+    const start = code.lastIndexOf("(", code.lastIndexOf("=>", index));
+    const end = code.indexOf("}}", code.indexOf("y:", index)) + 2;
+    const func = code.slice(start, end);
+    code = code.slice(0, start) + `(${wrapCalcMovementVelocity} ?? (v => v))(${func})` + code.slice(end);
+
+    return code;
 });

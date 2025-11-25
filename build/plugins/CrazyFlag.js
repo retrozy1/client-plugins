@@ -2,57 +2,12 @@
  * @name CrazyFlag
  * @description Make the flags in capture the flag or creative swing like crazy!
  * @author TheLazySquid
- * @version 1.3.1
+ * @version 1.3.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/CrazyFlag.js
  * @webpage https://gimloader.github.io/plugins/crazyflag
  * @reloadRequired ingame
  * @hasSettings true
- * @changelog Switched to a utility for rewriting source code
  */
-
-// shared/minifiedNavigator.ts
-function minifiedNavigator(code, start, end) {
-  if (typeof start === "string") start = [start];
-  if (typeof end === "string") end = [end];
-  let startIndex = 0;
-  if (start) {
-    for (const snippet of start) {
-      startIndex = code.indexOf(snippet, startIndex) + snippet.length;
-    }
-  }
-  let endIndex = startIndex;
-  if (end) {
-    for (const snippet in end) {
-      endIndex = code.indexOf(end[snippet], endIndex);
-      if (Number(snippet) < end.length - 1) endIndex += end[snippet].length;
-    }
-  } else {
-    endIndex = code.length - 1;
-  }
-  const startCode = code.slice(0, startIndex);
-  const endCode = code.substring(endIndex);
-  return {
-    startIndex,
-    endIndex,
-    inBetween: code.slice(startIndex, endIndex),
-    insertAfterStart(string) {
-      return startCode + string + this.inBetween + endCode;
-    },
-    insertBeforeEnd(string) {
-      return startCode + this.inBetween + string + endCode;
-    },
-    replaceEntireBetween(string) {
-      return startCode + string + endCode;
-    },
-    replaceBetween(...args) {
-      const changedMiddle = this.inBetween.replace(...args);
-      return this.replaceEntireBetween(changedMiddle);
-    },
-    deleteBetween() {
-      return startCode + endCode;
-    }
-  };
-}
 
 // plugins/CrazyFlag/src/index.ts
 api.settings.create([
@@ -91,6 +46,11 @@ var constsCallback = api.rewriter.createShared("FlagConsts", (consts) => {
   });
 });
 api.rewriter.addParseHook("FlagDevice", (code) => {
-  const name = minifiedNavigator(code, ")}),", "=").inBetween;
-  return code + `${constsCallback}?.(${name});`;
+  const index = code.indexOf("FlagOriginX:");
+  if (index === -1) return code;
+  const end = code.lastIndexOf("=", index);
+  const start = code.lastIndexOf(",", end);
+  const name = code.slice(start + 1, end);
+  code += `${constsCallback}?.(${name});`;
+  return code;
 });

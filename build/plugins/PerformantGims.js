@@ -2,57 +2,12 @@
  * @name PerformantGims
  * @description Replaces configurable gims with images of them. Looks like crap, runs really fast.
  * @author TheLazySquid
- * @version 0.5.1
+ * @version 0.5.0
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/refs/heads/main/build/plugins/PerformantGims.js
  * @webpage https://gimloader.github.io/plugins/performantgims
  * @reloadRequired ingame
  * @hasSettings true
- * @changelog Switched to a utility for rewriting source code
  */
-
-// shared/minifiedNavigator.ts
-function minifiedNavigator(code, start, end) {
-  if (typeof start === "string") start = [start];
-  if (typeof end === "string") end = [end];
-  let startIndex = 0;
-  if (start) {
-    for (const snippet of start) {
-      startIndex = code.indexOf(snippet, startIndex) + snippet.length;
-    }
-  }
-  let endIndex = startIndex;
-  if (end) {
-    for (const snippet in end) {
-      endIndex = code.indexOf(end[snippet], endIndex);
-      if (Number(snippet) < end.length - 1) endIndex += end[snippet].length;
-    }
-  } else {
-    endIndex = code.length - 1;
-  }
-  const startCode = code.slice(0, startIndex);
-  const endCode = code.substring(endIndex);
-  return {
-    startIndex,
-    endIndex,
-    inBetween: code.slice(startIndex, endIndex),
-    insertAfterStart(string) {
-      return startCode + string + this.inBetween + endCode;
-    },
-    insertBeforeEnd(string) {
-      return startCode + this.inBetween + string + endCode;
-    },
-    replaceEntireBetween(string) {
-      return startCode + string + endCode;
-    },
-    replaceBetween(...args) {
-      const changedMiddle = this.inBetween.replace(...args);
-      return this.replaceEntireBetween(changedMiddle);
-    },
-    deleteBetween() {
-      return startCode + endCode;
-    }
-  };
-}
 
 // plugins/PerformantGims/src/index.ts
 api.settings.create([
@@ -116,11 +71,15 @@ var wrapSkin = api.rewriter.createShared("WrapSkin", (Skin) => {
   return NewSkin;
 });
 api.rewriter.addParseHook("App", (code) => {
-  if (!code.includes("JSON.stringify(this.editStyles")) return code;
-  const className = minifiedNavigator(code, ".DEFAULT_CYAN};class ", "{").inBetween;
-  const classSection = minifiedNavigator(code, ".DEFAULT_CYAN};", ["this.character=", "var"]);
-  const classCode = classSection.inBetween;
-  return classSection.replaceEntireBetween(`const ${className}=(${wrapSkin} ?? (v => v))(${classCode});`);
+  const index = code.indexOf("JSON.stringify(this.editStyles");
+  if (index === -1) return code;
+  const classStart = code.lastIndexOf("class ", index);
+  const nameEnd = code.indexOf("{", classStart);
+  const name = code.slice(classStart + 6, nameEnd);
+  const classEnd = code.indexOf("}}", code.indexOf("this.character=", index)) + 2;
+  const classCode = code.slice(classStart, classEnd);
+  code = code.slice(0, classStart) + `const ${name}=(${wrapSkin} ?? (v => v))(${classCode});` + code.slice(classEnd);
+  return code;
 });
 var wrapAnimations = api.rewriter.createShared("WrapAnimations", (Animation) => {
   class NewAnimation {
@@ -139,11 +98,13 @@ var wrapAnimations = api.rewriter.createShared("WrapAnimations", (Animation) => 
   return NewAnimation;
 });
 api.rewriter.addParseHook("FixSpinePlugin", (code) => {
-  if (!code.includes("onSkinChanged=")) return code;
-  const className = minifiedNavigator(code, "BODY:5};class ", "{").inBetween;
-  console.log(className);
-  const classSection = minifiedNavigator(code, "BODY:5};", ["this.character=", "if"]);
-  const classCode = classSection.inBetween;
-  console.log(classCode);
-  return classSection.replaceEntireBetween(`const ${className}=(${wrapAnimations} ?? (v => v))(${classCode});`);
+  const index = code.indexOf("onSkinChanged=");
+  if (index === -1) return code;
+  const classStart = code.lastIndexOf("class ", index);
+  const nameEnd = code.indexOf("{", classStart);
+  const name = code.slice(classStart + 6, nameEnd);
+  const classEnd = code.indexOf("}}", code.indexOf("this.character=", index)) + 2;
+  const classCode = code.slice(classStart, classEnd);
+  code = code.slice(0, classStart) + `const ${name}=(${wrapAnimations}??(v=>v))(${classCode});` + code.slice(classEnd);
+  return code;
 });
