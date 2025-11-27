@@ -1,6 +1,11 @@
 api.net.onLoad(() => {
     const options = JSON.parse(api.stores.world.mapOptionsJSON);
-    if(!options.showHealthAndShield || options.healthMode !== "healthAndShield") return;
+    let visible = options.showHealthAndShield && options.healthMode === "healthAndShield";
+
+    api.onStop(api.net.room.state.listen("mapSettings", (settingsJson: string) => {
+        const options = JSON.parse(settingsJson);
+        visible = options.showHealthAndShield && options.healthMode === "healthAndShield";
+    }, false));
 
     const { scene } = api.stores.phaser;
     const width = 130;
@@ -21,7 +26,7 @@ api.net.onLoad(() => {
             let { x, y, depth } = character.nametag.tag;
             y += 22;
 
-            bg.visible = health.visible = shield.visible = !stateChar.isRespawning;
+            bg.visible = health.visible = shield.visible = visible && !stateChar.isRespawning;
             health.width = hp.health / hp.maxHealth * width;
             shield.width = hp.shield / hp.maxShield * width;
 
