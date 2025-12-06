@@ -2,12 +2,13 @@
  * @name InputRecorder
  * @description Records your inputs in Don't Look Down
  * @author TheLazySquid
- * @version 0.3.0
+ * @version 0.3.1
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/InputRecorder.js
  * @webpage https://gimloader.github.io/plugins/inputrecorder
  * @reloadRequired ingame
  * @needsLib DLDUtils | https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/libraries/DLDUtils.js
  * @gamemode dontLookDown
+ * @changelog Fixed performance issue while recording
  */
 
 // plugins/InputRecorder/src/updateLasers.ts
@@ -24,6 +25,7 @@ api.net.on("DEVICES_STATES_CHANGES", (packet) => {
 function stopUpdatingLasers() {
   lasers = [];
 }
+var lastActive = null;
 function updateLasers(frame) {
   if (lasers.length === 0) {
     lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
@@ -31,6 +33,8 @@ function updateLasers(frame) {
   const states = api.stores.world.devices.states;
   const devices = api.stores.phaser.scene.worldManager.devices;
   const active = frame % 66 < 36;
+  if (lastActive === active) return;
+  lastActive = active;
   if (!states.has(lasers[0].id)) {
     lasers = api.stores.phaser.scene.worldManager.devices.allDevices.filter((d) => d.laser);
   }
