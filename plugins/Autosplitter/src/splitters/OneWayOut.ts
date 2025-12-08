@@ -18,7 +18,7 @@ export default class OneWayOutAutosplitter extends SplitsAutosplitter {
 
         api.net.on("DEVICES_STATES_CHANGES", (msg: any) => {
             for(const change of msg.changes) {
-                if(msg.values[change[1][0]] === "apiOBAL_healthPercent") {
+                if(msg.values[change[1][0]] === "GLOBAL_healthPercent") {
                     const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
                     if(device?.propOption.id === "barriers/scifi_barrier_1" && change[2][0] === 0) {
                         this.addAttempt();

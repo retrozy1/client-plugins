@@ -2,13 +2,14 @@
  * @name Autosplitter
  * @description Automatically times speedruns for various gamemodes
  * @author TheLazySquid
- * @version 0.5.4
+ * @version 0.5.5
  * @downloadUrl https://raw.githubusercontent.com/Gimloader/client-plugins/main/build/plugins/Autosplitter.js
  * @webpage https://gimloader.github.io/plugins/autosplitter
  * @hasSettings true
  * @gamemode dontLookDown
  * @gamemode fishtopia
  * @gamemode oneWayOut
+ * @changelog Fixed One Way Out autosplitter not starting correctly
  */
 
 // node_modules/svelte/src/runtime/internal/utils.js
@@ -3990,7 +3991,7 @@ var OneWayOutAutosplitter = class extends SplitsAutosplitter {
     const gameSession = api.net.room.state.session.gameSession;
     api.net.on("DEVICES_STATES_CHANGES", (msg) => {
       for (const change of msg.changes) {
-        if (msg.values[change[1][0]] === "apiOBAL_healthPercent") {
+        if (msg.values[change[1][0]] === "GLOBAL_healthPercent") {
           const device = api.stores.phaser.scene.worldManager.devices.getDeviceById(change[0]);
           if (device?.propOption.id === "barriers/scifi_barrier_1" && change[2][0] === 0) {
             this.addAttempt();
