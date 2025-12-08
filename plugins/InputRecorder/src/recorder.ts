@@ -1,26 +1,25 @@
+import type { Vector } from "@dimforge/rapier2d-compat";
 import type { IFrameInfo, IRecording } from "../types";
 import { stopUpdatingLasers, updateLasers } from "./updateLasers";
 import type * as DLDUtils from "libraries/DLDUtils/src";
 
 export default class Recorder {
-    physicsManager: any;
-    nativeStep: Function;
-    physics: any;
-    rb: any;
-    inputManager: any;
-    getPhysicsInput: Function;
+    nativeStep: Gimloader.Stores.PhysicsManager["physicsStep"];
+    physics = api.stores.phaser.mainCharacter.physics;
+    rb = this.physics.getBody().rigidBody;
+    inputManager = api.stores.phaser.scene.inputManager;
+    getPhysicsInput = this.inputManager.getPhysicsInput;
 
-    startPos: { x: number; y: number } = { x: 0, y: 0 };
-    startState: string = "";
-    platformerPhysics: string = "";
+    startPos: Vector = { x: 0, y: 0 };
+    startState = "";
+    platformerPhysics = "";
     frames: IFrameInfo[] = [];
 
-    recording: boolean = false;
-    playing: boolean = false;
+    recording = false;
+    playing = false;
 
-    constructor(physicsManager: any) {
+    constructor(public physicsManager: Gimloader.Stores.PhysicsManager) {
         this.physicsManager = physicsManager;
-
         this.nativeStep = physicsManager.physicsStep;
 
         // load all bodies in at once for deterministic physics
@@ -30,12 +29,6 @@ export default class Recorder {
 
         // ignore attempts to disable bodies
         physicsManager.bodies.activeBodies.disableBody = () => {};
-
-        this.physics = api.stores.phaser.mainCharacter.physics;
-        this.rb = this.physics.getBody().rigidBody;
-        this.inputManager = api.stores.phaser.scene.inputManager;
-
-        this.getPhysicsInput = this.inputManager.getPhysicsInput;
     }
 
     toggleRecording() {
@@ -56,7 +49,7 @@ export default class Recorder {
         api.notification.open({ message: "Started Recording" });
 
         this.inputManager.getPhysicsInput = this.getPhysicsInput;
-        this.physicsManager.physicsStep = (dt: number) => {
+        this.physicsManager.physicsStep = (dt) => {
             this.frames.push(this.inputManager.getPhysicsInput());
 
             this.nativeStep(dt);
@@ -101,7 +94,7 @@ export default class Recorder {
         this.physics.state = JSON.parse(data.startState);
         Object.assign(GL.platformerPhysics, JSON.parse(data.platformerPhysics));
 
-        this.physicsManager.physicsStep = (dt: number) => {
+        this.physicsManager.physicsStep = (dt) => {
             api.stores.phaser.mainCharacter.physics.postUpdate(dt);
         };
 
@@ -109,7 +102,7 @@ export default class Recorder {
 
         let currentFrame = 0;
 
-        this.physicsManager.physicsStep = (dt: number) => {
+        this.physicsManager.physicsStep = (dt) => {
             const frame = data.frames[currentFrame];
             if(!frame) {
                 this.stopPlayback();

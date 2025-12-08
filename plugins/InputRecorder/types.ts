@@ -1,3 +1,5 @@
+import type { Vector } from "@dimforge/rapier2d-compat";
+
 export interface IFrameInfo {
     angle: number | null;
     jump: boolean;
@@ -5,7 +7,7 @@ export interface IFrameInfo {
 }
 
 export interface IRecording {
-    startPos: { x: number; y: number };
+    startPos: Vector;
     startState: string;
     platformerPhysics: string;
     frames: IFrameInfo[];
