@@ -1,5 +1,5 @@
 import type { Vector } from "@dimforge/rapier2d-compat";
-import type { IFrameInfo, IRecording } from "../types";
+import type { IRecording } from "../types";
 import { stopUpdatingLasers, updateLasers } from "./updateLasers";
 import type * as DLDUtils from "libraries/DLDUtils/src";
 
@@ -13,7 +13,7 @@ export default class Recorder {
     startPos: Vector = { x: 0, y: 0 };
     startState = "";
     platformerPhysics = "";
-    frames: IFrameInfo[] = [];
+    frames: Gimloader.Stores.TickInput[] = [];
 
     recording = false;
     playing = false;
