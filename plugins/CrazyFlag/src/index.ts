@@ -41,7 +41,7 @@ function applySettings() {
 api.settings.listen("swingSpeed", applySettings);
 api.settings.listen("swingAmount", applySettings);
 
-const constsCallback = api.rewriter.createShared("FlagConsts", (consts: any) => {
+const constsCallback = api.rewriter.createShared("FlagConsts", (consts: FlagConsts) => {
     const defaults = Object.assign({}, consts);
     flagConsts = consts;
     applySettings();

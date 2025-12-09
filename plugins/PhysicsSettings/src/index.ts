@@ -63,14 +63,14 @@ api.net.onLoad(() => {
         applyAll();
     });
 
-    const dldTas = GL.plugin("DLDTAS") as typeof DLDTAS | null;
+    const dldTas = api.plugin("DLDTAS") as typeof DLDTAS | null;
     dldTas?.setMoveSpeed(api.settings.speed);
     api.stores.me.movementSpeed = api.settings.speed;
 
     api.settings.listen("jumps", (jumps: number) => updateMapOption("maxJumps", jumps));
     api.settings.listen("jumpheight", (height: number) => updateMapOption("jumpHeight", height));
     api.settings.listen("speed", (speed: number) => {
-        const dldTas = GL.plugin("DLDTAS") as typeof DLDTAS | null;
+        const dldTas = api.plugin("DLDTAS") as typeof DLDTAS | null;
         dldTas?.setMoveSpeed(api.settings.speed);
         api.stores.me.movementSpeed = speed;
     });

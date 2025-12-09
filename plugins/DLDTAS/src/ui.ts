@@ -161,7 +161,7 @@ export function createUI() {
     countdownDiv.id = "controlCountdown";
     const countdownContent = document.createElement("div");
     countdownDiv.appendChild(countdownContent);
-    let activateTimeout: any;
+    let activateTimeout: ReturnType<typeof setTimeout>;
 
     function setControlling(value: boolean) {
         controlling = value;

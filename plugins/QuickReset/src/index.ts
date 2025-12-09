@@ -15,7 +15,7 @@ api.hotkeys.addConfigurableHotkey({
         alt: true
     }
 }, () => {
-    if(api.net.type !== "Colyseus" || !GL.net.isHost) return;
+    if(api.net.type !== "Colyseus" || !api.net.isHost) return;
 
     api.net.send("END_GAME", undefined);
     api.net.send("RESTORE_MAP_EARLIER", undefined);
@@ -43,7 +43,7 @@ api.hotkeys.addConfigurableHotkey({
         alt: true
     }
 }, () => {
-    if(api.net.type !== "Colyseus" || !GL.net.isHost) return;
+    if(api.net.type !== "Colyseus" || !api.net.isHost) return;
 
     api.net.send("END_GAME", undefined);
     api.net.send("RESTORE_MAP_EARLIER", undefined);

@@ -175,7 +175,7 @@ const enable = () => {
 
 api.net.onLoad(() => {
     enable();
-    const desync = GL.lib("Desync") as typeof Desync;
+    const desync = api.lib("Desync") as typeof Desync;
     desync.enable();
 });
 
