@@ -12,7 +12,7 @@ export default class AutoKicker {
     idleDelay = 20000;
     UIVisible = true;
 
-    idleKickTimeouts = new Map<string, number>();
+    idleKickTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
     kicked = new Set<string>();
 
     constructor() {
@@ -53,7 +53,7 @@ export default class AutoKicker {
                 if(!e || e.id === this.myId) return;
                 if(this.kickIdle) {
                     // set and idle kick timeout
-                    const timeout = window.setTimeout(() => {
+                    const timeout = setTimeout(() => {
                         this.colyseusKick(e.id, "being idle");
                     }, this.idleDelay);
 
@@ -119,7 +119,7 @@ export default class AutoKicker {
                 if(id === this.myId) continue;
                 if(this.idleKickTimeouts.has(id)) continue;
 
-                const timeout = window.setTimeout(() => {
+                const timeout = setTimeout(() => {
                     this.colyseusKick(id, "being idle");
                 }, this.idleDelay);
 
