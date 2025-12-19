@@ -67,17 +67,17 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
         }
     }
 
-    const body: Record<string, any> = {
+    const body = {
         experienceId: id,
         matchmakerOptions,
         options: {
             allowGoogleTranslate: false,
-            cosmosBlocked: false
-        },
-        hookOptions: {
-            ...defaultHooks,
-            ...savedHooks[id],
-            ...urlHooks
+            cosmosBlocked: false,
+            hookOptions: {
+                ...defaultHooks,
+                ...savedHooks[id],
+                ...urlHooks
+            }
         }
     };
 
@@ -91,7 +91,7 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
             api.settings.kit = games[0]._id;
         }
 
-        body.hookOptions[kitHook.key] = api.settings.kit;
+        body.options.hookOptions[kitHook.key] = api.settings.kit;
     }
 
     const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {

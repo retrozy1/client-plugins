@@ -113,12 +113,12 @@ async function makeGame(id2, entries) {
     matchmakerOptions,
     options: {
       allowGoogleTranslate: false,
-      cosmosBlocked: false
-    },
-    hookOptions: {
-      ...defaultHooks,
-      ...savedHooks[id2],
-      ...urlHooks
+      cosmosBlocked: false,
+      hookOptions: {
+        ...defaultHooks,
+        ...savedHooks[id2],
+        ...urlHooks
+      }
     }
   };
   const kitHook = hooks.find((hook) => hook.type === "kit");
@@ -129,7 +129,7 @@ async function makeGame(id2, entries) {
       if (!games.length) throw new Error("You don't have any kits");
       api.settings.kit = games[0]._id;
     }
-    body.hookOptions[kitHook.key] = api.settings.kit;
+    body.options.hookOptions[kitHook.key] = api.settings.kit;
   }
   const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
     method: "POST",
