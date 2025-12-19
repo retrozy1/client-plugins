@@ -1,9 +1,14 @@
 type HooksObj = Record<string, string | number>;
 
-// Hooks are hieratrical: map defaults -> your saved hooks -> URL hooks
+const matchmakerOptions: Record<string, any> = {
+    group: "",
+    joinInLate: true
+};
+
 export default async function makeGame(id: string, entries: URLSearchParamsIterator<[string, string]>) {
     if(!id) throw new Error("Gamemode ID is missing");
 
+    // Hooks are hieratrical: map defaults -> your saved hooks -> URL hooks
     const hooksRes = await fetch("/api/experience/map/hooks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -11,8 +16,18 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
     });
     const hooksJson = await hooksRes.json();
 
-    if(hooksJson.message?.text === "No experience found") throw new Error("Gamemode not found");
     if(hooksJson.name === "CastError") throw new Error("Invalid gamemode");
+    if(hooksJson.message?.text) {
+        const gameRes = await fetch("/api/matchmaker/intent/map/edit/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mapId: id })
+        });
+
+        if(gameRes.status === 500) throw new Error("This map doesn't exist.");
+
+        return await gameRes.text();
+    }
 
     const { hooks } = hooksJson;
 
@@ -27,11 +42,6 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
 
     const savedHooksString = localStorage.getItem("gimkit-hook-saved-options");
     const savedHooks = savedHooksString ? JSON.parse(savedHooksString) : {};
-
-    const matchmakerOptions: Record<string, any> = {
-        group: "",
-        joinInLate: true
-    };
 
     const urlHooks: HooksObj = {};
     for(const [key, value] of entries) {
@@ -57,17 +67,17 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
         }
     }
 
-    const body = {
+    const body: Record<string, any> = {
         experienceId: id,
         matchmakerOptions,
         options: {
             allowGoogleTranslate: false,
-            cosmosBlocked: false,
-            hookOptions: {
-                ...defaultHooks,
-                ...savedHooks[id],
-                ...urlHooks
-            }
+            cosmosBlocked: false
+        },
+        hookOptions: {
+            ...defaultHooks,
+            ...savedHooks[id],
+            ...urlHooks
         }
     };
 
@@ -79,10 +89,9 @@ export default async function makeGame(id: string, entries: URLSearchParamsItera
 
             if(!games.length) throw new Error("You don't have any kits");
             api.settings.kit = games[0]._id;
-            api.storage.setValue("selectedKitId", api.settings.kit);
         }
 
-        body.options.hookOptions[kitHook.key] = api.settings.kit;
+        body.hookOptions[kitHook.key] = api.settings.kit;
     }
 
     const creationRes = await fetch("/api/matchmaker/intent/map/play/create", {
