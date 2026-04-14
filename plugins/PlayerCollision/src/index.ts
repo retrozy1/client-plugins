@@ -15,7 +15,47 @@ const settings = api.settings.create([
     }
 ]);
 
-api.net.onLoad(async () => {
+class Collision {
+    private readonly physics: Gimloader.Stores.PhysicsManager;
+    private readonly world: RAPIER.World;
+    private readonly colliders = new Map<string, RAPIER.Collider>();
+
+    constructor(private readonly rapier: typeof RAPIER, stores: Gimloader.Stores.Stores) {
+        this.physics = stores.phaser.scene.worldManager.physics;
+        this.world = this.physics.world;
+
+        api.patcher.before(this.physics, "physicsStep", () => {
+            for(const [id, collider] of this.colliders) {
+                const body = stores.phaser.scene.characterManager.characters.get(id)?.body;
+                if(!body) return;
+
+                collider.setTranslation({
+                    x: body.x / 100,
+                    y: body.y / 100
+                });
+            }
+        });
+    }
+
+    createCollider(id: string) {
+        if(this.colliders.has(id)) return;
+        const collider = this.world.createCollider(this.rapier.ColliderDesc.cuboid(0.32, 0.32));
+        this.colliders.set(id, collider);
+    }
+
+    removeCollider(id: string) {
+        const collider = this.colliders.get(id);
+        if(!collider) return;
+        this.world.removeCollider(collider, true);
+        this.colliders.delete(id);
+    }
+
+    removeAllColliders() {
+        this.colliders.keys().forEach(this.removeCollider);
+    }
+}
+
+api.net.onColyseusLoad(async (stores, net) => {
     const rapier = await new Promise<typeof RAPIER>((res) => {
         api.rewriter.exposeVar("App", {
             check: "this.device.parts.destroySpecificPart",
@@ -24,89 +64,60 @@ api.net.onLoad(async () => {
         });
     });
 
-    const physics = api.stores.phaser.scene.worldManager.physics;
-    const world = physics.world;
-    const colliders = new Map<string, RAPIER.Collider>();
-    const myId = api.stores.network.authId;
+    const collision = new Collision(rapier, stores);
+    const myId = stores.network.auth.myId;
+    
+    api.onStop(
+        net.state.characters.onAdd((char) => {
+            if(char.id === myId) return;
+            if(char.type === "player" && !settings.collidePlayers) return;
+            if(char.type === "sentry" && !settings.collideSentries) return;
 
-    function createCollider(id: string) {
-        if(colliders.has(id)) return;
-        const collider = world.createCollider(rapier.ColliderDesc.cuboid(0.32, 0.32));
-        colliders.set(id, collider);
-    }
+            collision.createCollider(char.id);
 
-    function removeCollider(id: string) {
-        const collider = colliders.get(id);
-        if(!collider) return;
-        world.removeCollider(collider, true);
-        colliders.delete(id);
-    }
+            api.onStop(
+                char.onRemove(() => collision.removeCollider(char.id))
+            );
+        })
+    );
 
     settings.listen("collidePlayers", (enabled) => {
-        for(const [id, char] of api.stores.phaser.scene.characterManager.characters) {
+        for(const [id, char] of stores.phaser.scene.characterManager.characters) {
             if(char.type !== "player" || char.id === myId) continue;
             if(enabled) {
-                createCollider(id);
+                collision.createCollider(id);
             } else {
-                removeCollider(id);
+                collision.removeCollider(id);
             }
         }
     });
 
     settings.listen("collideSentries", (enabled) => {
-        for(const [id, { type }] of api.stores.phaser.scene.characterManager.characters) {
+        for(const [id, { type }] of stores.phaser.scene.characterManager.characters) {
             if(type !== "sentry") continue;
             if(enabled) {
-                createCollider(id);
+                collision.createCollider(id);
             } else {
-                removeCollider(id);
+                collision.removeCollider(id);
             }
         }
     });
 
-    api.onStop(
-        api.net.state.characters.onAdd((char) => {
-            if(char.id === myId) return;
-            if(char.type === "player" && !settings.collidePlayers) return;
-            if(char.type === "sentry" && !settings.collideSentries) return;
-
-            createCollider(char.id);
-
-            api.onStop(
-                char.onRemove(() => removeCollider(char.id))
-            );
-        })
-    );
-
-    if(!api.net.isHost) {
-        const { gameOwnerId } = api.stores.session;
-        api.net.state.session.listen("phase", (phase) => {
+    if(!net.isHost) {
+        const gameOwnerId = stores.session.gameOwnerId;
+        net.state.session.listen("phase", (phase) => {
             if(
-                api.net.state.characters.get(gameOwnerId)?.teamId === "__SPECTATORS_TEAM"
+                net.state.characters.get(gameOwnerId)?.teamId === "__SPECTATORS_TEAM"
                 && phase === "game"
             ) {
-                removeCollider(gameOwnerId);
+                collision.removeCollider(gameOwnerId);
             } else {
-                createCollider(gameOwnerId);
+                collision.createCollider(gameOwnerId);
             }
         });
     }
 
-    api.patcher.before(physics, "physicsStep", () => {
-        for(const [id, collider] of colliders) {
-            const body = api.stores.phaser.scene.characterManager.characters.get(id)?.body;
-            if(!body) return;
-
-            collider.setTranslation({
-                x: body.x / 100,
-                y: body.y / 100
-            });
-        }
-    });
-
     api.onStop(() => {
-        for(const [id] of colliders) {
-            removeCollider(id);
-        }
-    });
-});
+        collision.removeAllColliders();
+    })
+})
