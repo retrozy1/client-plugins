@@ -11,6 +11,10 @@ export default class Messenger {
     private static alternate = false;
     private static ignoreNextAngle = false;
 
+    static get lastSentAngle() {
+        return this.angleQueue[0]?.angle;
+    }
+
     static init() {
         api.net.on("send:AIMING", (message, editFn) => {
             if(this.ignoreNextAngle) {
@@ -21,7 +25,10 @@ export default class Messenger {
             this.pendingAngle = message.angle;
 
             // Cancel it if we still have messages to send
-            if(this.angleQueue.length > 0) editFn(null);
+            if(this.angleQueue.length > 0) {
+                editFn(null);
+            } else {
+            };
         });
 
         // Purge the queue once the game ends
