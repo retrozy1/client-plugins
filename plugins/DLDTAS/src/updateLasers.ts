@@ -1,4 +1,4 @@
-import type { ISharedValues } from "../types";
+import type { SharedValues } from "./types";
 
 let lasers: Gimloader.Stores.Device[] = [];
 let laserOffset: number = api.storage.getValue("laserOffset", 0);
@@ -13,20 +13,22 @@ api.net.colyseus.on("DEVICES_STATES_CHANGES", (packet) => {
     }
 });
 
-export function initLasers(values: ISharedValues) {
+export function initLasers(values: SharedValues) {
     api.hotkeys.addHotkey({
         key: "KeyL",
         alt: true
-    }, () => {
+    }, async () => {
         api.hotkeys.releaseAll();
 
-        const offset = prompt(`Enter the laser offset in frames, from 0 to 65 (currently ${laserOffset})`);
+        const offset = await api.UI.prompt("Laser offset", {
+            text: `Enter the laser offset in frames, from 0 to 65 (currently ${laserOffset})`
+        });
         if(offset === null) return;
 
         const parsed = parseInt(offset, 10);
 
         if(Number.isNaN(parsed) || parsed < 0 || parsed > 65) {
-            alert("Invalid offset");
+            api.UI.notification.error({ message: "Invalid laser offset" });
             return;
         }
 

@@ -1,5 +1,5 @@
 import type { Vector } from "@dimforge/rapier2d-compat";
-import type { IRecording } from "../types";
+import type { Recording } from "./types";
 import { stopUpdatingLasers, updateLasers } from "./updateLasers";
 import { downloadJsonFile } from "$shared/files";
 
@@ -31,11 +31,9 @@ export default class Recorder {
         physicsManager.bodies.activeBodies.disableBody = () => {};
     }
 
-    toggleRecording() {
-        if(this.recording) {
-            const conf = window.confirm("Do you want to save the recording?");
-            this.stopRecording(conf);
-        } else this.startRecording();
+    async toggleRecording() {
+        if(this.recording) this.stopRecording(true);
+        else this.startRecording();
     }
 
     startRecording() {
@@ -57,15 +55,16 @@ export default class Recorder {
         };
     }
 
-    stopRecording(save: boolean, fileName?: string) {
+    async stopRecording(promptSave: boolean, fileName?: string) {
         this.recording = false;
         this.physicsManager.physicsStep = this.nativeStep;
         stopUpdatingLasers();
 
-        if(!save) return;
+        if(!promptSave) return;
+        if(!await api.UI.confirm("Recording ended", "Do you want to save the recording?")) return;
 
         // download the file
-        const json: IRecording = {
+        const json: Recording = {
             startPos: this.startPos,
             startState: this.startState,
             platformerPhysics: this.platformerPhysics,
@@ -76,7 +75,7 @@ export default class Recorder {
         downloadJsonFile(json, fileName ?? `recording-${name}.json`);
     }
 
-    async playback(data: IRecording) {
+    async playback(data: Recording) {
         const desync = api.plugin("Desynchronize");
         desync.DLD.cancelRespawn();
 
