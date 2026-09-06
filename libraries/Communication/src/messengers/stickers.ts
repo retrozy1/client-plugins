@@ -151,6 +151,9 @@ export default class StickerMessenger {
         const char = api.net.colyseus.state.characters.get(characterId);
         if(!char) return;
 
+        // The limits of stickers are shared between every player
+        this.stickersSentAfterLastWait += newBuffer.length;
+
         if(newBuffer.length === 1) {
             const buffer = this.stickerCodeBuffers.get(char);
             // If they sent two lone stickers, the first one was definitely not communication
