@@ -76,7 +76,6 @@ api.net.onLoad(() => {
 
                 api.net.colyseus.send("START_GAME", {
                     customTeams,
-                    // @ts-expect-error Incorrect type
                     modeType: api.stores.me.preferences.startGameWithMode,
                     ownerAsSpectator: api.stores.session.ownerRole === "spectator"
                 });
