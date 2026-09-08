@@ -31,6 +31,14 @@ api.rewriter.exposeVar("App", {
 
 api.net.onLoad(() => {
     const scene = api.stores.phaser.scene;
+    const character = api.stores.phaser.mainCharacter.physics.getBody().character;
+
+    character.controller.setMaxSlopeClimbAngle(Phaser.Math.DegToRad(45));
+    character.controller.setMinSlopeSlideAngle(Phaser.Math.DegToRad(45));
+    api.onStop(() => {
+        character.controller.setMaxSlopeClimbAngle(Phaser.Math.DegToRad(46));
+        character.controller.setMinSlopeSlideAngle(Phaser.Math.DegToRad(46));
+    });
 
     api.stores.phaser.mainCharacter.physics.state = {
         "gravity": 0.001,
