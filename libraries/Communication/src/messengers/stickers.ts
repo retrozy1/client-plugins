@@ -102,15 +102,11 @@ export default class StickerMessenger {
         if(addedDevices.devices.length === 0) return;
         const getValue = (index: number) => addedDevices.values[index];
 
-        let stickerCount = 0;
-
         const incomingStickerBuffers = new Map<string, number[]>();
         for(const device of addedDevices.devices) {
             const y = device[2], deviceOptionIdIndex = device[5], optionIndexes = device[6];
             const deviceOptionId = getValue(deviceOptionIdIndex);
             if(deviceOptionId !== "placedSticker") continue;
-
-            stickerCount++;
 
             const options: Record<string, any> = {};
             for(const [propertyIndex, valueIndex] of optionIndexes) {
@@ -140,11 +136,9 @@ export default class StickerMessenger {
             this.appendCharacterBuffer(characterId, buffer);
         }
 
-        if(stickerCount > 1) {
-            addedDevices.devices = addedDevices.devices.filter((d) => (
-                getValue(d[5]) !== "placedSticker"
-            ));
-        }
+        addedDevices.devices = addedDevices.devices.filter((d) => (
+            getValue(d[5]) !== "placedSticker"
+        ));
     }
 
     static appendCharacterBuffer(characterId: string, newBuffer: number[]) {
