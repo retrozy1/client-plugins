@@ -37,7 +37,7 @@ export default class AimingMessenger {
         });
 
         api.onStop(
-            api.net.state.characters.get(api.stores.network.authId)!.projectiles.listen("aimAngle", (angle) => {
+            api.net.colyseus.state.characters.get(api.stores.network.authId)!.projectiles.listen("aimAngle", (angle) => {
                 if(!angle || angle !== this.angleQueue[0]?.angle) return;
                 this.angleChangeRes?.();
             }, false)
@@ -57,7 +57,7 @@ export default class AimingMessenger {
         if(character.id === api.stores.network.authId) return;
 
         api.patcher.before(character.aimingAndLookingAround, "setTargetAngle", (_, [angle]) => {
-            const netChar = api.net.state.characters.get(character.id)!;
+            const netChar = api.net.colyseus.state.characters.get(character.id)!;
             AimingMessenger.handleBytes(netChar, floatToBytes(angle));
             return true;
         });
@@ -213,7 +213,7 @@ export default class AimingMessenger {
             const queuedAngle = this.angleQueue[0];
 
             this.ignoreNextAngle = true;
-            api.net.send("AIMING", { angle: queuedAngle.angle });
+            api.net.colyseus.send("AIMING", { angle: queuedAngle.angle });
 
             try {
                 await this.awaitAngleChange();
@@ -227,7 +227,7 @@ export default class AimingMessenger {
 
         // Send the real angle afterwards (we don't care about this being dropped)
         if(!this.realAngle) return;
-        api.net.send("AIMING", { angle: this.realAngle });
+        api.net.colyseus.send("AIMING", { angle: this.realAngle });
     }
 
     private static async awaitAngleChange() {

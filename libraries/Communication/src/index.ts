@@ -12,7 +12,7 @@ class EnabledManager {
     static ready = StickerMessenger.ownedStickerPromise.then(() => {}, () => {});
 
     static init() {
-        api.net.state.session.listen("phase", () => this.handlePotentialEnabledChange(false));
+        api.net.colyseus.state.session.listen("phase", () => this.handlePotentialEnabledChange(false));
         this.ready.then(() => this.handlePotentialEnabledChange(true));
     }
 
@@ -30,7 +30,7 @@ class EnabledManager {
 
     static get enabled() {
         if(api.net.type !== "Colyseus") return false;
-        return api.net.state.session.phase === "game" || Boolean(StickerMessenger.ownedSticker);
+        return api.net.colyseus.state.session.phase === "game" || Boolean(StickerMessenger.ownedSticker);
     }
 
     static onEnabledChanged(callback: OnEnabledCallback) {
@@ -47,7 +47,7 @@ api.net.onLoad(() => {
     StickerMessenger.init();
     EnabledManager.init();
 
-    api.net.state.session.listen("phase", (phase) => {
+    api.net.colyseus.state.session.listen("phase", (phase) => {
         if(phase === "game") StickerMessenger.reset();
         else AimingMessenger.reset();
 
@@ -107,7 +107,7 @@ export default class Communication<T extends Message = Message> {
     static async #processQueue() {
         while(this.#queue.length > 0) {
             // Don't send messages if nobody else is in the server
-            const players = [...api.net.state.characters.values()].filter(char => char.type === "player");
+            const players = [...api.net.colyseus.state.characters.values()].filter(char => char.type === "player");
             if(players.length === 0) {
                 for(const item of this.#queue) item.resolvers.resolve();
                 this.#queue.length = 0;
@@ -118,7 +118,7 @@ export default class Communication<T extends Message = Message> {
             if(!queued) return;
 
             try {
-                if(api.net.state.session.phase === "preGame") {
+                if(api.net.colyseus.state.session.phase === "preGame") {
                     await queued.stickerMessenger.send(queued.message);
                 } else {
                     await queued.aimingMessenger.send(queued.message);
