@@ -21,5 +21,5 @@ export interface Callbacks {
 
 export interface AddedDevices {
     devices: any[];
-    values: any[];
+    values: string[];
 }

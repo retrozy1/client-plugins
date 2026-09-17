@@ -55,6 +55,9 @@ api.net.onLoad(() => {
     }, false);
 });
 
+// Ignore stickers even before we load in
+StickerMessenger.initNet();
+
 type OnEnabledCallback = (enabled: boolean, enabledAfterReady: boolean) => void;
 
 interface QueuedMessage {

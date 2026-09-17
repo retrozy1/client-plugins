@@ -63,6 +63,22 @@ export default class StickerMessenger {
     static ownedStickerPromise = getOwnedSticker();
     static ownedSticker: string | null = null;
 
+    static initNet() {
+        let loaded = false;
+
+        api.net.onLoad(() => {
+            loaded = true;
+        });
+
+        api.net.colyseus.on("WORLD_CHANGES", (data) => {
+            if(loaded) {
+                this.handleAddedDevices(data.devices.addedDevices);
+            }
+
+            this.removeStickers(data.devices.addedDevices);
+        });
+    }
+
     static init() {
         this.ownedStickerPromise.then((sticker) => this.ownedSticker = sticker);
 
@@ -81,10 +97,6 @@ export default class StickerMessenger {
                 );
             })
         );
-
-        api.net.colyseus.on("WORLD_CHANGES", (data) => {
-            this.handleAddedDevices(data.devices.addedDevices);
-        });
     }
 
     static reset() {
@@ -135,11 +147,13 @@ export default class StickerMessenger {
         for(const [characterId, buffer] of incomingStickerBuffers) {
             this.appendCharacterBuffer(characterId, buffer);
         }
-
-        addedDevices.devices = addedDevices.devices.filter((d) => (
-            getValue(d[5]) !== "placedSticker"
-        ));
     }
+
+    static removeStickers = (addedDevices: AddedDevices) => {
+        addedDevices.devices = addedDevices.devices.filter((d) => (
+            addedDevices.values[d[5]] !== "placedSticker"
+        ));
+    };
 
     static appendCharacterBuffer(characterId: string, newBuffer: number[]) {
         const char = api.net.colyseus.state.characters.get(characterId);
