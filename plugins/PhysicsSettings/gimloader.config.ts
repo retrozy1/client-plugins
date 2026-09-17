@@ -5,8 +5,8 @@ export default officialScriptConfig({
     name: "PhysicsSettings",
     description: "Allows you to configure various things about the physics in platformer modes (client-side only)",
     hasSettings: true,
-    version: "0.3.1",
+    version: "0.3.2",
     gamemodes: ["2d"],
     needsPlugins: ["Desynchronize"],
-    changelog: ["Updated webpage url"]
+    changelog: ["Bump version to force update"]
 });
