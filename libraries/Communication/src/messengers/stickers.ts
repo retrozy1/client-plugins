@@ -189,15 +189,15 @@ export default class StickerMessenger {
     static readMessageFromBuffer(char: Character, buffer: number[]) {
         const streamState = this.streamState.get(char);
 
-        if (!streamState) {
-          const identifiers = Streamer.callbacks.keys();
-          for (const identifier of identifiers) {
-            const dozens = numberToDozens(identifier, stickerIdentifierLength);
-            const index = indexOfSubarray(buffer, dozens)
-            if (index === -1) continue;
-            buffer.splice(0, index);
-            break;
-          }
+        if(!streamState) {
+            const identifiers = Streamer.callbacks.keys();
+            for(const identifier of identifiers) {
+                const dozens = numberToDozens(identifier, stickerIdentifierLength);
+                const index = indexOfSubarray(buffer, dozens);
+                if(index === -1) continue;
+                buffer.splice(0, index);
+                break;
+            }
         }
 
         if(streamState) {

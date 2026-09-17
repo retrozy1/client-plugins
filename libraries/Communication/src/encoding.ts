@@ -213,18 +213,18 @@ export function dozensToBytes(dozens: number[], state?: DozensDecodeState): Doze
 }
 
 export function indexOfSubarray(array: number[], subarray: number[]) {
-for (let i = 0; i <= array.length - subarray.length; i++) {
-    let found = true;
+    for(let i = 0; i <= array.length - subarray.length; i++) {
+        let found = true;
 
-    for (let j = 0; j < subarray.length; j++) {
-      if (array[i + j] !== subarray[j]) {
-        found = false;
-        break;
-      }
+        for(let j = 0; j < subarray.length; j++) {
+            if(array[i + j] !== subarray[j]) {
+                found = false;
+                break;
+            }
+        }
+
+        if(found) return i;
     }
 
-    if (found) return i;
-  }
-
-  return -1;
+    return -1;
 }
