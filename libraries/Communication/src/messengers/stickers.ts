@@ -1,5 +1,5 @@
 import type { AddedDevices, Character, Message } from "../types";
-import { bytesToDozens, dozensToBytes, dozensToFloat, dozensToNumber, encodeCharacters, floatToDozens, isUint8, numberToDozens, type DozensDecodeState } from "../encoding";
+import { bytesToDozens, dozensToBytes, dozensToFloat, dozensToNumber, encodeCharacters, floatToDozens, indexOfSubarray, isUint8, numberToDozens, type DozensDecodeState } from "../encoding";
 import Streamer from "../streamer";
 import { maxDozensInt, maxStickerMessageLength, maxStickersBeforeWait, placements, sizeNumbers, sizes, stickerIdentifierLength, stickerMessageSizeLength, StickerMessageType, stickerWait } from "../consts";
 
@@ -188,6 +188,17 @@ export default class StickerMessenger {
 
     static readMessageFromBuffer(char: Character, buffer: number[]) {
         const streamState = this.streamState.get(char);
+
+        if (!streamState) {
+          const identifiers = Streamer.callbacks.keys();
+          for (const identifier of identifiers) {
+            const dozens = numberToDozens(identifier, stickerIdentifierLength);
+            const index = indexOfSubarray(buffer, dozens)
+            if (index === -1) continue;
+            buffer.splice(0, index);
+            break;
+          }
+        }
 
         if(streamState) {
             const done = buffer.length >= streamState.remainingDozens;
