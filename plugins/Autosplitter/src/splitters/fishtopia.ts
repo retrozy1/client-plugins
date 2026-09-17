@@ -44,7 +44,7 @@ export default class FishtopiaAutosplitter extends SplitsAutosplitter {
             if(this.usedChannels.has(channel)) return;
             this.usedChannels.add(channel);
 
-            api.net.once("PHYSICS_STATE", (e) => {
+            api.net.colyseus.once("PHYSICS_STATE", (e) => {
                 if(e.teleport) {
                     this.timer.split();
                 }

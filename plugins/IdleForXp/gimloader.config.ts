@@ -5,7 +5,7 @@ export default officialScriptConfig({
     name: "IdleForXp",
     description: "Automatically performs actions to let you gain XP while idle",
     reloadRequired: "ingame",
-    version: "0.3.3",
+    version: "0.3.4",
     gamemodes: ["2d"],
-    changelog: ["Updated webpage url"]
+    changelog: ["Bump version to force update"]
 });
