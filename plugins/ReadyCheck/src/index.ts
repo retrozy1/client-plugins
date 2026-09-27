@@ -17,7 +17,35 @@ const settings = api.settings.create([
     }
 ]);
 
-let toggleReady: (() => void) | null = null;
+const addLabel = api.lib("CharacterLabels");
+const Comms = api.lib("Communication");
+const comms = new Comms<Op>("ReadyCheck");
+
+const charactersReady = new Map<string, boolean>();
+const disableAllReady = () => {
+    for(const key of charactersReady.keys()) {
+        charactersReady.set(key, false);
+    }
+};
+
+let startingWhenAllReady = false;
+let timeout: ReturnType<typeof setTimeout> | null = null;
+
+let ready = false;
+const sendReady = () => {
+    comms.send(ready ? Op.Ready : Op.NotReady);
+};
+const updateReadyTag = () => {
+    charactersReady.set(api.stores.network.authId, ready);
+};
+const updateReady = () => {
+    sendReady();
+    updateReadyTag();
+};
+const toggleReady = () => {
+    ready = !ready;
+    updateReady();
+};
 
 api.hotkeys.addConfigurableHotkey({
     title: "Toggle Ready",
@@ -28,12 +56,9 @@ api.hotkeys.addConfigurableHotkey({
         shift: true
     }
 }, () => {
-    toggleReady?.();
+    if(!Comms.enabled) return;
+    toggleReady();
 });
-
-let changeAutostart: ((autostart: boolean) => void) | null = null;
-
-let getAutostart: (() => boolean) | null = null;
 
 if(api.net.isHost) {
     api.rewriter.runInScope("App", (code, run, initial) => {
@@ -56,12 +81,11 @@ if(api.net.isHost) {
         );
 
         const onClick = api.rewriter.createShared("Autostart", (autostart: boolean) => {
-            changeAutostart?.(autostart);
+            startingWhenAllReady = autostart;
+            startIfAllReady();
         });
 
-        const getAutostartShared = api.rewriter.createShared("GetAutostart", () => {
-            return getAutostart?.();
-        });
+        const getAutostart = api.rewriter.createShared("GetAutostart", () => startingWhenAllReady);
 
         let newFunctionCode = originalFunctionCode.replace(
             "]",
@@ -71,7 +95,7 @@ if(api.net.isHost) {
       })]`
         );
 
-        newFunctionCode = newFunctionCode.replace("{", `{const [autostart, setAutostart] = ${react}.useState(${getAutostartShared}());`);
+        newFunctionCode = newFunctionCode.replace("{", `{const [autostart, setAutostart] = ${react}.useState(${getAutostart}());`);
         run(`${name} = ${newFunctionCode}`);
         if(!initial && api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
         api.onStop(() => {
@@ -81,6 +105,31 @@ if(api.net.isHost) {
         return true;
     });
 } else {
+    api.net.onLoad(() => {
+        comms.onEnabledChanged((enabled) => {
+            if(!enabled) return;
+            updateReady();
+        });
+
+        api.onStop(
+            api.net.colyseus.state.session.listen("phase", () => {
+                ready = false;
+                updateReadyTag();
+            }, false)
+        );
+
+        const onVisibilityChange = () => {
+            if(document.visibilityState === "visible" || !settings.notReadyOnTabOut || !ready) return;
+            ready = false;
+            updateReady();
+        };
+
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        api.onStop(() => {
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+        });
+    });
+
     api.rewriter.runInScope("App", (code, run, initial) => {
         if(!code.includes("Game actions")) return;
         const prefix = 'overscrollBehavior:"contain"#useEffect#})})},';
@@ -92,7 +141,8 @@ if(api.net.isHost) {
         let rewardsButton = getSection(value, '"Game actions"#?@:null');
         rewardsButton = replaceSection(rewardsButton, "label:@,", '"Ready"');
         const onClick = api.rewriter.createShared("ToggleReady", () => {
-            toggleReady?.();
+            if(!Comms.enabled) return;
+            toggleReady();
         });
         rewardsButton = replaceSection(rewardsButton, "onClick:@,", `() => { ${onClick}?.() }`);
         rewardsButton = replaceSection(rewardsButton, "onClick#.jsx(@}", '"i", { className: "far fa-check"');
@@ -110,177 +160,100 @@ if(api.net.isHost) {
     });
 }
 
-api.net.onLoad(() => {
-    const addLabel = api.lib("CharacterLabels");
-    const Comms = api.lib("Communication");
-    const comms = new Comms<Op>("ReadyCheck");
-    let startingWhenAllReady = false;
-    let timeout: ReturnType<typeof setTimeout> | null = null;
+const startIfAllReady = () => {
+    if(!startingWhenAllReady || charactersReady.size === 0 || charactersReady.values().some(r => !r) || scheduledStart) return;
 
-    const startIfAllReady = () => {
-        if(!startingWhenAllReady || charactersReady.size === 0 || charactersReady.values().some(r => !r) || scheduledStart) return;
+    scheduledStart = true;
+    comms.send(Op.StartingGame);
+    api.UI.notification.info({
+        message: "Game starting in 3 seconds..."
+    });
 
-        scheduledStart = true;
-        comms.send(Op.StartingGame);
-        api.UI.notification.info({
-            message: "Game starting in 3 seconds..."
+    timeout = setTimeout(() => {
+        const customTeams: Record<string, string> = {};
+        api.stores.session.customTeams.characterToTeamMap.forEach((team, character) => {
+            customTeams[character] = team;
         });
 
-        timeout = setTimeout(() => {
-            const customTeams: Record<string, string> = {};
-            api.stores.session.customTeams.characterToTeamMap.forEach((team, character) => {
-                customTeams[character] = team;
-            });
+        api.net.colyseus.send("START_GAME", {
+            customTeams,
+            modeType: api.stores.me.preferences.startGameWithMode,
+            ownerAsSpectator: api.stores.session.ownerRole === "spectator"
+        });
+    }, 3000);
+};
 
-            api.net.colyseus.send("START_GAME", {
-                customTeams,
-                modeType: api.stores.me.preferences.startGameWithMode,
-                ownerAsSpectator: api.stores.session.ownerRole === "spectator"
-            });
-        }, 3000);
+const destroyLabel = addLabel((char) => {
+    if(api.net.colyseus.state.session.gameOwnerId === char.id) return;
+
+    const text = api.stores.phaser.scene.add.text(0, 0, "", {
+        fontSize: "normal 25px",
+        fontFamily: "'Fugaz One', sans-serif",
+        stroke: "#000000",
+        strokeThickness: 5,
+        align: "center"
+    });
+    text.setOrigin(0.5, 0);
+
+    return {
+        gameObjects: [text],
+        update: () => {
+            if(api.net.colyseus.state.session.phase === "game") {
+                text.visible = false;
+                return;
+            }
+            const ready = charactersReady.get(char.id);
+            if(typeof ready === "undefined") {
+                text.visible = false;
+                return;
+            }
+            text.visible = true;
+            text.text = ready ? "READY" : "NOT READY";
+            text.setColor(ready ? "#00FF00" : "#FF0000");
+        }
     };
+});
 
-    const charactersReady = new Map<string, boolean>();
+let scheduledStart = false;
 
-    class ReadySender {
-        private ready = false;
-
-        sendReady() {
-            comms.send(this.ready ? Op.Ready : Op.NotReady);
-        }
-
-        private updateReadyTag() {
-            charactersReady.set(api.stores.network.authId, this.ready);
-        }
-
-        private updateReady() {
-            this.sendReady();
-            this.updateReadyTag();
-        }
-
-        private toggleReady() {
-            this.ready = !this.ready;
-            this.updateReady();
-        }
-
-        constructor() {
-            comms.onEnabledChanged((enabled) => {
-                if(!enabled) return;
-                this.updateReady();
-            });
-
-            api.onStop(
-                api.net.colyseus.state.session.listen("phase", () => {
-                    this.ready = false;
-                    this.updateReadyTag();
-                }, false)
-            );
-
-            toggleReady = () => {
-                if(!Comms.enabled) return;
-                if(api.net.colyseus.state.session.phase === "game") return;
-                this.toggleReady();
-            };
-
-            const onVisabilityChange = () => {
-                if(document.visibilityState === "visible" || !settings.notReadyOnTabOut || !this.ready) return;
-                this.ready = false;
-                this.updateReady();
-            };
-
-            document.addEventListener("visibilitychange", onVisabilityChange);
-            api.onStop(() => {
-                document.removeEventListener("visibilitychange", onVisabilityChange);
-            });
-        }
+comms.onMessage((op, char) => {
+    if(op === Op.StartingGame) {
+        if(char.id !== api.net.colyseus.state.session.gameOwnerId) return;
+        scheduledStart = true;
+        api.UI.message.info({
+            content: "Game starting in 3 seconds, switch to not ready to cancel."
+        });
+        return;
     }
+
+    if(op === Op.Left) {
+        charactersReady.delete(char.id);
+        return;
+    }
+
+    if(!charactersReady.has(char.id) && !api.net.isHost) {
+        sendReady();
+    }
+    if(scheduledStart && op === Op.NotReady) {
+        scheduledStart = false;
+        api.UI.notification.info({
+            message: `${char.name} canceled start`
+        });
+        disableAllReady();
+        if(timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
+        return;
+    }
+    charactersReady.set(char.id, op === Op.Ready);
 
     if(api.net.isHost) {
-        changeAutostart = (autostart) => {
-            startingWhenAllReady = autostart;
-            startIfAllReady();
-        };
-
-        getAutostart = () => startingWhenAllReady;
+        startIfAllReady();
     }
+});
 
-    const destroyLabel = addLabel((char) => {
-        if(api.net.colyseus.state.session.gameOwnerId === char.id) return;
-
-        const text = api.stores.phaser.scene.add.text(0, 0, "", {
-            fontSize: "normal 25px",
-            fontFamily: "'Fugaz One', sans-serif",
-            stroke: "#000000",
-            strokeThickness: 5,
-            align: "center"
-        });
-        text.setOrigin(0.5, 0);
-
-        return {
-            gameObjects: [text],
-            update: () => {
-                if(api.net.colyseus.state.session.phase === "game") {
-                    text.visible = false;
-                    return;
-                }
-                const ready = charactersReady.get(char.id);
-                if(typeof ready === "undefined") {
-                    text.visible = false;
-                    return;
-                }
-                text.visible = true;
-                text.text = ready ? "READY" : "NOT READY";
-                text.setColor(ready ? "#00FF00" : "#FF0000");
-            }
-        };
-    });
-
-    const disableAllReady = () => {
-        for(const key of charactersReady.keys()) {
-            charactersReady.set(key, false);
-        }
-    };
-
-    const readySender = api.net.isHost ? null : new ReadySender();
-    let scheduledStart = false;
-
-    comms.onMessage((op, char) => {
-        if(op === Op.StartingGame) {
-            if(char.id !== api.net.colyseus.state.session.gameOwnerId) return;
-            scheduledStart = true;
-            api.UI.message.info({
-                content: "Game starting in 3 seconds, switch to not ready to cancel."
-            });
-            return;
-        }
-
-        if(op === Op.Left) {
-            charactersReady.delete(char.id);
-            return;
-        }
-
-        if(!charactersReady.has(char.id)) {
-            readySender?.sendReady();
-        }
-        if(scheduledStart && op === Op.NotReady) {
-            scheduledStart = false;
-            api.UI.notification.info({
-                message: `${char.name} canceled start`
-            });
-            disableAllReady();
-            if(timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-            return;
-        }
-        charactersReady.set(char.id, op === Op.Ready);
-
-        if(api.net.isHost) {
-            startIfAllReady();
-        }
-    });
-
+api.net.onLoad(() => {
     api.onStop(
         api.net.colyseus.state.session.listen("phase", (phase) => {
             if(phase === "preGame") return;
