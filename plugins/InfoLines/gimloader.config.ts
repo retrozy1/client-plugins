@@ -4,8 +4,8 @@ export default officialScriptConfig({
     input: "src/index.ts",
     name: "InfoLines",
     description: "Displays a configurable list of info on the screen",
-    version: "1.3.1",
-    changelog: ["Bump version to force update"],
+    version: "1.4.0",
+    changelog: ["Made settings menu more readable"],
     hasSettings: true,
     gamemodes: ["2d"]
 });
