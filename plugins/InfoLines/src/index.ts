@@ -21,7 +21,7 @@ export class InfoLines {
     element?: HTMLElement;
 
     constructor() {
-        const settings: Gimloader.PluginSetting[] = [
+        const settings: Gimloader.SettingItem[] = [
             {
                 type: "dropdown",
                 id: "position",
@@ -37,13 +37,22 @@ export class InfoLines {
         ];
 
         for(const line of this.lines) {
-            settings.push({
-                type: "toggle",
-                id: line.name,
-                title: line.name,
-                default: line.enabledDefault
-            });
-            if(line.settings) settings.push(...line.settings);
+            if(line.settings) {
+                settings.push({
+                    type: "togglegroup",
+                    id: line.name,
+                    title: line.name,
+                    default: line.enabledDefault,
+                    settings: line.settings
+                });
+            } else {
+                settings.push({
+                    type: "toggle",
+                    id: line.name,
+                    title: line.name,
+                    default: line.enabledDefault
+                });
+            }
         }
 
         api.settings.create(settings);
