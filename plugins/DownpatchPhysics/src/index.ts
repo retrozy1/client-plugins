@@ -17,7 +17,7 @@ const settings = api.settings.create([
 
 let RAPIER: typeof RapierType;
 
-api.rewriter.exposeVar("App", {
+api.rewriter.exposeVar("Device-", {
     check: "get RigidBodyType()",
     find: /(\w{1,3})=Object\.freeze\({__proto__:null,version/,
     callback: (rapier) => RAPIER = rapier
