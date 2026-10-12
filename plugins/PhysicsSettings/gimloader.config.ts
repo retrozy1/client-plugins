@@ -5,8 +5,8 @@ export default officialScriptConfig({
     name: "PhysicsSettings",
     description: "Allows you to configure various things about the physics in platformer modes (client-side only)",
     hasSettings: true,
-    version: "0.3.2",
+    version: "0.3.3",
     gamemodes: ["2d"],
     needsPlugins: ["Desynchronize"],
-    changelog: ["Bump version to force update"]
+    changelog: ["Fixed for new Gimkit update"]
 });

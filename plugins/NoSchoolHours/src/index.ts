@@ -3,7 +3,7 @@ const FakeDate = api.rewriter.createShared("FakeDate", {
         return {
             day: () => 0,
             hour: () => 0
-        }
+        };
     }
 });
 

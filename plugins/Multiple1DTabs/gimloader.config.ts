@@ -5,5 +5,6 @@ export default officialScriptConfig({
     name: "Multiple1DTabs",
     reloadRequired: "ingame",
     description: "Allows having multiple different tabs connected to a single 1D game",
-    version: "0.1.0"
+    version: "0.1.1",
+    changelog: ["Fixed for new Gimkit update"]
 });
