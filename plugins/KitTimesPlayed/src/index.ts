@@ -1,14 +1,18 @@
-import { getSection, insert } from "$shared/rewritingUtils";
-
 const isEnabled = api.rewriter.createShared("Enabled", true);
 
-api.rewriter.addParseHook("Container", (code) => {
-    if(!code.includes("There are no kits in this folder.")) return code;
+console.log("Here?");
+api.rewriter.addParseHook("Container-", (code) => {
+    const index = code.indexOf(".createdAt?`Created");
+    if(index === -1) return code;
 
-    const name = getSection(code, ".createdAt?`Created ${#(@.");
-    const playCountString = `${name}.playCount`;
-    const playCountInfo = `, \${${playCountString} ? \`played \${${playCountString}} \${${playCountString} === 1 ? "time" : "times"}\` : "never played"}`;
-    return insert(code, ".createdAt).fromNow()}@`", `\${${isEnabled} ? \`${playCountInfo}\` : ""}`);
+    const varStart = code.lastIndexOf("=>", index) + 2;
+    const varName = code.slice(varStart, index);
+    const insertIndex = code.indexOf("}", index) + 1;
+
+    const playCount = `${varName}.playCount`;
+    const insert = `${playCount}?${playCount}==1?"played once":"played "+${playCount}+" times":"never played"`;
+
+    return code.slice(0, insertIndex) + ", ${" + insert + "}" + code.slice(insertIndex);
 });
 
 api.onStop(() => {

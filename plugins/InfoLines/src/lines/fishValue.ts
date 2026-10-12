@@ -58,7 +58,7 @@ export default class FishValue extends BaseLine {
         this.allDevices = api.stores.phaser.scene.worldManager.devices.allDevices;
 
         const autorunFn = await new Promise<typeof autorun>(res => {
-            api.rewriter.exposeVar(true, {
+            api.rewriter.exposeVar("decorate-", {
                 find: /isMobxAction===!0}function (\S+)\(/,
                 callback: res
             });
