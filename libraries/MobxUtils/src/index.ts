@@ -31,7 +31,7 @@ api.rewriter.addParseHook("mobxreact", (code) => {
     const funcStart = code.lastIndexOf("function", index);
     const nameEnd = code.indexOf("(", funcStart);
     const name = code.slice(funcStart + 9, nameEnd);
-    const funcEnd = code.indexOf("}", code.indexOf(".forwardRef", index)) + 1;
+    const funcEnd = code.indexOf("}", code.indexOf(".forwardRef)(", index)) + 1;
     const func = code.slice(funcStart, funcEnd);
 
     code = code.slice(0, funcStart) + `const ${name}=(${wrapObserver}??(v => v))(${func});`

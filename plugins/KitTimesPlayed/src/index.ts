@@ -1,6 +1,5 @@
 const isEnabled = api.rewriter.createShared("Enabled", true);
 
-console.log("Here?");
 api.rewriter.addParseHook("Container-", (code) => {
     const index = code.indexOf(".createdAt?`Created");
     if(index === -1) return code;
@@ -10,7 +9,7 @@ api.rewriter.addParseHook("Container-", (code) => {
     const insertIndex = code.indexOf("}", index) + 1;
 
     const playCount = `${varName}.playCount`;
-    const insert = `${playCount}?${playCount}==1?"played once":"played "+${playCount}+" times":"never played"`;
+    const insert = `${isEnabled}?${playCount}?${playCount}==1?"played once":"played "+${playCount}+" times":"never played":""`;
 
     return code.slice(0, insertIndex) + ", ${" + insert + "}" + code.slice(insertIndex);
 });

@@ -1,5 +1,3 @@
-import { replaceSection } from "$shared/rewritingUtils";
-
 const settings = api.settings.create([
     {
         type: "number",
@@ -42,9 +40,10 @@ let rewritten = false;
 const getTps = api.rewriter.createShared("GetTPS", () => settings.tps);
 const triggerRewritten = api.rewriter.createShared("TriggerRewritten", () => rewritten = true);
 
-api.rewriter.addParseHook("App", (code) => {
-    if(!code.includes('.zoneAbilitiesOverrides.listen("allowResourceDrop",')) return code;
-    code = replaceSection(code, ",staticGridSize:#=@,", `${getTps}?.() ?? 12`);
+api.rewriter.addParseHook("FixPhaserBootProcess-", (code) => {
+    if(!code.includes("{tickRate:12")) return code;
+    code = code.replace("{tickRate:12", `{tickRate:${getTps}?.()??12`);
+
     return code + `${triggerRewritten}?.();`;
 });
 
