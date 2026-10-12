@@ -4,7 +4,7 @@ export default officialScriptConfig({
     input: "src/index.ts",
     name: "KitTimesPlayed",
     description: "Shows the number of times that kits have been played on the kits screen",
-    version: "0.1.3",
+    version: "0.1.4",
     reloadRequired: "notingame",
-    changelog: ["Bumped version to force update"]
+    changelog: ["Fixed for new Gimkit update"]
 });
