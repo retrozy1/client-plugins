@@ -1,1 +1,3 @@
-api.rewriter.addParseHook("ObjectListener", (code) => code.replace("this.useClientIdSaving=!0", "this.useClientIdSaving=false"));
+api.patcher.before(localStorage, "getItem", (_, args) => {
+    if(args[0]?.startsWith?.("blueboat-id-")) return true;
+});

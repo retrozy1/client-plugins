@@ -1,11 +1,29 @@
-import { getSection, insert, replaceSection } from "$shared/rewritingUtils";
+api.rewriter.swapVar("App-", {
+    check: "useLocalstorageState:",
+    find: /0.93\);\n`,(\w{1,3})=/,
+    callback: (val, initial) => {
+        if(!initial) api.UI.forceReactUpdate();
+        api.onStop(() => api.UI.forceReactUpdate());
 
-api.rewriter.addParseHook("App", (code) => {
-    if(!code.includes(".sticker?12:void")) return code;
-    let selectCosmeticCode = getSection(code, '"Update":"Selected"#onClick#{#,@}}};');
-    selectCosmeticCode = replaceSection(selectCosmeticCode, ".type,@onSuccess", "");
-    const isStickerCode = getSection(code, ".sticker?12:void#if@return");
-    const shouldShowInfo = getSection(code, '"Update":"Selected"#disabled:@&');
-    code = insert(code, ".sticker?12:void 0#onClick#,@#", `(!(${shouldShowInfo}) && !${isStickerCode}) ? ${selectCosmeticCode} : `);
-    return code;
+        return function(this: any, props: any) {
+            const result = val.apply(this, arguments);
+            const iconProps = result.props.children[0].props;
+            const onClick = iconProps.onClick;
+
+            iconProps.onClick = () => {
+                if(props.selected || props.type === "sticker") {
+                    onClick();
+                    return;
+                }
+
+                const actions = result.props.children[1].props.callToAction({
+                    editStyles: props.editStyles
+                });
+
+                actions.onClick();
+            };
+
+            return result;
+        };
+    }
 });

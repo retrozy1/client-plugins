@@ -17,9 +17,9 @@ const settings = api.settings.create([
 
 api.net.onLoad(async () => {
     const rapier = await new Promise<typeof RAPIER>((res) => {
-        api.rewriter.exposeVar("App", {
-            check: "this.device.parts.destroySpecificPart",
-            find: /var (\S+)=Object.freeze\({__proto__:null/,
+        api.rewriter.exposeVar("Device-", {
+            check: "get RigidBodyType()",
+            find: /(\w{1,3})=Object\.freeze\({__proto__:null,version/,
             callback: res
         });
     });
