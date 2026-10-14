@@ -30,9 +30,9 @@ api.rewriter.swapVar("Container-", {
                 created.children += ", " + message;
 
                 return result;
-            }
+            };
 
             return val.apply(this, arguments);
-        }
+        };
     }
 });
