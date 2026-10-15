@@ -1,5 +1,3 @@
-import { getSection, insert, replaceSection } from "$shared/rewritingUtils";
-
 enum Op {
     Ready,
     NotReady,
@@ -61,48 +59,40 @@ api.hotkeys.addConfigurableHotkey({
 });
 
 if(api.net.isHost) {
-    api.rewriter.runInScope("App", (code, run, initial) => {
-        const react = api.rewriter.createShared("React", api.React);
-        const identifier = ".customTeams.characterToTeamMap.forEach(";
-        if(!code.includes(identifier)) return;
-        const functionEndIndex = code.lastIndexOf(
-            ",",
-            code.lastIndexOf("div", code.indexOf(identifier))
-        );
-        const nameStartIndex = code.lastIndexOf("}:null,", functionEndIndex) + 7;
-        const nameEndIndex = code.indexOf("=", nameStartIndex);
-        const functionStartIndex = nameEndIndex + 1;
-        const name = code.slice(nameStartIndex, nameEndIndex);
-        const originalFunctionCode = code.slice(functionStartIndex, functionEndIndex);
-        const firstQuestionMarkIndex = code.indexOf("?", functionStartIndex) + 1;
-        const startOfComponent = code.slice(
-            firstQuestionMarkIndex,
-            code.indexOf(",", firstQuestionMarkIndex)
-        );
+    let BottomButton: any;
+    const identifier = ".customTeams.characterToTeamMap.forEach(";
+    api.rewriter.exposeVar("App-", {
+        check: identifier,
+        find: /spectator`}`,onClick:\w{1,3}}},(\w{1,3})=/,
+        callback: (bb) => BottomButton = bb
+    });
 
-        const onClick = api.rewriter.createShared("Autostart", (autostart: boolean) => {
-            startingWhenAllReady = autostart;
-            startIfAllReady();
-        });
+    api.rewriter.swapVar("App-", {
+        check: identifier,
+        find: /\.teamCustomization\)}}:null,(\w{1,3})=/,
+        callback: (val, initial) => {
+            if(!initial && api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
+            api.onStop(() => {
+                if(api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
+            });
 
-        const getAutostart = api.rewriter.createShared("GetAutostart", () => startingWhenAllReady);
+            return function(this: any) {
+                const [autostart, setAutostart] = api.React.useState(false);
 
-        let newFunctionCode = originalFunctionCode.replace(
-            "]",
-            `, ${startOfComponent}, {
-        label: autostart ? "Starting when all ready" : "Manually starting game",
-        onClick: () => { setAutostart(prev => { ${onClick}?.(!prev); return !prev; }); }
-      })]`
-        );
-
-        newFunctionCode = newFunctionCode.replace("{", `{const [autostart, setAutostart] = ${react}.useState(${getAutostart}());`);
-        run(`${name} = ${newFunctionCode}`);
-        if(!initial && api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
-        api.onStop(() => {
-            run(`${name} = ${originalFunctionCode}`);
-            if(api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
-        });
-        return true;
+                const result = val.apply(this, arguments);
+                const bottomButtons = result.props.children.props.children;
+                bottomButtons.push(api.React.createElement(BottomButton, {
+                    onClick: () => {
+                        setAutostart((prev) => {
+                            startingWhenAllReady = !prev;
+                            return !prev;
+                        });
+                    },
+                    label: autostart ? "Starting when all ready" : "Manually starting game"
+                }));
+                return result;
+            };
+        }
     });
 } else {
     api.net.onLoad(() => {
@@ -130,33 +120,41 @@ if(api.net.isHost) {
         });
     });
 
-    api.rewriter.runInScope("App", (code, run, initial) => {
-        if(!code.includes("Game actions")) return;
-        const prefix = 'overscrollBehavior:"contain"#useEffect#})})},';
-        const valueEnd = "!1})]})})";
-        const name = getSection(code, `${prefix}@=`);
-        const originalValue = getSection(code, `${prefix}#=@${valueEnd}`) + valueEnd;
-        let value = originalValue;
+    let GameActionButton: any;
+    const check = '"aria-label":`Game actions`';
+    api.rewriter.exposeVar("App-", {
+        check,
+        find: /}\)\]}\)}\),(\w{1,3})=\w{1,3}=>/,
+        callback: (val) => GameActionButton = val
+    });
 
-        let rewardsButton = getSection(value, '"Game actions"#?@:null');
-        rewardsButton = replaceSection(rewardsButton, "label:@,", '"Ready"');
-        const onClick = api.rewriter.createShared("ToggleReady", () => {
-            if(!Comms.enabled) return;
-            toggleReady();
-        });
-        rewardsButton = replaceSection(rewardsButton, "onClick:@,", `() => { ${onClick}?.() }`);
-        rewardsButton = replaceSection(rewardsButton, "onClick#.jsx(@}", '"i", { className: "far fa-check"');
+    api.rewriter.exposeVar("App-", {
+        check,
+        find: /}\)}\)},(\w{1,3})=\w{1,3}\(\(\)=>{let{session:{cosmosBlocked/,
+        callback: (val, initial) => {
+            const originalType = val.type;
 
-        value = insert(value, `"Game actions"#[@`, `${rewardsButton},`);
+            val.type = function(this) {
+                const result = originalType.apply(this, arguments);
+                const gameActionsProps = result.props.children[0].props.children.props;
+                const button = api.React.createElement(GameActionButton, {
+                    label: "Ready",
+                    onClick: () => {
+                        if(!Comms.enabled) return;
+                        toggleReady();
+                    }
+                }, api.React.createElement("i", { className: "far fa-check" }));
+                gameActionsProps.children = [button, ...gameActionsProps.children];
+                return result;
+            };
 
-        run(`${name} = ${value}`);
+            if(!initial && api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
 
-        if(!initial && api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
-        api.onStop(() => {
-            run(`${name} = ${originalValue}`);
-            if(api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
-        });
-        return true;
+            api.onStop(() => {
+                if(api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
+                val.type = originalType;
+            });
+        }
     });
 }
 
