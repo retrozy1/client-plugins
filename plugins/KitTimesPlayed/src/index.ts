@@ -1,26 +1,38 @@
-const isEnabled = api.rewriter.createShared("Enabled", true);
+api.rewriter.swapVar("Container-", {
+    check: "?`Created ${",
+    find: /description}}\):null]}\)}\),(\w{1,3})/,
+    callback: (val, initial) => {
+        if(!initial) api.UI.forceReactUpdate();
+        api.onStop(() => api.UI.forceReactUpdate());
 
-api.rewriter.addParseHook("Container-", (code) => {
-    const index = code.indexOf(".createdAt?`Created");
-    if(index === -1) return code;
+        let hasPatched = false;
 
-    const varStart = code.lastIndexOf("=>", index) + 2;
-    const varName = code.slice(varStart, index);
-    const insertIndex = code.indexOf("}", index) + 1;
+        // Kind of ugly because there's a mobx wrapper around the thing we actually want to patch
+        return function(this: any) {
+            if(hasPatched) return val.apply(this, arguments);
 
-    const playCount = `${varName}.playCount`;
-    const insert = `${isEnabled}?${playCount}?${playCount}==1?"played once":"played "+${playCount}+" times":"never played":""`;
+            const res = val.apply(this, arguments);
+            const kitCards = res.props.children[1].props.children.props.children;
+            const type = kitCards[0]?.props.children.type;
+            if(!type) return res;
 
-    return code.slice(0, insertIndex) + ", ${" + insert + "}" + code.slice(insertIndex);
-});
+            const typeFn = type.type;
+            api.onStop(() => type.type = typeFn);
+            hasPatched = true;
 
-api.onStop(() => {
-    if(location.pathname !== "/kits" && location.pathname !== "/gamemode") return;
-    const kits = document.getElementsByClassName("ant-card ant-card-bordered ant-card-hoverable");
+            type.type = function(props: any) {
+                const result = typeFn.apply(this, arguments);
+                const created = result.props.children[0].props.children.props.children.props.children[0].props.children[1].props.children[1].props;
 
-    for(const kit of kits) {
-        const div = kit.children[0]?.children[0]?.children[0]?.children[1]?.children[1];
-        if(!div?.innerHTML.includes(",")) return;
-        div.innerHTML = div.innerHTML.split(",")[0];
+                const playCount = props.game.playCount;
+                const message = playCount ? playCount > 1 ? `played ${playCount} times` : "played once" : "never played";
+
+                created.children += ", " + message;
+
+                return result;
+            };
+
+            return val.apply(this, arguments);
+        };
     }
 });
