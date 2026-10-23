@@ -18,24 +18,16 @@ const settings = api.settings.create([
 const addLabel = api.lib("CharacterLabels");
 const Comms = api.lib("Communication");
 const comms = new Comms<Op>("ReadyCheck");
-
 const charactersReady = new Map<string, boolean>();
-const disableAllReady = () => {
-    for(const key of charactersReady.keys()) {
-        charactersReady.set(key, false);
-    }
-};
 
 let startingWhenAllReady = false;
 let timeout: ReturnType<typeof setTimeout> | null = null;
 
 let ready = false;
-const sendReady = () => {
-    comms.send(ready ? Op.Ready : Op.NotReady);
-};
-const updateReadyTag = () => {
-    charactersReady.set(api.stores.network.authId, ready);
-};
+const sendReady = () => comms.send(ready ? Op.Ready : Op.NotReady);
+const updateReadyTag = () => charactersReady.set(api.stores.network.authId, ready);
+const isPreGame = () => api.net.colyseus.state.session.phase === "preGame";
+
 const updateReady = () => {
     sendReady();
     updateReadyTag();
@@ -71,9 +63,9 @@ if(api.net.isHost) {
         check: identifier,
         find: /\.teamCustomization\)}}:null,(\w{1,3})=/,
         callback: (val, initial) => {
-            if(!initial && api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
+            if(!initial && isPreGame()) api.UI.forceReactUpdate();
             api.onStop(() => {
-                if(api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
+                if(isPreGame()) api.UI.forceReactUpdate();
             });
 
             return function(this: any) {
@@ -132,10 +124,7 @@ if(api.net.isHost) {
         check,
         find: /}\)}\)},(\w{1,3})=\w{1,3}\(\(\)=>{let{session:{cosmosBlocked/,
         callback: (val, initial) => {
-            const originalType = val.type;
-
-            val.type = function(this) {
-                const result = originalType.apply(this, arguments);
+            api.patcher.afterReact(val.type, (_, __, result) => {
                 const gameActionsProps = result.props.children[0].props.children.props;
                 const button = api.React.createElement(GameActionButton, {
                     label: "Ready",
@@ -145,14 +134,12 @@ if(api.net.isHost) {
                     }
                 }, api.React.createElement("i", { className: "far fa-check" }));
                 gameActionsProps.children = [button, ...gameActionsProps.children];
-                return result;
-            };
+            });
 
-            if(!initial && api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
+            if(!initial && isPreGame()) api.UI.forceReactUpdate();
 
             api.onStop(() => {
-                if(api.net.colyseus.state.session.phase === "preGame") api.UI.forceReactUpdate();
-                val.type = originalType;
+                if(isPreGame()) api.UI.forceReactUpdate();
             });
         }
     });
@@ -232,18 +219,18 @@ comms.onMessage((op, char) => {
     if(!charactersReady.has(char.id) && !api.net.isHost) {
         sendReady();
     }
+
     if(scheduledStart && op === Op.NotReady) {
         scheduledStart = false;
         api.UI.notification.info({
             message: `${char.name} canceled start`
         });
-        disableAllReady();
         if(timeout) {
             clearTimeout(timeout);
             timeout = null;
         }
-        return;
     }
+
     charactersReady.set(char.id, op === Op.Ready);
 
     if(api.net.isHost) {
@@ -256,7 +243,9 @@ api.net.onLoad(() => {
         api.net.colyseus.state.session.listen("phase", (phase) => {
             if(phase === "preGame") return;
             scheduledStart = false;
-            disableAllReady();
+            for(const key of charactersReady.keys()) {
+                charactersReady.set(key, false);
+            }
         }, false)
     );
 
